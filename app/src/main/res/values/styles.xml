@@ -1,0 +1,14 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/oberEscalator_colorBrand</item>
+        <item name="colorPrimaryDark">@color/oberEscalator_colorBlack</item>
+        <item name="colorAccent">@color/oberEscalator_colorBrand</item>
+    </style>
+
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name ="android:windowBackground">@drawable/splash_screen_background</item>
+    </style>
+
+</resources>
