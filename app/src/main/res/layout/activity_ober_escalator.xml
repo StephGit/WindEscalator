@@ -30,7 +30,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:background="@color/oberEscalator_colorBrand"
         app:itemBackground="@color/oberEscalator_colorBrand"
-        app:itemIconTint="@color/oberEscalator_bottom_navigation"
-        app:itemTextColor="@color/oberEscalator_bottom_navigation"
+        app:itemIconTint="@color/oberescalator_bottom_navigation"
+        app:itemTextColor="@color/oberescalator_bottom_navigation"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

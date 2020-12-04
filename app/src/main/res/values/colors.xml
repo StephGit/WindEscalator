@@ -7,8 +7,8 @@
     <!-- OberEscalator colors -->
     <color name="oberEscalator_colorWhite">#FFFFFF</color>
     <color name="oberEscalator_colorBlack">#000</color>
-    <color name="oberEscalator_colorBrand">#4DABF7</color>
-    <color name="oberEscalator_colorSelected">#311B92</color>
+    <color name="oberEscalator_colorBrand">#ee3030</color>
+    <color name="oberEscalator_colorSelected">#8E2020</color>
     <color name="oberEscalator_colorBackgroundText">#CED4DA</color>
     <color name="oberEscalator_colorBackgroundLight">#F9F9F9</color>
     <color name="oberEscalator_colorBackground">#F1F3F5</color>

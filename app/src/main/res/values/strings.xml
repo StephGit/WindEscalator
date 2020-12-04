@@ -6,6 +6,7 @@
     <string name="alert_emtpy_fragment_icon_text">Alert Image</string>
     <string name="alert_empty_fragment_title">No alerts</string>
     <string name="alert_emtpy_fragment_info">New alerts are shown here.</string>
+    <string name="search">Search</string>
 
 
 </resources>
