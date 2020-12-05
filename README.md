@@ -1,6 +1,6 @@
-# OberEscalator App
+# WindEscalator App
 
-[![Build Status](https://travis-ci.com/StephGit/OberEscalator.svg?branch=master)](https://travis-ci.com/StephGit/OberEscalator)
+[![Build Status](https://travis-ci.com/StephGit/WindEscalator.svg?branch=master)](https://travis-ci.com/StephGit/WindEscalator)
 
 Simple wind alerting app for Android in Kotlin.
 

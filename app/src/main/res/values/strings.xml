@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OberEscalator</string>
+    <string name="app_name">WindEscalator</string>
     <string name="bottom_navigation_alert">Alerts</string>
     <string name="bottom_navigation_messure">Wind</string>
     <string name="bottom_navigation_webcam">Webcams</string>

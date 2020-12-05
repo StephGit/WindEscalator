@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OberEscalatorActivity">
+    tools:context=".WindEscalatorActivity">
 
 
     <FrameLayout
@@ -13,24 +13,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ober_escalator_navigation"
+        app:layout_constraintBottom_toTopOf="@id/wind_escalator_navigation"
         android:layout_height="0dp"
         android:layout_width="0dp"/>
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/ober_escalator_navigation"
+        android:id="@+id/wind_escalator_navigation"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_gravity="start"
-        app:menu="@menu/ober_escalator_navgation"
+        app:menu="@menu/wind_escalator_navgation"
         app:layout_constraintTop_toBottomOf="@id/frame_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:background="@color/oberEscalator_colorBrand"
-        app:itemBackground="@color/oberEscalator_colorBrand"
-        app:itemIconTint="@color/oberescalator_bottom_navigation"
-        app:itemTextColor="@color/oberescalator_bottom_navigation"
+        android:background="@color/windEscalator_colorBrand"
+        app:itemBackground="@color/windEscalator_colorBrand"
+        app:itemIconTint="@color/windescalator_bottom_navigation"
+        app:itemTextColor="@color/windescalator_bottom_navigation"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

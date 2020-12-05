@@ -4,16 +4,16 @@
     <!--<color name="colorPrimaryDark">#00574B</color>-->
     <!--<color name="colorAccent">#D81B60</color>-->
 
-    <!-- OberEscalator colors -->
-    <color name="oberEscalator_colorWhite">#FFFFFF</color>
-    <color name="oberEscalator_colorBlack">#000</color>
-    <color name="oberEscalator_colorBrand">#ee3030</color>
-    <color name="oberEscalator_colorSelected">#8E2020</color>
-    <color name="oberEscalator_colorBackgroundText">#CED4DA</color>
-    <color name="oberEscalator_colorBackgroundLight">#F9F9F9</color>
-    <color name="oberEscalator_colorBackground">#F1F3F5</color>
-    <color name="oberEscalator_light_gray">#808080</color>
-    <color name="oberEscalator_colorDelete">#E26860</color>
+    <!-- WindEscalator colors -->
+    <color name="windEscalator_colorWhite">#FFFFFF</color>
+    <color name="windEscalator_colorBlack">#000</color>
+    <color name="windEscalator_colorBrand">#ee3030</color>
+    <color name="windEscalator_colorSelected">#641818</color>
+    <color name="windEscalator_colorBackgroundText">#CED4DA</color>
+    <color name="windEscalator_colorBackgroundLight">#F9F9F9</color>
+    <color name="windEscalator_colorBackground">#F1F3F5</color>
+    <color name="windEscalator_light_gray">#808080</color>
+    <color name="windEscalator_colorDelete">#E26860</color>
 
 
 </resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_marginTop="@dimen/windEscalator_top_margin_list_elements"
+              android:layout_marginBottom="@dimen/windEscalator_bottom_margin_list_elements"
+              android:layout_marginStart="@dimen/windEscalator_left_margin_list_elements"
+              android:layout_marginEnd="@dimen/windEscalator_right_margin_list_elements"
+              android:padding="@dimen/windEscalator_padding_list_elements"
+              android:clickable="true"
+              android:focusable="true"
+              android:background="@color/windEscalator_colorBackgroundLight"
+              android:foreground="?android:attr/selectableItemBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/alert_list_item_content"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/windEscalator_height_content_list_elements">
+
+        <Switch
+                android:id="@+id/sw_alertActive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/windEscalator_margin_top_alert_list_item"
+                android:layout_marginStart="@dimen/windEscalator_margin_start_alert_list_item"
+                app:layout_constraintBottom_toBottomOf="@id/alert_list_item_content"
+                app:layout_constraintTop_toTopOf="@id/alert_list_item_content"
+                android:padding="@dimen/windEscalator_padding_text_views_list_elements"
+                android:focusable="false"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+                android:id="@+id/tv_alertItemText"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/windEscalator_height_half_content_list_elements"
+                android:padding="@dimen/windEscalator_padding_text_views_list_elements"
+                android:textSize="@dimen/windEscalator_text_size_alert_name_list_item"
+                android:layout_marginTop="@dimen/windEscalator_margin_top_alert_list_item"
+                android:layout_marginStart="@dimen/windEscalator_margin_start_alert_list_item"
+                android:layout_marginEnd="@dimen/windEscalator_margin_end_alert_list_item"
+                app:layout_constraintBottom_toBottomOf="@id/alert_list_item_content"
+                app:layout_constraintTop_toTopOf="@id/alert_list_item_content"
+                app:layout_constraintStart_toEndOf="@+id/sw_alertActive"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -1,33 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="oberEscalator_empty_fragment_icon_width">48dp</dimen>
-    <dimen name="oberEscalator_empty_fragment_icon_height">48dp</dimen>
-    <dimen name="oberEscalator_empty_fragment_icon_marginTop">80dp</dimen>
-    <dimen name="oberEscalator_empty_fragment_icon_marginBottom">8dp</dimen>
+    <dimen name="windEscalator_empty_fragment_icon_width">48dp</dimen>
+    <dimen name="windEscalator_empty_fragment_icon_height">48dp</dimen>
+    <dimen name="windEscalator_empty_fragment_icon_marginTop">80dp</dimen>
+    <dimen name="windEscalator_empty_fragment_icon_marginBottom">8dp</dimen>
 
-    <dimen name="oberEscalator_empty_fragment_title_marginBottom">30dp</dimen>
-    <dimen name="oberEscalator_empty_fragment_title_textSize">18sp</dimen>
+    <dimen name="windEscalator_empty_fragment_title_marginBottom">30dp</dimen>
+    <dimen name="windEscalator_empty_fragment_title_textSize">18sp</dimen>
 
-    <dimen name="oberEscalator_top_margin_list_elements">1dp</dimen>
-    <dimen name="oberEscalator_bottom_margin_list_elements">1dp</dimen>
-    <dimen name="oberEscalator_left_margin_list_elements">5dp</dimen>
-    <dimen name="oberEscalator_right_margin_list_elements">0dp</dimen>
-    <dimen name="oberEscalator_margin_save_delete_buttons">8dp</dimen>
-    <dimen name="oberEscalator_padding_list_elements">6dp</dimen>
-    <dimen name="oberEscalator_padding_half_list_elements">3dp</dimen>
+    <dimen name="windEscalator_top_margin_list_elements">1dp</dimen>
+    <dimen name="windEscalator_bottom_margin_list_elements">1dp</dimen>
+    <dimen name="windEscalator_left_margin_list_elements">5dp</dimen>
+    <dimen name="windEscalator_right_margin_list_elements">0dp</dimen>
+    <dimen name="windEscalator_margin_save_delete_buttons">8dp</dimen>
+    <dimen name="windEscalator_padding_list_elements">6dp</dimen>
+    <dimen name="windEscalator_padding_half_list_elements">3dp</dimen>
 
-    <dimen name="oberEscalator_padding_text_views_list_elements">2dp</dimen>
-    <dimen name="oberEscalator_height_content_list_elements">60dp</dimen>
-    <dimen name="oberEscalator_height_half_content_list_elements">30dp</dimen>
-    <dimen name="oberEscalator_width_color_tag_list_elements">60dp</dimen>
-    <dimen name="oberEscalator_width_time_list_elements">100dp</dimen>
+    <dimen name="windEscalator_padding_text_views_list_elements">2dp</dimen>
+    <dimen name="windEscalator_height_content_list_elements">60dp</dimen>
+    <dimen name="windEscalator_height_half_content_list_elements">30dp</dimen>
+    <dimen name="windEscalator_width_color_tag_list_elements">60dp</dimen>
+    <dimen name="windEscalator_width_time_list_elements">100dp</dimen>
 
-    <dimen name="oberEscalator_floating_action_button_margin">20dp</dimen>
+    <dimen name="windEscalator_text_size_alert_name_list_item">20sp</dimen>
+    <dimen name="windEscalator_margin_top_alert_list_item">8dp</dimen>
+    <dimen name="windEscalator_margin_start_alert_list_item">8dp</dimen>
+    <dimen name="windEscalator_margin_end_alert_list_item">8dp</dimen>
 
-    <dimen name="oberEscalator_padding_form_fields_border">20dp</dimen>
+    <dimen name="windEscalator_floating_action_button_margin">20dp</dimen>
 
-    <dimen name="oberEscalator_bottom_margin_form_elements">20dp</dimen>
-    <dimen name="oberEscalator_text_size_form_labels">18sp</dimen>
+    <dimen name="windEscalator_padding_form_fields_border">20dp</dimen>
+
+    <dimen name="windEscalator_bottom_margin_form_elements">20dp</dimen>
+    <dimen name="windEscalator_text_size_form_labels">18sp</dimen>
 
     <dimen name="widget_margin">10dp</dimen>
     <dimen name="widget_button_margin">5dp</dimen>

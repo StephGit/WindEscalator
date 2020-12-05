@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         tools:context=".alert.AlertFragment"
         android:id="@+id/AlertFragment"
-        android:background="@color/oberEscalator_colorBackground">
+        android:background="@color/windEscalator_colorBackground">
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lv_alerts"
@@ -33,11 +33,11 @@
     <ImageView
                 android:id="@+id/iv_noAlert"
                 android:src="@drawable/ic_baseline_alarm_24"
-                android:layout_width="@dimen/oberEscalator_empty_fragment_icon_width"
-                android:layout_height="@dimen/oberEscalator_empty_fragment_icon_height"
-                android:layout_marginTop="@dimen/oberEscalator_empty_fragment_icon_marginTop"
-                android:layout_marginBottom="@dimen/oberEscalator_empty_fragment_icon_marginBottom"
-                app:backgroundTint="@color/oberEscalator_colorBackgroundText"
+                android:layout_width="@dimen/windEscalator_empty_fragment_icon_width"
+                android:layout_height="@dimen/windEscalator_empty_fragment_icon_height"
+                android:layout_marginTop="@dimen/windEscalator_empty_fragment_icon_marginTop"
+                android:layout_marginBottom="@dimen/windEscalator_empty_fragment_icon_marginBottom"
+                app:backgroundTint="@color/windEscalator_colorBackgroundText"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,14 +50,14 @@
                 android:text="@string/alert_empty_fragment_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/oberEscalator_empty_fragment_title_textSize"
-                android:layout_marginBottom="@dimen/oberEscalator_empty_fragment_title_marginBottom"
+                android:textSize="@dimen/windEscalator_empty_fragment_title_textSize"
+                android:layout_marginBottom="@dimen/windEscalator_empty_fragment_title_marginBottom"
                 app:layout_constraintTop_toBottomOf="@+id/iv_noAlert"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/tv_noAlertHint"
                 app:layout_constraintVertical_bias="0.3"
-                android:textColor="@color/oberEscalator_colorBackgroundText"/>
+                android:textColor="@color/windEscalator_colorBackgroundText"/>
         <TextView
                 android:id="@+id/tv_noAlertHint"
                 android:text="@string/alert_emtpy_fragment_info"
@@ -68,7 +68,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_noAlert"
                 app:layout_constraintVertical_bias="0.3"
-                android:textColor="@color/oberEscalator_colorBackgroundText"/>
+                android:textColor="@color/windEscalator_colorBackgroundText"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -76,10 +76,10 @@
             android:id="@+id/btn_addAlert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/oberEscalator_floating_action_button_margin"
+            android:layout_margin="@dimen/windEscalator_floating_action_button_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/oberEscalator_colorBrand"
+            app:backgroundTint="@color/windEscalator_colorBrand"
             />
 </androidx.constraintlayout.widget.ConstraintLayout>

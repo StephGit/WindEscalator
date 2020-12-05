@@ -3,7 +3,7 @@
             android:layout_height="match_parent" android:layout_width="match_parent"
             android:opacity="opaque">
 
-    <item android:drawable="@color/oberEscalator_colorBrand"/>
+    <item android:drawable="@color/windEscalator_colorBrand"/>
     <!-- Your product logo - 144dp color version of your app icon -->
     <item>
         <bitmap
