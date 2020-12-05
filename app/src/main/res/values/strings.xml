@@ -7,6 +7,9 @@
     <string name="alert_empty_fragment_title">No alerts</string>
     <string name="alert_emtpy_fragment_info">New alerts are shown here.</string>
     <string name="search">Search</string>
+    <string name="alert_fragment_title">Alerts</string>
+    <string name="rollback">Undo</string>
+    <string name="alert_removed">deleted.</string>
 
 
 </resources>

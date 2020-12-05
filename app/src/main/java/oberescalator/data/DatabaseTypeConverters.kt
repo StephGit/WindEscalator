@@ -1,4 +1,4 @@
-package data
+package oberescalator.data
 
 import androidx.room.TypeConverter
 import org.joda.time.LocalDate

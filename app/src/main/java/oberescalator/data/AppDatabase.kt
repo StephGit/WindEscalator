@@ -1,4 +1,4 @@
-package data
+package oberescalator.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

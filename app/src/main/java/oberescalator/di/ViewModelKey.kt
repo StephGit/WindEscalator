@@ -1,4 +1,4 @@
-package di
+package oberescalator.di
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

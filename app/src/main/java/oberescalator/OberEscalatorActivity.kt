@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import di.Injector
+import oberescalator.di.Injector
 import oberescalator.alert.AlertFragment
 
 
