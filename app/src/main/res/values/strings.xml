@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WindEscalator</string>
+    <string name="app_name">Wind Escalator</string>
     <string name="bottom_navigation_alert">Alerts</string>
     <string name="bottom_navigation_messure">Wind</string>
     <string name="bottom_navigation_webcam">Webcams</string>
@@ -10,6 +10,14 @@
     <string name="alert_fragment_title">Alerts</string>
     <string name="rollback">Undo</string>
     <string name="alert_removed">deleted.</string>
+    <string name="wind_fragment_title">Wind</string>
+    <string name="wind_emtpy_fragment_icon_text">No wind data</string>
+    <string name="wind_empty_fragment_title">No wind data</string>
+    <string name="wind_emtpy_fragment_info">Wind data is shown here.</string>
+    <string name="webcam_emtpy_fragment_icon_text">wecam icon</string>
+    <string name="webcam_empty_fragment_title">No webcams</string>
+    <string name="webcam_emtpy_fragment_info">Webcams are shown here.</string>
+    <string name="webcam_fragment_title">Webcams</string>
 
 
 </resources>

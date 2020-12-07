@@ -7,8 +7,10 @@
     <!-- WindEscalator colors -->
     <color name="windEscalator_colorWhite">#FFFFFF</color>
     <color name="windEscalator_colorBlack">#000</color>
-    <color name="windEscalator_colorBrand">#ee3030</color>
-    <color name="windEscalator_colorSelected">#641818</color>
+    <color name="windEscalator_colorBrand">#1E1E1E</color>
+<!--    <color name="windEscalator_colorBrand">#ee3030</color>-->
+    <color name="windEscalator_colorSelected">#ee3030</color>
+<!--    <color name="windEscalator_colorSelected">#641818</color>-->
     <color name="windEscalator_colorBackgroundText">#CED4DA</color>
     <color name="windEscalator_colorBackgroundLight">#F9F9F9</color>
     <color name="windEscalator_colorBackground">#F1F3F5</color>

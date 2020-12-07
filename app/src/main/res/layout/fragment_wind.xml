@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".WindFragment"
+android:id="@+id/WindFragment"
+android:background="@color/windEscalator_colorBackground">
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    android:id="@+id/wind_no_messures_exists"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintVertical_chainStyle="packed"
+    app:layout_constraintVertical_bias="0.3">
+    <ImageView
+        android:id="@+id/iv_noWind"
+        android:src="@drawable/ic_windbag_24"
+        android:layout_width="@dimen/windEscalator_empty_fragment_icon_width"
+        android:layout_height="@dimen/windEscalator_empty_fragment_icon_height"
+        android:layout_marginTop="@dimen/windEscalator_empty_fragment_icon_marginTop"
+        android:layout_marginBottom="@dimen/windEscalator_empty_fragment_icon_marginBottom"
+        app:backgroundTint="@color/windEscalator_colorBackgroundText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_noWind"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0.3"
+        android:contentDescription="@string/wind_emtpy_fragment_icon_text"/>
+    <TextView
+        android:id="@+id/tv_noWind"
+        android:text="@string/wind_empty_fragment_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/windEscalator_empty_fragment_title_textSize"
+        android:layout_marginBottom="@dimen/windEscalator_empty_fragment_title_marginBottom"
+        app:layout_constraintTop_toBottomOf="@+id/iv_noWind"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_noWindHint"
+        app:layout_constraintVertical_bias="0.3"
+        android:textColor="@color/windEscalator_colorBackgroundText"/>
+    <TextView
+        android:id="@+id/tv_noWindHint"
+        android:text="@string/wind_emtpy_fragment_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_noWind"
+        app:layout_constraintVertical_bias="0.3"
+        android:textColor="@color/windEscalator_colorBackgroundText"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

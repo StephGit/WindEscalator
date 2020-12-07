@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_gravity="start"
-        app:menu="@menu/wind_escalator_navgation"
+        app:menu="@menu/wind_escalator_navigation"
         app:layout_constraintTop_toBottomOf="@id/frame_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -7,7 +7,7 @@
     <item
             android:id="@+id/bottom_navigation_messure"
             android:title="@string/bottom_navigation_messure"
-            android:icon="@drawable/ic_baseline_beach_access_24"/>
+            android:icon="@drawable/ic_windbag_24"/>
     <item
             android:id="@+id/bottom_navigation_webcam"
             android:title="@string/bottom_navigation_webcam"

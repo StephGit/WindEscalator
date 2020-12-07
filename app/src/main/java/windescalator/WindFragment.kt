@@ -8,20 +8,20 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import windescalator.di.Injector
 
-class WebcamFragment : androidx.fragment.app.Fragment() {
+class WindFragment : androidx.fragment.app.Fragment() {
 
-    private lateinit var noWebcamsInfo: ConstraintLayout
+    private lateinit var noWindMessureInfo: ConstraintLayout
     private lateinit var linearLayoutManager: LinearLayoutManager
 
     companion object {
-        fun newFragment(): androidx.fragment.app.Fragment = WebcamFragment()
+        fun newFragment(): androidx.fragment.app.Fragment = WindFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_webcam, container, false)
+        val view = inflater.inflate(R.layout.fragment_wind, container, false)
         Injector.appComponent.inject(this)
-        activity!!.title = getString(R.string.webcam_fragment_title)
-        noWebcamsInfo = view.findViewById(R.id.webcam_no_cams_exists)
+        activity!!.title = getString(R.string.wind_fragment_title)
+        noWindMessureInfo = view.findViewById(R.id.wind_no_messures_exists)
         linearLayoutManager = LinearLayoutManager(context)
 
         return view

@@ -52,7 +52,7 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
         when (clickedMenuItem.itemId) {
             R.id.bottom_navigation_alert -> replaceFragment(AlertFragment())
-            R.id.bottom_navigation_messure -> replaceFragment(MessureFragment())
+            R.id.bottom_navigation_messure -> replaceFragment(WindFragment())
             R.id.bottom_navigation_webcam -> replaceFragment(WebcamFragment())
             else -> throw IllegalArgumentException("Unknown clickedMenuItem.itemId: ${clickedMenuItem.itemId}")
         }
