@@ -18,6 +18,9 @@
     <string name="webcam_empty_fragment_title">No webcams</string>
     <string name="webcam_emtpy_fragment_info">Webcams are shown here.</string>
     <string name="webcam_fragment_title">Webcams</string>
+    <string name="alert_detail_activity_title">Configure alert</string>
+    <string name="alert_detail_add_name_hint">Alertname</string>
+    <string name="alert_detail_add_name_text">Alertname</string>
 
 
 </resources>

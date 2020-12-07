@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".alert.AlertDetailActivity"
+    android:id="@+id/AlertDetailActivity"
+    android:background="@color/windEscalator_colorBackground">
+
+    <EditText
+        android:id="@+id/et_add_alert_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/sp_select_alert_resource"
+        android:hint="@string/alert_detail_add_name_hint"
+        android:text="@string/alert_detail_add_name_text"
+        android:inputType="text"
+        tools:ignore="Autofill"/>
+
+    <Spinner
+        android:id="@+id/sp_select_alert_resource"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/et_add_alert_name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/et_alert_start_time"
+        tools:layout_editor_absoluteY="93dp" />
+
+    <EditText
+        android:id="@+id/et_alert_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="time"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/et_alert_end_time"
+        app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold" />
+
+    <EditText
+        android:id="@+id/et_alert_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="time"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource"
+        app:layout_constraintLeft_toRightOf="et_alert_start_time"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold" />
+
+    <SeekBar
+        android:id="@+id/sb_alert_threshold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/et_alert_start_time"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_alert_save"  />
+
+    <Button
+        android:id="@+id/btn_alert_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:layout_constraintTop_toBottomOf="@+id/sb_alert_threshold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
