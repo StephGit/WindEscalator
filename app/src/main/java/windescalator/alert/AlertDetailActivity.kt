@@ -9,10 +9,14 @@ import windescalator.data.repo.AlertRepo
 import windescalator.di.Injector
 import javax.inject.Inject
 import windescalator.R
+import windescalator.util.RoundSelectorButton
 
-class AlertDetailActivity : AppCompatActivity() {
+class AlertDetailActivity :
+        AppCompatActivity(),
+        RoundSelectorButton.OnSliceClickListener {
 
     private lateinit var alert: Alert
+    private lateinit var sliceSelectorButton: RoundSelectorButton
 
     @Inject
     lateinit var alertService: AlertService
@@ -36,12 +40,20 @@ class AlertDetailActivity : AppCompatActivity() {
         alertId?.let {
             getAlertFromRepo(alertId)
         }
+
+        sliceSelectorButton = findViewById(R.id.btn_alert_wind_direction)
+        sliceSelectorButton.setOnSliceClickListener(this)
+
     }
 
-    private fun getAlertFromRepo(alertId: Long): Any {
+    private fun getAlertFromRepo(alertId: Long) {
         alertRepo.getAlert(alertId)?.let {
             this.alert = it
         }
+    }
+
+    override fun onSlickClick(slicePosition: Int) {
+        println("Slice Position: " + slicePosition)
     }
 }
 

@@ -23,6 +23,10 @@
                   android:configChanges="orientation"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name="windescalator.alert.AlertDetailActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
 
         <uses-library
                 android:name="org.apache.http.legacy"
