@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".alert.AlertDetailActivity"
+    tools:context=".alert.detail.AlertDetailActivity"
     android:id="@+id/AlertDetailActivity"
     android:background="@color/windEscalator_colorBackground">
 
@@ -78,10 +78,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btn_alert_wind_direction"/>
 
-    <windescalator.util.RoundSelectorButton
+
+    <windescalator.alert.detail.chart.WindDirectionChart
         android:id="@+id/btn_alert_wind_direction"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_marginTop="20dp"
         android:gravity="center_vertical|center_horizontal"
         app:layout_constraintTop_toBottomOf="@+id/sb_alert_threshold"
         app:layout_constraintLeft_toLeftOf="parent"

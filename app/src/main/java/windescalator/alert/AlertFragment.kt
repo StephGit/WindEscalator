@@ -24,6 +24,7 @@ import windescalator.data.entity.Alert
 import windescalator.di.Injector
 import javax.inject.Inject
 import windescalator.R
+import windescalator.alert.detail.AlertDetailActivity
 
 class AlertFragment : androidx.fragment.app.Fragment() {
 

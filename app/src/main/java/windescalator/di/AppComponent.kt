@@ -6,7 +6,7 @@ import dagger.Component
 import windescalator.WebcamFragment
 import windescalator.WindEscalatorActivity
 import windescalator.WindFragment
-import windescalator.alert.AlertDetailActivity
+import windescalator.alert.detail.AlertDetailActivity
 import windescalator.alert.AlertFragment
 import javax.inject.Singleton
 
