@@ -19,10 +19,10 @@ class ChartData {
         } else {
             color?.let {
                 slices[name] = Slice(name, 0f, 0f,
-                        PointF(), createPaint(it), SliceState.UNSELECTED)
+                        PointF(), createPaint(it), SliceState.SELECTED)
             } ?: run {
                 slices[name] = Slice(name, 0f, 0f,
-                        PointF(), createPaint(null), SliceState.UNSELECTED)
+                        PointF(), createPaint(null), SliceState.SELECTED)
             }
         }
     }

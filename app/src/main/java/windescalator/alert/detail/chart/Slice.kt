@@ -8,6 +8,6 @@ data class Slice (
         var startAngle: Float,
         var sweepAngle: Float,
         var labelLocation: PointF,
-        val paint: Paint,
+        var paint: Paint,
         var state: SliceState
         )

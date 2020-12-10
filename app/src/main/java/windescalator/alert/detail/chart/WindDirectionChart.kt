@@ -1,7 +1,9 @@
 package windescalator.alert.detail.chart
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -18,13 +20,16 @@ class WindDirectionChart @JvmOverloads constructor(
 
     // Graphics
     private val colorWhite = ResourcesCompat.getColor(resources, R.color.windEscalator_colorWhite, null)
-    private val colorSelected = ResourcesCompat.getColor(resources, R.color.windEscalator_colorSelected, null)
-    private val colorSlice = ResourcesCompat.getColor(resources, R.color.windEscalator_colorBrandLight, null)
+    @SuppressLint("ResourceType")
+    private val colorSelected = resources.getString(R.color.windEscalator_colorSelectedLight)
+    @SuppressLint("ResourceType")
+    private val colorSlice = resources.getString(R.color.windEscalator_colorBrandLight)
     private val borderPaint = Paint()
     private val labelPaint = Paint()
     private val oval = RectF()
 
     //calc stuff
+    private var initialAngle = -22.5f
     private var centerX = 0
     private var centerY = 0
     private var outerRadius = 0f
@@ -50,8 +55,8 @@ class WindDirectionChart @JvmOverloads constructor(
     }
 
     private fun setSliceDimensions() {
-        var lastAngle = -22.5f
-        val sweepAngle = 45F
+        var lastAngle = initialAngle // initial angle
+        val sweepAngle = 45f
         data?.slices?.forEach {
             it.value.startAngle = lastAngle
             it.value.sweepAngle = sweepAngle
@@ -80,26 +85,6 @@ class WindDirectionChart @JvmOverloads constructor(
         }
     }
 
-    private fun setChartBounds(
-            top: Float = 0f, bottom: Float = layoutParams.height.toFloat(),
-            left: Float = (width / 2) - (layoutParams.height / 2).toFloat(),
-            right: Float = (width / 2) + (layoutParams.height / 2).toFloat()
-    ) {
-        oval.top = top
-        oval.bottom = bottom
-        oval.left = left
-        oval.right = right
-        centerX = width / 2
-        centerY = height / 2
-        outerRadius = if (centerX > centerY) centerY.toFloat() else centerX.toFloat()
-        outerRadiusSquare = outerRadius * outerRadius
-    }
-
-    private fun setGraphicSizes() {
-        borderPaint.strokeWidth = height / 100f
-        labelPaint.textSize = height / 20f
-    }
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
@@ -125,6 +110,26 @@ class WindDirectionChart @JvmOverloads constructor(
         }
     }
 
+    private fun setChartBounds(
+            top: Float = 0f, bottom: Float = layoutParams.height.toFloat(),
+            left: Float = (width / 2) - (layoutParams.height / 2).toFloat(),
+            right: Float = (width / 2) + (layoutParams.height / 2).toFloat()
+    ) {
+        oval.top = top
+        oval.bottom = bottom
+        oval.left = left
+        oval.right = right
+        centerX = width / 2
+        centerY = height / 2
+        outerRadius = if (centerX > centerY) centerY.toFloat() else centerX.toFloat()
+        outerRadiusSquare = outerRadius * outerRadius
+    }
+
+    private fun setGraphicSizes() {
+        borderPaint.strokeWidth = height / 200f
+        labelPaint.textSize = height / 20f
+    }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val currX = event?.x
         val currY = event?.y
@@ -137,24 +142,40 @@ class WindDirectionChart @JvmOverloads constructor(
             // longer than innerRadius, then we're in the clickable area
             if (distanceSquare > 0 && distanceSquare < outerRadiusSquare) {
 
-                //get the angle to detect which slice is currently being click
+                //get the theta-angle of polar coordinates
                 var angle = Math.atan2(dy.toDouble(), dx.toDouble())
+                // calculate degrees to detect slice
                 var deg = (angle / Math.PI * 180) + (if (angle > 0) 0f else 360f)
 
-                setSliceState(deg)
+                handleTouchedSlice(deg)
             }
         }
         return super.onTouchEvent(event)
     }
 
-    private fun setSliceState(deg: Double) {
+    // TODO add test
+    private fun handleTouchedSlice(deg: Double) {
         data?.slices?.forEach {
-            // FIXME map value -22.5 to 22.5 for 337.5° to 22.5°
-            if (it.value.startAngle < deg && (it.value.startAngle + it.value.sweepAngle) > deg) {
-                println("DIRECTION TOUCHED: " + it.value.name)
-                // TODO set state and color (createPaint) of slice
+            // evaluate touched degree with angle of slice statement
+            // or for value -22.5 to 0 and 337.5° to 360°
+            if ((it.value.startAngle <= deg && (it.value.startAngle + it.value.sweepAngle) > deg) ||
+                    (it.value.startAngle == initialAngle && deg <= 360 && deg >= (360 + initialAngle ))) {
+                when (it.value.state) {
+                    SliceState.UNSELECTED -> updateColorState(it.value, colorSelected, SliceState.SELECTED)
+                    SliceState.SELECTED -> updateColorState(it.value, colorSlice, SliceState.UNSELECTED)
+                    else -> {}
+                }
+                return@forEach
             }
         }
+    }
 
+    private fun updateColorState(slice: Slice, newColor: String, newState: SliceState) {
+        val newPaint = Paint()
+        newPaint.color = Color.parseColor(newColor)
+        slice.state = newState
+        slice.paint = newPaint
+        requestLayout()
+        invalidate()
     }
 }

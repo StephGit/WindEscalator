@@ -57,10 +57,10 @@ class AlertDetailActivity :
     @SuppressLint("ResourceType")
     private fun initChartData() {
         windDirectionChart = findViewById(R.id.btn_alert_wind_direction)
-        val DIRECTIONS: Array<String> = arrayOf<String>("E", "SE", "S", "SW", "W", "NW", "N", "NE")
-        val colorSlice = resources.getString(R.color.windEscalator_colorBrandLight)
-        DIRECTIONS.forEach {
-            windDirectionData.add(it, colorSlice)
+        val directions: Array<String> = arrayOf<String>("E", "SE", "S", "SW", "W", "NW", "N", "NE")
+        val initColorSlice = resources.getString(R.color.windEscalator_colorSelectedLight)
+        directions.forEach {
+            windDirectionData.add(it, initColorSlice)
         }
         windDirectionChart.setData(windDirectionData)
     }
