@@ -21,6 +21,7 @@
     <string name="alert_detail_activity_title">Configure alert</string>
     <string name="alert_detail_add_name_hint">Alertname</string>
     <string name="alert_detail_add_name_text">Alertname</string>
+    <string name="alert_detail_select_alert_hint">Select alert...</string>
 
 
 </resources>

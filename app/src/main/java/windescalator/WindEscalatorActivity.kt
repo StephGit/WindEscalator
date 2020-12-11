@@ -24,7 +24,7 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ober_escalator)
+        setContentView(R.layout.activity_wind_escalator)
         navigation = findViewById(R.id.wind_escalator_navigation)
         navigation.setOnNavigationItemSelectedListener { clickedMenuItem -> selectMenuItem(clickedMenuItem) }
         Injector.appComponent.inject(this)

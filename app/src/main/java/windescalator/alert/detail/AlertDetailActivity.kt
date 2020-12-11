@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import windescalator.data.entity.Alert
 import windescalator.data.repo.AlertRepo
@@ -15,13 +17,10 @@ import windescalator.alert.detail.chart.ChartData
 import windescalator.alert.detail.chart.WindDirectionChart
 
 class AlertDetailActivity :
-        AppCompatActivity()
-//        RoundSelectorButton.OnSliceClickListener
-{
+        AppCompatActivity() {
     val windDirectionData = ChartData()
     private lateinit var windDirectionChart: WindDirectionChart
     private lateinit var alert: Alert
-//    private lateinit var sliceSelectorButton: RoundSelectorButton
 
     @Inject
     lateinit var alertService: AlertService
@@ -46,12 +45,22 @@ class AlertDetailActivity :
             getAlertFromRepo(alertId)
         }
 
+        initAlertSpinner()
         initChartData()
 
-//        sliceSelectorButton = findViewById(R.id.btn_alert_wind_direction)
-//        sliceSelectorButton.setOnSliceClickListener(this)
+    }
 
-
+    private fun initAlertSpinner() {
+        val spinner: Spinner = findViewById(R.id.sp_select_alert_resource)
+        // TODO replace by saved resources
+//        ArrayAdapter.createFromResource(
+//                this,
+//                R.array.alerts_mock_array,
+//                android.R.layout.simple_spinner_item
+//        ).also { adapter ->
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//            spinner.adapter = adapter
+//        }
     }
 
     @SuppressLint("ResourceType")
@@ -71,8 +80,5 @@ class AlertDetailActivity :
         }
     }
 
-//    override fun onSlickClick(slicePosition: Int) {
-//        println("Slice Position: " + slicePosition)
-//    }
 }
 
