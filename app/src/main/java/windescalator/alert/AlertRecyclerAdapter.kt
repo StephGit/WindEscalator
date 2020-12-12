@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.switchmaterial.SwitchMaterial
 import windescalator.data.entity.Alert
 import javax.inject.Inject
 import windescalator.R
@@ -53,7 +54,7 @@ class AlertRecyclerAdapter  @Inject constructor(private var alertService: AlertS
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemText: TextView = itemView.findViewById(R.id.tv_alertItemText)
-        val switch: Switch = itemView.findViewById(R.id.sw_alertActive)
+        val switch: SwitchMaterial = itemView.findViewById(R.id.sw_alertActive)
 
         fun bind(alert: Alert) {
             itemView.setOnClickListener {

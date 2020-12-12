@@ -54,8 +54,8 @@ class AlertFragment : androidx.fragment.app.Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_alert, container, false)
         Injector.appComponent.inject(this)
-        activity!!.title = getString(R.string.alert_fragment_title)
-        prefs = requireActivity().getSharedPreferences("oberescalator", Context.MODE_PRIVATE)
+        requireActivity().title = getString(R.string.alert_fragment_title)
+        prefs = requireActivity().getSharedPreferences("windescalator", Context.MODE_PRIVATE)
         noAlertInfo = view.findViewById(R.id.alert_no_alerts_exists)
         recyclerView = view.findViewById(R.id.lv_alerts)
 
@@ -85,7 +85,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
 
 
     private fun subscribeViewModel(recyclerAdapter: AlertRecyclerAdapter) {
-        viewModel.alertItems.observe(this, Observer { alerts ->
+        viewModel.alertItems.observe(viewLifecycleOwner, Observer { alerts ->
             recyclerAdapter.submitList(alerts)
             if (alerts.isNotEmpty()) {
                 noAlertInfo.visibility = View.GONE
@@ -174,7 +174,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun addAlert() {
-            startActivity(AlertDetailActivity.newIntent(context!!))
+            startActivity(AlertDetailActivity.newIntent(requireContext()))
     }
 
     private fun showAlertDetail(item: Alert) {

@@ -28,7 +28,7 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         navigation = findViewById(R.id.wind_escalator_navigation)
         navigation.setOnNavigationItemSelectedListener { clickedMenuItem -> selectMenuItem(clickedMenuItem) }
         Injector.appComponent.inject(this)
-        prefs = getSharedPreferences("oberescalator", Context.MODE_PRIVATE)
+        prefs = getSharedPreferences("windescalator", Context.MODE_PRIVATE)
 
         if (savedInstanceState == null) {
             replaceFragment(AlertFragment())
