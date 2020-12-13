@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
@@ -60,6 +60,8 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.3.0-alpha03'
     kapt 'androidx.room:room-compiler:2.3.0-alpha03'
     api 'joda-time:joda-time:2.9.9'
+    implementation platform('com.google.firebase:firebase-bom:26.1.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
     //dagger and lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
