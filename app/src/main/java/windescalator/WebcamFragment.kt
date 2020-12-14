@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import ch.stephgit.windescalator.R
 import windescalator.di.Injector
 
 class WebcamFragment : androidx.fragment.app.Fragment() {

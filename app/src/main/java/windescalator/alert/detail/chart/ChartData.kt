@@ -6,7 +6,6 @@ import android.graphics.PointF
 import android.util.Log
 import windescalator.TAG
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
 
 class ChartData {

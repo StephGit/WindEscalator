@@ -3,15 +3,14 @@ package windescalator.alert
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ch.stephgit.windescalator.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 import windescalator.data.entity.Alert
 import javax.inject.Inject
-import windescalator.R
 
 class AlertRecyclerAdapter  @Inject constructor(private var alertService: AlertService) :
         ListAdapter<Alert, AlertRecyclerAdapter.ViewHolder>(AlertDiffCallback()) {

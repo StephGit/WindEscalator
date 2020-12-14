@@ -6,7 +6,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import windescalator.alert.AlertViewModel
-import util.ViewModelFactory
+import windescalator.util.ViewModelFactory
 
 
 @Module

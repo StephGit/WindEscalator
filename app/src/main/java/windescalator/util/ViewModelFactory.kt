@@ -1,4 +1,4 @@
-package util
+package windescalator.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

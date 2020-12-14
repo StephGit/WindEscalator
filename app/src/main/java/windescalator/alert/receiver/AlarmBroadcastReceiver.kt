@@ -3,7 +3,7 @@ package windescalator.alert.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import windescalator.R
+import ch.stephgit.windescalator.R
 
 /**
  * Receives alarm broadcast with an Intent and the transition type
@@ -13,7 +13,7 @@ class AlarmBroadcastReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == context.getString(R.string.wind_alert_action)) {
-            val service = AlertTransitionsJobIntentService()
+            val service = WindDataJobIntentService()
             service.enqueueWork(context, intent)
         }
     }

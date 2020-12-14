@@ -18,13 +18,13 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ch.stephgit.windescalator.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import windescalator.alert.detail.AlertDetailActivity
 import windescalator.data.entity.Alert
 import windescalator.di.Injector
 import javax.inject.Inject
-import windescalator.R
-import windescalator.alert.detail.AlertDetailActivity
 
 class AlertFragment : androidx.fragment.app.Fragment() {
 

@@ -8,7 +8,7 @@ import windescalator.WindEscalatorActivity
 import windescalator.WindFragment
 import windescalator.alert.detail.AlertDetailActivity
 import windescalator.alert.AlertFragment
-import windescalator.alert.receiver.AlertTransitionsJobIntentService
+import windescalator.alert.receiver.WindDataJobIntentService
 import windescalator.alert.receiver.BootBroadcastReceiver
 import javax.inject.Singleton
 
@@ -27,7 +27,7 @@ interface AppComponent {
 
     fun inject(alertFragment: AlertFragment)
     fun inject(alertDetailActivity: AlertDetailActivity)
-    fun inject(alertTransitionsJobIntentService: AlertTransitionsJobIntentService)
+    fun inject(windDataJobIntentService: WindDataJobIntentService)
     fun inject(bootBroadcastReceiverTask: BootBroadcastReceiver.BootReceiverTask)
 
     fun inject(windFragment: WindFragment)

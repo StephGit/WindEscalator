@@ -4,9 +4,11 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
 import androidx.core.content.ContextCompat.getSystemService
-import windescalator.R
+import ch.stephgit.windescalator.R
 import windescalator.alert.receiver.AlarmBroadcastReceiver
+import windescalator.alert.receiver.WindDataJobIntentService
 import windescalator.data.entity.Alert
 import windescalator.data.repo.AlertRepo
 import javax.inject.Inject
@@ -17,25 +19,41 @@ class AlertService @Inject constructor(
 ) {
 
     private val alerts: MutableMap<Long, String> = HashMap()
-    private val alarmManager: AlarmManager = getSystemService(context, AlarmManager::class.java) as AlarmManager
-    private var localAlertPendingIntent: PendingIntent? = null
+    private lateinit var alertPendingIntent: PendingIntent
+    private val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     private fun add(alert: Alert) {
-        TODO("Not yet implemented")
+        if (isAlreadyAdded(alert)) return
+
+        setAlarmReceiver(alert)
+    }
+
+    private fun setAlarmReceiver(alert: Alert) {
+        alertPendingIntent = Intent(context, AlarmBroadcastReceiver::class.java).let {
+            PendingIntent.getBroadcast(context, 0, it, 0)
+        }
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000*60, 1000*60, alertPendingIntent)
+    }
+
+    private fun isAlreadyAdded(alert: Alert): Boolean {
+        return (this.alerts.containsKey(alert.id))
     }
 
     fun addOrUpdate(alert: Alert) {
-//        val ALARM_DELAY_IN_SECONDS = 10
-//        val alarmTimeUTC = System.currentTimeMillis() + ALARM_DELAY_IN_SECONDS * 1_000L
-//        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeUTC, alertPendingIntent)
+        add(alert)
     }
 
     fun remove(alert: Alert) {
-        TODO("Not yet implemented")
+
     }
 
-    fun initAlerts() {
-        TODO("Not yet implemented")
+    fun initAlerts(): Boolean {
+        val tmpList: MutableList<Alert> = ArrayList()
+        tmpList.addAll(alertRepo.getActiveAlerts())
+        tmpList.forEach {
+            add(it)
+        }
+        return (alerts.isNotEmpty())
     }
 
     /**
@@ -48,7 +66,7 @@ class AlertService @Inject constructor(
 //
 //        val intent = Intent(context, AlarmBroadcastReceiver::class.java)
 //        intent.action = context.getString(R.string.wind_alert_action)
-//        localAlertPendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//        localAlertPendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
 //        return@lazy localAlertPendingIntent
 //    }
 }

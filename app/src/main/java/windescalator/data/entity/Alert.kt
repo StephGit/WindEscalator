@@ -3,7 +3,6 @@ package windescalator.data.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import org.joda.time.LocalDateTime
-import java.util.*
 
 @Entity
 data class Alert(

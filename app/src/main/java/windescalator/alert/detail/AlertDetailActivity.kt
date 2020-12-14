@@ -10,7 +10,7 @@ import windescalator.data.entity.Alert
 import windescalator.data.repo.AlertRepo
 import windescalator.di.Injector
 import javax.inject.Inject
-import windescalator.R
+import ch.stephgit.windescalator.R
 import windescalator.alert.AlertService
 import windescalator.alert.detail.chart.ChartData
 import windescalator.alert.detail.chart.WindDirectionChart
