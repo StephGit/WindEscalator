@@ -25,6 +25,7 @@
     <string name="wind_alert_action">WIND_ALERT_ACTION</string>
     <string name="alert_edit_error_no_name">Set alert name!</string>
     <string name="alert_detail_activity_toast_saved_alert">Alert saved!</string>
+    <string name="header_wind_resource">Select wind resource...</string>
 
 
 </resources>

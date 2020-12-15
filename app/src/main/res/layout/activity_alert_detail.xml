@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/AlertDetailActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".alert.detail.AlertDetailActivity"
-    android:id="@+id/AlertDetailActivity"
-    android:background="@color/windEscalator_colorBackground">
+    android:background="@color/windEscalator_colorBackground"
+    tools:context="windescalator.alert.detail.AlertDetailActivity">
 
     <EditText
         android:id="@+id/et_add_alert_name"
@@ -28,45 +27,46 @@
         android:id="@+id/sp_select_alert_resource"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:background="@drawable/red_outline"
         android:popupBackground="@drawable/red_outline_white_background"
         android:spinnerMode="dropdown"
-        tools:listitem="@layout/item_alert_resource"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@id/et_alert_start_time"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_add_alert_name" />
+        app:layout_constraintTop_toBottomOf="@+id/et_add_alert_name"
+        tools:listitem="@layout/item_wind_resource" />
 
     <EditText
         android:id="@+id/et_alert_start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="2dp"
         android:ems="10"
         android:inputType="time"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource"
+        app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/et_alert_end_time"
-        app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold"
- />
+        app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource" />
 
     <EditText
         android:id="@+id/et_alert_end_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="2dp"
         android:ems="10"
         android:inputType="time"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource"
+        app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold"
         app:layout_constraintLeft_toRightOf="@id/et_alert_start_time"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold" />
+        app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource" />
 
     <SeekBar
         android:id="@+id/sb_alert_threshold"
@@ -74,33 +74,33 @@
         android:layout_height="wrap_content"
         android:contentDescription="Kts Threshold"
         android:max="45"
-        android:progress="15"
         android:outlineProvider="paddedBounds"
-        app:layout_constraintTop_toBottomOf="@+id/et_alert_start_time"
+        android:progress="15"
+        app:layout_constraintBottom_toTopOf="@id/btn_alert_wind_direction"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btn_alert_wind_direction"/>
+        app:layout_constraintTop_toBottomOf="@+id/et_alert_start_time" />
 
 
-    <windescalator.alert.detail.chart.WindDirectionChart
+    <windescalator.alert.detail.direction.DirectionChart
         android:id="@+id/btn_alert_wind_direction"
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:layout_marginTop="20dp"
         android:gravity="center_vertical|center_horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/sb_alert_threshold"
+        app:layout_constraintBottom_toTopOf="@id/btn_alert_save"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btn_alert_save" />
+        app:layout_constraintTop_toBottomOf="@+id/sb_alert_threshold" />
 
     <Button
         android:id="@+id/btn_alert_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
-        app:layout_constraintTop_toBottomOf="@+id/btn_alert_wind_direction"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_alert_wind_direction" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

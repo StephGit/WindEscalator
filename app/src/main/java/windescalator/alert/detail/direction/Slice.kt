@@ -1,4 +1,4 @@
-package windescalator.alert.detail.chart
+package windescalator.alert.detail.direction
 
 import android.graphics.Paint
 import android.graphics.PointF

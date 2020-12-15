@@ -1,4 +1,4 @@
-package windescalator.alert.detail.chart
+package windescalator.alert.detail.direction
 
 import android.graphics.Color
 import android.graphics.Paint
@@ -8,7 +8,7 @@ import windescalator.TAG
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-class ChartData {
+class DirectionChartData {
     val totalValue = 8 // fixed amount of slices
     val slices = LinkedHashMap<String, Slice>()
 

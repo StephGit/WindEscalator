@@ -21,7 +21,7 @@ class WebcamFragment : androidx.fragment.app.Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_webcam, container, false)
         Injector.appComponent.inject(this)
-        activity!!.title = getString(R.string.webcam_fragment_title)
+        requireActivity().title = getString(R.string.webcam_fragment_title)
         noWebcamsInfo = view.findViewById(R.id.webcam_no_cams_exists)
         linearLayoutManager = LinearLayoutManager(context)
 

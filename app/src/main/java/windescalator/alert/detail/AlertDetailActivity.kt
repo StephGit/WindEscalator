@@ -12,14 +12,15 @@ import windescalator.di.Injector
 import javax.inject.Inject
 import ch.stephgit.windescalator.R
 import windescalator.alert.AlertService
-import windescalator.alert.detail.chart.ChartData
-import windescalator.alert.detail.chart.WindDirectionChart
+import windescalator.alert.detail.direction.DirectionChartData
+import windescalator.alert.detail.direction.DirectionChart
 import java.util.*
 
-class AlertDetailActivity :
-    AppCompatActivity() {
-    val windDirectionData = ChartData()
-    private lateinit var windDirectionChart: WindDirectionChart
+class AlertDetailActivity : AppCompatActivity() {
+
+    private val windDirectionData = DirectionChartData()
+    private lateinit var directionChart: DirectionChart
+    private lateinit var windResourceSpinner: Spinner
     private lateinit var alert: Alert
     private lateinit var alertName: EditText
 
@@ -28,6 +29,9 @@ class AlertDetailActivity :
 
     @Inject
     lateinit var alertRepo: AlertRepo
+
+    @Inject
+    lateinit var windResourceAdapter: WindResourceAdapter
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, AlertDetailActivity::class.java)
@@ -51,7 +55,7 @@ class AlertDetailActivity :
         val saveButton: Button = findViewById(R.id.btn_alert_save)
         saveButton.setOnClickListener { saveOrUpdate() }
         alertName.setText(getAlertName())
-        initAlertSpinner()
+        initWindResourceSpinner()
         initChartData()
 
     }
@@ -65,28 +69,20 @@ class AlertDetailActivity :
         return ""
     }
 
-    private fun initAlertSpinner() {
-        val spinner: Spinner = findViewById(R.id.sp_select_alert_resource)
-        // TODO replace by saved resources
-//        ArrayAdapter.createFromResource(
-//                this,
-//                R.array.alerts_mock_array,
-//                android.R.layout.simple_spinner_item
-//        ).also { adapter ->
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//            spinner.adapter = adapter
-//        }
+    private fun initWindResourceSpinner() {
+        windResourceSpinner = findViewById(R.id.sp_select_alert_resource)
+        windResourceSpinner.adapter = windResourceAdapter
     }
 
     @SuppressLint("ResourceType")
     private fun initChartData() {
-        windDirectionChart = findViewById(R.id.btn_alert_wind_direction)
+        directionChart = findViewById(R.id.btn_alert_wind_direction)
         val directions: Array<String> = arrayOf<String>("E", "SE", "S", "SW", "W", "NW", "N", "NE")
         val initColorSlice = resources.getString(R.color.windEscalator_colorSelectedLight)
         directions.forEach {
             windDirectionData.add(it, initColorSlice)
         }
-        windDirectionChart.setData(windDirectionData)
+        directionChart.setData(windDirectionData)
     }
 
     private fun getAlertFromRepo(alertId: Long) {

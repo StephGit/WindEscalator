@@ -21,7 +21,7 @@ class WindFragment : androidx.fragment.app.Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_wind, container, false)
         Injector.appComponent.inject(this)
-        activity!!.title = getString(R.string.wind_fragment_title)
+        requireActivity().title = getString(R.string.wind_fragment_title)
         noWindMessureInfo = view.findViewById(R.id.wind_no_messures_exists)
         linearLayoutManager = LinearLayoutManager(context)
 

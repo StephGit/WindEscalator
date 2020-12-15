@@ -1,4 +1,4 @@
-package windescalator.alert.detail.chart
+package windescalator.alert.detail.direction
 
 enum class SliceState {
     SELECTED, UNSELECTED

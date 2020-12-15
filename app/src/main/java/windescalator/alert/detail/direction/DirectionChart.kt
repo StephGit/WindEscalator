@@ -1,4 +1,4 @@
-package windescalator.alert.detail.chart
+package windescalator.alert.detail.direction
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,11 +12,11 @@ import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import ch.stephgit.windescalator.R
 
-class WindDirectionChart @JvmOverloads constructor(
+class DirectionChart @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     // Data
-    private var data: ChartData? = null
+    private var dataDirection: DirectionChartData? = null
 
     // Graphics
     private val colorWhite = ResourcesCompat.getColor(resources, R.color.windEscalator_colorWhite, null)
@@ -48,8 +48,8 @@ class WindDirectionChart @JvmOverloads constructor(
         }
     }
 
-    fun setData(data: ChartData) {
-        this.data = data
+    fun setData(dataDirection: DirectionChartData) {
+        this.dataDirection = dataDirection
         setSliceDimensions()
         invalidate()
     }
@@ -57,7 +57,7 @@ class WindDirectionChart @JvmOverloads constructor(
     private fun setSliceDimensions() {
         var lastAngle = initialAngle // initial angle
         val sweepAngle = 45f
-        data?.slices?.forEach {
+        dataDirection?.slices?.forEach {
             it.value.startAngle = lastAngle
             it.value.sweepAngle = sweepAngle
             lastAngle += it.value.sweepAngle
@@ -74,7 +74,7 @@ class WindDirectionChart @JvmOverloads constructor(
      * @param key key of chart slice being altered
      */
     private fun setLabelLocation(key: String) {
-        data?.slices?.get(key)?.let {
+        dataDirection?.slices?.get(key)?.let {
             val middleAngle = it.sweepAngle / 2 + it.startAngle
             val distanceToCenter = (3 * layoutParams.height / 8)
 
@@ -88,7 +88,7 @@ class WindDirectionChart @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        data?.slices?.let { slices ->
+        dataDirection?.slices?.let { slices ->
             slices.forEach {
                 canvas?.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, it.value.paint)
                 canvas?.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, borderPaint)
@@ -105,7 +105,7 @@ class WindDirectionChart @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         setChartBounds()
         setGraphicSizes()
-        data?.slices?.forEach {
+        dataDirection?.slices?.forEach {
             setLabelLocation(it.key)
         }
     }
@@ -155,7 +155,7 @@ class WindDirectionChart @JvmOverloads constructor(
 
     // TODO add test
     private fun handleTouchedSlice(deg: Double) {
-        data?.slices?.forEach {
+        dataDirection?.slices?.forEach {
             // evaluate touched degree with angle of slice statement
             // or for value -22.5 to 0 and 337.5° to 360°
             if ((it.value.startAngle <= deg && (it.value.startAngle + it.value.sweepAngle) > deg) ||
