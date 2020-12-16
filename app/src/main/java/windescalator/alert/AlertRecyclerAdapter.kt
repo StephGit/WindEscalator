@@ -75,7 +75,7 @@ private class AlertDiffCallback : DiffUtil.ItemCallback<Alert>() {
 
     override fun areContentsTheSame(oldItem: Alert, newItem: Alert): Boolean {
         return oldItem.active == newItem.active &&
-                oldItem.requestId == newItem.requestId &&
+                oldItem.resource == newItem.resource &&
                 oldItem.name == newItem.name &&
                 oldItem.id == newItem.id
     }

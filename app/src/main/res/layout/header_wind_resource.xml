@@ -1,25 +1,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="32dp"
     android:paddingStart="5dp"
     android:paddingEnd="5dp">
 
     <TextView
         android:id="@+id/tvAlertResource"
-        android:layout_height="match_parent"
         android:layout_width="wrap_content"
-        android:layout_marginStart="@dimen/windEscalator_left_margin_list_elements"
-        android:layout_alignParentStart="true"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:textSize="18sp"
+        android:layout_marginTop="@dimen/windEscalator_left_margin_list_elements"
+        android:layout_marginEnd="@dimen/windEscalator_left_margin_list_elements"
         android:text="@string/header_wind_resource"
-    />
+        android:textSize="16sp" />
 
     <ImageView
+        android:id="@+id/ivArrowDown"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
-        />
+        android:src="@drawable/ic_baseline_keyboard_arrow_down_24" />
 </RelativeLayout>

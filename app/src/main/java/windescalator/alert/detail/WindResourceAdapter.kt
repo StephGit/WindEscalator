@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import ch.stephgit.windescalator.R
-import java.util.*
 import javax.inject.Inject
 
 class WindResourceAdapter @Inject constructor(
@@ -20,10 +19,10 @@ class WindResourceAdapter @Inject constructor(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view: View
-        if (convertView == null) {
-            view = layoutInflater.inflate(R.layout.item_wind_resource, parent, false)
+        if (convertView == null && position == 0) {
+            view = layoutInflater.inflate(R.layout.header_wind_resource, parent, false)
         } else {
-            view = convertView
+            view = layoutInflater.inflate(R.layout.item_wind_resource, parent, false)
         }
         getItem(position)?.let { resource ->
             setItemForResource(view, resource)
@@ -63,6 +62,7 @@ class WindResourceAdapter @Inject constructor(
         val tvResource = view.findViewById<TextView>(R.id.tvAlertResource)
         val ivResource = view.findViewById<ImageView>(R.id.ivAlertResource)
         tvResource.text = resource.fullname
-        ivResource.setBackgroundResource(resource.icon)
+        resource.icon?.let { icon -> ivResource.setBackgroundResource(icon) }
+//        ivResource.setBackgroundResource(resource.icon)
     }
 }

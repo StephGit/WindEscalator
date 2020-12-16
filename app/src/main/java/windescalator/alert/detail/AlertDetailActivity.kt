@@ -1,28 +1,38 @@
 package windescalator.alert.detail
 
 import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import ch.stephgit.windescalator.R
+import windescalator.alert.AlertService
+import windescalator.alert.detail.direction.DirectionChart
+import windescalator.alert.detail.direction.DirectionChartData
 import windescalator.data.entity.Alert
 import windescalator.data.repo.AlertRepo
 import windescalator.di.Injector
-import javax.inject.Inject
-import ch.stephgit.windescalator.R
-import windescalator.alert.AlertService
-import windescalator.alert.detail.direction.DirectionChartData
-import windescalator.alert.detail.direction.DirectionChart
 import java.util.*
+import javax.inject.Inject
 
-class AlertDetailActivity : AppCompatActivity() {
 
-    private val windDirectionData = DirectionChartData()
-    private lateinit var directionChart: DirectionChart
-    private lateinit var windResourceSpinner: Spinner
+class AlertDetailActivity : AppCompatActivity(){
+
     private lateinit var alert: Alert
     private lateinit var alertName: EditText
+    private lateinit var windResourceSpinner: Spinner
+    private lateinit var startTime: EditText
+    private lateinit var endTime: EditText
+    private lateinit var timePickerDialog: TimePickerDialog
+    private val windDirectionData = DirectionChartData()
+    private lateinit var directionChart: DirectionChart
+    private lateinit var saveButton: Button
+
+
 
     @Inject
     lateinit var alertService: AlertService
@@ -43,25 +53,61 @@ class AlertDetailActivity : AppCompatActivity() {
         title = getString(R.string.alert_detail_activity_title)
 
         Injector.appComponent.inject(this)
+        initViewElements()
 
         val extras = intent.extras
         val alertId = extras?.get("ALERT_ID") as Long?
-        alertName = findViewById(R.id.et_add_alert_name)
         alertId?.let {
             getAlertFromRepo(alertId)
         }
+        if (!::alert.isInitialized) initAlert() else setViewElements()
+    }
 
-        if (!::alert.isInitialized) initAlert()
-        val saveButton: Button = findViewById(R.id.btn_alert_save)
-        saveButton.setOnClickListener { saveOrUpdate() }
-        alertName.setText(getAlertName())
+    private fun initViewElements() {
+        alertName = findViewById(R.id.et_add_alert_name)
         initWindResourceSpinner()
+        initTimePickers()
         initChartData()
+        saveButton = findViewById(R.id.btn_alert_save)
+        saveButton.setOnClickListener { saveOrUpdate() }
+    }
+
+    private fun initTimePickers() {
+        startTime = findViewById(R.id.et_alert_start_time)
+        startTime.inputType = InputType.TYPE_NULL
+        endTime = findViewById(R.id.et_alert_end_time)
+        endTime.inputType = InputType.TYPE_NULL
+        startTime.setOnClickListener {
+            getTimePickerDialog(startTime)
+        }
+        endTime.setOnClickListener {
+            getTimePickerDialog(endTime)
+        }
+    }
+
+    private fun getTimePickerDialog(text: EditText) {
+        val cldr = Calendar.getInstance()
+        val hour = cldr[Calendar.HOUR_OF_DAY]
+        val minutes = cldr[Calendar.MINUTE]
+        // time picker dialog
+        val timePicker = TimePicker(this.applicationContext)
+        timePicker.layoutMode = 1
+        timePickerDialog = TimePickerDialog(
+                this@AlertDetailActivity,
+                {timePicker, sHour, sMinute -> text.setText("$sHour:$sMinute") }, hour, minutes, true)
+        timePickerDialog.show()
+    }
+
+    private fun setViewElements() {
+        alertName.setText(getAlertName())
+        windResourceSpinner.setSelection(WindResource.valueOf(alert.resource!!).id)
+        startTime.setText(alert.startTime.toString())
+        endTime.setText(alert.endTime.toString())
 
     }
 
     private fun initAlert() {
-        this.alert = Alert(null, false, null, null,null,null)
+        this.alert = Alert(null, false, null, null, null, null)
     }
 
     private fun getAlertName(): String {
@@ -110,19 +156,17 @@ class AlertDetailActivity : AppCompatActivity() {
                     alertService.addOrUpdate(alert)
                 }
             } ?: run {
-                alert.requestId = alert.name + UUID.randomUUID()
                 alert.active = true
                 alertRepo.insert(alert)
             }
             finish()
             Toast.makeText(
-                this,
-                getString(R.string.alert_detail_activity_toast_saved_alert),
-                Toast.LENGTH_SHORT
+                    this,
+                    getString(R.string.alert_detail_activity_toast_saved_alert),
+                    Toast.LENGTH_SHORT
             )
                 .show()
         }
     }
-
 }
 

@@ -1,18 +1,16 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="32dp"
     android:paddingStart="5dp"
     android:paddingEnd="5dp">
-
     <ImageView
         android:id="@+id/ivAlertResource"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        tools:src="@drawable/ic_windbag_black_24"
+        android:src="@drawable/ic_windbag_black_24"
          />
 
     <TextView
@@ -22,6 +20,5 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/ivAlertResource"
         android:layout_centerVertical="true"
-        android:textSize="18sp"/>
-
+        android:textSize="16sp"/>
 </RelativeLayout>

@@ -40,4 +40,5 @@
     <dimen name="widget_min_width">80dp</dimen>
     <dimen name="remoteViewHeight">80dp</dimen>
     <dimen name="button_round_radius">4dip</dimen>
+    <dimen name="windescalator_alert_detail_margin_top">10dp</dimen>
 </resources>
