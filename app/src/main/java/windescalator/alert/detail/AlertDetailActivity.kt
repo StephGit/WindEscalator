@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
@@ -20,7 +19,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class AlertDetailActivity : AppCompatActivity(){
+class AlertDetailActivity : AppCompatActivity() {
 
     private lateinit var alert: Alert
     private lateinit var alertName: EditText
@@ -31,7 +30,6 @@ class AlertDetailActivity : AppCompatActivity(){
     private val windDirectionData = DirectionChartData()
     private lateinit var directionChart: DirectionChart
     private lateinit var saveButton: Button
-
 
 
     @Inject
@@ -85,6 +83,7 @@ class AlertDetailActivity : AppCompatActivity(){
         }
     }
 
+
     private fun getTimePickerDialog(text: EditText) {
         val cldr = Calendar.getInstance()
         val hour = cldr[Calendar.HOUR_OF_DAY]
@@ -92,9 +91,10 @@ class AlertDetailActivity : AppCompatActivity(){
         // time picker dialog
         val timePicker = TimePicker(this.applicationContext)
         timePicker.layoutMode = 1
+
         timePickerDialog = TimePickerDialog(
                 this@AlertDetailActivity,
-                {timePicker, sHour, sMinute -> text.setText("$sHour:$sMinute") }, hour, minutes, true)
+                { timePicker, sHour, sMinute -> text.setText("$sHour:$sMinute") }, hour, minutes, true)
         timePickerDialog.show()
     }
 
@@ -165,7 +165,7 @@ class AlertDetailActivity : AppCompatActivity(){
                     getString(R.string.alert_detail_activity_toast_saved_alert),
                     Toast.LENGTH_SHORT
             )
-                .show()
+                    .show()
         }
     }
 }
