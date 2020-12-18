@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.widget.*
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
 import windescalator.alert.AlertService
@@ -26,7 +27,8 @@ class AlertDetailActivity : AppCompatActivity() {
     private lateinit var windResourceSpinner: Spinner
     private lateinit var startTime: EditText
     private lateinit var endTime: EditText
-    private lateinit var timePickerDialog: TimePickerDialog
+    private lateinit var seekBar: SeekBar
+    private lateinit var labelSeekBar: TextView
     private val windDirectionData = DirectionChartData()
     private lateinit var directionChart: DirectionChart
     private lateinit var saveButton: Button
@@ -58,16 +60,22 @@ class AlertDetailActivity : AppCompatActivity() {
         alertId?.let {
             getAlertFromRepo(alertId)
         }
-        if (!::alert.isInitialized) initAlert() else setViewElements()
+        if (!::alert.isInitialized) initAlert() else setViewElementsData()
     }
 
     private fun initViewElements() {
         alertName = findViewById(R.id.et_add_alert_name)
         initWindResourceSpinner()
         initTimePickers()
+        initSeekBar()
         initChartData()
         saveButton = findViewById(R.id.btn_alert_save)
         saveButton.setOnClickListener { saveOrUpdate() }
+    }
+
+    private fun initWindResourceSpinner() {
+        windResourceSpinner = findViewById(R.id.sp_select_alert_resource)
+        windResourceSpinner.adapter = windResourceAdapter
     }
 
     private fun initTimePickers() {
@@ -83,41 +91,32 @@ class AlertDetailActivity : AppCompatActivity() {
         }
     }
 
-
     private fun getTimePickerDialog(text: EditText) {
         val cldr = Calendar.getInstance()
         val hour = cldr[Calendar.HOUR_OF_DAY]
         val minutes = cldr[Calendar.MINUTE]
-        // time picker dialog
-        val timePicker = TimePicker(this.applicationContext)
-        timePicker.layoutMode = 1
-
-        timePickerDialog = TimePickerDialog(
+        val timePickerDialog = TimePickerDialog(
                 this@AlertDetailActivity,
-                { timePicker, sHour, sMinute -> text.setText("$sHour:$sMinute") }, hour, minutes, true)
+                { _, sHour, sMinute -> text.setText("$sHour:$sMinute") }, hour, minutes, true)
         timePickerDialog.show()
     }
 
-    private fun setViewElements() {
-        alertName.setText(getAlertName())
-        windResourceSpinner.setSelection(WindResource.valueOf(alert.resource!!).id)
-        startTime.setText(alert.startTime.toString())
-        endTime.setText(alert.endTime.toString())
+    private fun initSeekBar() {
+        seekBar = findViewById(R.id.sb_alert_threshold)
+        labelSeekBar = findViewById(R.id.sb_label)
+        labelSeekBar.x = 15F
+        seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                labelSeekBar.text = "$progress kts"
+                //Get the thumb bound and get its left value
+                val x = seekBar.thumb.bounds.left.toFloat()
+                //set the left value to textview x value
+                labelSeekBar.x = x
+            }
 
-    }
-
-    private fun initAlert() {
-        this.alert = Alert(null, false, null, null, null, null)
-    }
-
-    private fun getAlertName(): String {
-        if (::alert.isInitialized && this.alert.name != null) return this.alert.name!!
-        return ""
-    }
-
-    private fun initWindResourceSpinner() {
-        windResourceSpinner = findViewById(R.id.sp_select_alert_resource)
-        windResourceSpinner.adapter = windResourceAdapter
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
     }
 
     @SuppressLint("ResourceType")
@@ -129,6 +128,28 @@ class AlertDetailActivity : AppCompatActivity() {
             windDirectionData.add(it, initColorSlice)
         }
         directionChart.setData(windDirectionData)
+    }
+
+    private fun setViewElementsData() {
+        alertName.setText(getAlertName())
+        windResourceSpinner.setSelection(WindResource.valueOf(alert.resource!!).id)
+        startTime.setText(alert.startTime.toString())
+        endTime.setText(alert.endTime.toString())
+        seekBar.progress = getWindForce()
+        // TODO set chartData
+    }
+
+    private fun initAlert() {
+        this.alert = Alert(null, false, null, null, null, null)
+    }
+
+    private fun getAlertName(): String {
+        if (::alert.isInitialized && this.alert.name != null) return this.alert.name!!
+        return ""
+    }
+
+    private fun getWindForce(): Int {
+        return if (alert.windForceKts != null) alert.windForceKts!! else 1
     }
 
     private fun getAlertFromRepo(alertId: Long) {
