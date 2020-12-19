@@ -1,8 +1,8 @@
 package windescalator.data
 
 import androidx.room.TypeConverter
-import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
+import java.lang.reflect.Type
 
 
 class DatabaseTypeConverters {
@@ -22,16 +22,12 @@ class DatabaseTypeConverters {
     }
 
     @TypeConverter
-    fun longToDate(v: Long?): LocalDate? {
-        return if(v == null){
-            null
-        } else {
-            LocalDate(v)
-        }
+    fun fromString(stringListString: String): List<String> {
+        return stringListString.split(",").map { it }
     }
 
     @TypeConverter
-    fun dateToLong(v: LocalDate?): Long? {
-        return v?.toDateTimeAtStartOfDay()?.toDateTime()?.millis
+    fun toString(stringList: List<String>): String {
+        return stringList.joinToString(separator = ",")
     }
 }

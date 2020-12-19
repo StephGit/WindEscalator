@@ -13,6 +13,7 @@ data class Alert(
     var startTime: LocalDateTime?,
     var endTime: LocalDateTime?,
     var windForceKts: Int?,
+    var directions: List<String>?,
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null
 )

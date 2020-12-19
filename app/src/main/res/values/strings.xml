@@ -23,9 +23,14 @@
     <string name="alert_detail_add_name_text">Alertname</string>
     <string name="alert_detail_select_alert_hint">Select alert...</string>
     <string name="wind_alert_action">WIND_ALERT_ACTION</string>
-    <string name="alert_edit_error_no_name">Set alert name!</string>
+    <string name="alert_detail_activity_error_no_name">Set alert name!</string>
     <string name="alert_detail_activity_toast_saved_alert">Alert saved!</string>
     <string name="header_wind_resource">Select wind resource...</string>
+    <string name="alert_detail_activity_toast_error_missing_directions">Really! Alerting for wind from no direction?! Are you on the moon?!</string>
+    <string name="alert_detail_activity_toast_error_missing_threshold">Select minimal wind force to trigger alert!</string>
+    <string name="alert_detail_activity_error_missing_endtime">Set end time to watch for wind!</string>
+    <string name="alert_detail_activity_error_missing_starttime">Set time to start watching for wind!</string>
+    <string name="alert_detail_activity_toast_error_missing_resource">Select wind resource to alert!</string>
 
 
 </resources>

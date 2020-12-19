@@ -16,7 +16,7 @@ class DirectionChart @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     // Data
-    private var dataDirection: DirectionChartData? = null
+    private lateinit var chartData: DirectionChartData
 
     // Graphics
     private val colorWhite = ResourcesCompat.getColor(resources, R.color.windEscalator_colorWhite, null)
@@ -48,8 +48,29 @@ class DirectionChart @JvmOverloads constructor(
         }
     }
 
-    fun setData(dataDirection: DirectionChartData) {
-        this.dataDirection = dataDirection
+    fun getSelectedData(): List<String> {
+        var selection = ArrayList<String>()
+        this.chartData.slices.entries.forEach{
+            if (it.value.state == SliceState.SELECTED) selection.add(it.key)
+        }
+        return selection
+    }
+
+    /**
+     * Updates chartData based on saved alert.directions
+     * Slices not in alert.directions are set to unselected state
+     */
+
+    fun setData(directions: List<String>) {
+        this.chartData.slices.forEach {
+            if (!directions.contains(it.key)) {
+                updateColorState(it.value, colorSlice, SliceState.UNSELECTED)
+            }
+        }
+    }
+
+    fun setInitialData(dataDirection: DirectionChartData) {
+        this.chartData = dataDirection
         setSliceDimensions()
         invalidate()
     }
@@ -57,7 +78,7 @@ class DirectionChart @JvmOverloads constructor(
     private fun setSliceDimensions() {
         var lastAngle = initialAngle // initial angle
         val sweepAngle = 45f
-        dataDirection?.slices?.forEach {
+        chartData.slices.forEach {
             it.value.startAngle = lastAngle
             it.value.sweepAngle = sweepAngle
             lastAngle += it.value.sweepAngle
@@ -74,9 +95,9 @@ class DirectionChart @JvmOverloads constructor(
      * @param key key of chart slice being altered
      */
     private fun setLabelLocation(key: String) {
-        dataDirection?.slices?.get(key)?.let {
+        chartData.slices.get(key)?.let {
             val middleAngle = it.sweepAngle / 2 + it.startAngle
-            val distanceToCenter = (3 * layoutParams.height / 8)
+            val distanceToCenter = (3 * layoutParams.height / chartData!!.totalValue)
 
             it.labelLocation.x = distanceToCenter *
                     Math.cos(Math.toRadians(middleAngle.toDouble())).toFloat() + width / 2
@@ -88,7 +109,7 @@ class DirectionChart @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        dataDirection?.slices?.let { slices ->
+        chartData.slices.let { slices ->
             slices.forEach {
                 canvas?.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, it.value.paint)
                 canvas?.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, borderPaint)
@@ -105,7 +126,7 @@ class DirectionChart @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         setChartBounds()
         setGraphicSizes()
-        dataDirection?.slices?.forEach {
+        chartData.slices.forEach {
             setLabelLocation(it.key)
         }
     }
@@ -155,7 +176,7 @@ class DirectionChart @JvmOverloads constructor(
 
     // TODO add test
     private fun handleTouchedSlice(deg: Double) {
-        dataDirection?.slices?.forEach {
+        chartData.slices.forEach {
             // evaluate touched degree with angle of slice statement
             // or for value -22.5 to 0 and 337.5° to 360°
             if ((it.value.startAngle <= deg && (it.value.startAngle + it.value.sweepAngle) > deg) ||
@@ -175,7 +196,7 @@ class DirectionChart @JvmOverloads constructor(
         newPaint.color = Color.parseColor(newColor)
         slice.state = newState
         slice.paint = newPaint
-        requestLayout()
         invalidate()
+        requestLayout()
     }
 }

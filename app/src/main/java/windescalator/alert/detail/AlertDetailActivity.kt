@@ -10,6 +10,7 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
+import org.joda.time.LocalDateTime
 import windescalator.alert.AlertService
 import windescalator.alert.detail.direction.DirectionChart
 import windescalator.alert.detail.direction.DirectionChartData
@@ -122,12 +123,12 @@ class AlertDetailActivity : AppCompatActivity() {
     @SuppressLint("ResourceType")
     private fun initChartData() {
         directionChart = findViewById(R.id.btn_alert_wind_direction)
-        val directions: Array<String> = arrayOf<String>("E", "SE", "S", "SW", "W", "NW", "N", "NE")
+        val directions: Array<String> = arrayOf("E", "SE", "S", "SW", "W", "NW", "N", "NE")
         val initColorSlice = resources.getString(R.color.windEscalator_colorSelectedLight)
         directions.forEach {
             windDirectionData.add(it, initColorSlice)
         }
-        directionChart.setData(windDirectionData)
+        directionChart.setInitialData(windDirectionData)
     }
 
     private fun setViewElementsData() {
@@ -136,11 +137,11 @@ class AlertDetailActivity : AppCompatActivity() {
         startTime.setText(alert.startTime.toString())
         endTime.setText(alert.endTime.toString())
         seekBar.progress = getWindForce()
-        // TODO set chartData
+        if (!alert.directions.isNullOrEmpty()) alert.directions?.let { directionChart.setData(it) }
     }
 
     private fun initAlert() {
-        this.alert = Alert(null, false, null, null, null, null)
+        this.alert = Alert(null, false, null, null, null, null, listOf())
     }
 
     private fun getAlertName(): String {
@@ -161,7 +162,33 @@ class AlertDetailActivity : AppCompatActivity() {
     private fun isValid(): Boolean {
         return when {
             alertName.text.trim().isBlank() -> {
-                alertName.error = getString(R.string.alert_edit_error_no_name)
+                alertName.error = getString(R.string.alert_detail_activity_error_no_name)
+                false
+            }
+            (windResourceSpinner.selectedItemId == 0L) -> {
+                Toast.makeText(this,
+                        getString(R.string.alert_detail_activity_toast_error_missing_resource),
+                        Toast.LENGTH_SHORT).show()
+                false
+            }
+            startTime.text.isNullOrBlank() -> {
+                startTime.error = getString(R.string.alert_detail_activity_error_missing_starttime)
+                false
+            }
+            endTime.text.isNullOrBlank() -> {
+                endTime.error = getString(R.string.alert_detail_activity_error_missing_endtime)
+                false
+            }
+            (seekBar.progress == 0) -> {
+                Toast.makeText(this,
+                        getString(R.string.alert_detail_activity_toast_error_missing_threshold),
+                        Toast.LENGTH_LONG).show()
+                false
+            }
+            (directionChart.getSelectedData().isNullOrEmpty()) -> {
+                Toast.makeText(this,
+                        getString(R.string.alert_detail_activity_toast_error_missing_directions),
+                        Toast.LENGTH_SHORT).show()
                 false
             }
             else -> true
@@ -169,8 +196,14 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun saveOrUpdate() {
-        alert.name = alertName.text.toString().trim()
         if (isValid()) {
+            alert.name = alertName.text.toString().trim()
+            alert.resource = windResourceSpinner.selectedItem.toString()
+            alert.startTime = LocalDateTime(startTime.text)
+            alert.endTime = LocalDateTime(endTime.text)
+            alert.windForceKts = seekBar.progress
+            alert.directions = directionChart.getSelectedData()
+
             alert.id?.let {
                 alertRepo.update(alert)
                 if (alert.active) {
