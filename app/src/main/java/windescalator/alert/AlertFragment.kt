@@ -124,7 +124,9 @@ class AlertFragment : androidx.fragment.app.Fragment() {
                             if (removedAlert.active) {
                                 alertService.addOrUpdate(removedAlert)
                             }
-                        }.show()
+                        }
+                        .setActionTextColor(ResourcesCompat.getColor(resources, R.color.windEscalator_colorSnackAction, null))
+                        .show()
             }
             override fun onChildDraw(
                     c: Canvas,

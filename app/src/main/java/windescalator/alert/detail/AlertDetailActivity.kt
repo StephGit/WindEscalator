@@ -10,7 +10,6 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
-import org.joda.time.LocalDateTime
 import windescalator.alert.AlertService
 import windescalator.alert.detail.direction.DirectionChart
 import windescalator.alert.detail.direction.DirectionChartData
@@ -199,8 +198,8 @@ class AlertDetailActivity : AppCompatActivity() {
         if (isValid()) {
             alert.name = alertName.text.toString().trim()
             alert.resource = windResourceSpinner.selectedItem.toString()
-            alert.startTime = LocalDateTime(startTime.text)
-            alert.endTime = LocalDateTime(endTime.text)
+            alert.startTime = startTime.text.toString()
+            alert.endTime = endTime.text.toString()
             alert.windForceKts = seekBar.progress
             alert.directions = directionChart.getSelectedData()
 
