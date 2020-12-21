@@ -13,7 +13,6 @@
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/windescalator_alert_detail_margin_top"
         android:fontFamily="sans-serif"
         android:hint="@string/alert_detail_add_name_hint"
         android:inputType="text"
@@ -27,7 +26,6 @@
         android:id="@+id/sp_select_alert_resource"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/windescalator_alert_detail_margin_top"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:background="@drawable/red_outline"
@@ -46,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="@dimen/windescalator_alert_detail_margin_top"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="30dp"
         android:layout_marginEnd="10dp"
         android:textAlignment="center"
         android:hint="Start Time"
@@ -62,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/windescalator_alert_detail_margin_top"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="30dp"
         android:text="-"
         app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold"
         app:layout_constraintLeft_toRightOf="@id/et_alert_start_time"
@@ -76,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="@dimen/windescalator_alert_detail_margin_top"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="30dp"
         android:layout_marginEnd="20dp"
         android:textAlignment="center"
         android:hint="End Time"
@@ -87,11 +85,34 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource" />
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sb_label"
+        android:layout_marginTop="30dp"
+        android:text="1kts"
+        app:layout_constraintTop_toBottomOf="@id/tv_time_delimiter"
+        app:layout_constraintBottom_toTopOf="@+id/sb_alert_threshold"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:id="@+id/sb_label_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginStart="10dp"
+        android:text="Kts:"
+        app:layout_constraintBottom_toTopOf="@id/btn_alert_wind_direction"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/sb_alert_threshold"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time_delimiter"
+        app:layout_constraintVertical_bias="0.570" />
+
     <SeekBar
         android:id="@+id/sb_alert_threshold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/windescalator_alert_detail_margin_top"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:contentDescription="Kts Threshold"
@@ -102,16 +123,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_time_delimiter" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sb_label"
-        android:text="1kts"
-        app:layout_constraintTop_toBottomOf="@id/tv_time_delimiter"
-        app:layout_constraintBottom_toTopOf="@+id/sb_alert_threshold"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
 
     <windescalator.alert.detail.direction.DirectionChart
         android:id="@+id/btn_alert_wind_direction"

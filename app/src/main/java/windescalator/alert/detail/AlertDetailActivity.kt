@@ -97,7 +97,7 @@ class AlertDetailActivity : AppCompatActivity() {
         val minutes = cldr[Calendar.MINUTE]
         val timePickerDialog = TimePickerDialog(
                 this@AlertDetailActivity,
-                { _, sHour, sMinute -> text.setText("$sHour:$sMinute") }, hour, minutes, true)
+                { _, sHour, sMinute -> text.setText(String.format("%02d:%02d", sHour, sMinute)) }, hour, minutes, true)
         timePickerDialog.show()
     }
 
