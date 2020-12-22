@@ -108,9 +108,9 @@ class AlertDetailActivity : AppCompatActivity() {
         seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 labelSeekBar.text = "$progress kts"
-                //Get the thumb bound and get its left value
-                val x = seekBar.thumb.bounds.left.toFloat()
-                //set the left value to textview x value
+                //Get the thumb bound and get its right value
+                val x = seekBar.thumb.bounds.right.toFloat()
+                //set the value to textview x value
                 labelSeekBar.x = x
             }
 
@@ -137,6 +137,11 @@ class AlertDetailActivity : AppCompatActivity() {
         endTime.setText(alert.endTime.toString())
         seekBar.progress = getWindForce()
         if (!alert.directions.isNullOrEmpty()) alert.directions?.let { directionChart.setData(it) }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        labelSeekBar.x = (seekBar.width) * seekBar.progress / seekBar.max + 0F
     }
 
     private fun initAlert() {
