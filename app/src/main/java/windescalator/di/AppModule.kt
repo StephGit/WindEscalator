@@ -11,6 +11,7 @@ import windescalator.alert.detail.WindResourceAdapter
 import windescalator.data.AppDatabase
 import windescalator.data.dao.AlertDao
 import windescalator.data.repo.AlertRepo
+import windescalator.remote.NotificationHandler
 import javax.inject.Singleton
 
 
@@ -52,4 +53,9 @@ class AppModule {
     @Singleton
     fun provideWindResourceAdapter(context: Context):
             WindResourceAdapter = WindResourceAdapter(context)
+
+    @Provides
+    @Singleton
+    fun provideNotificationHandler(context: Context):
+            NotificationHandler = NotificationHandler(context)
 }

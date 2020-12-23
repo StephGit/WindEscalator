@@ -31,6 +31,8 @@
     <string name="alert_detail_activity_error_missing_endtime">Set end time to watch for wind!</string>
     <string name="alert_detail_activity_error_missing_starttime">Set time to start watching for wind!</string>
     <string name="alert_detail_activity_toast_error_missing_resource">Select wind resource to alert!</string>
+    <string name="alert_notification_title">WindEscalator Alert!</string>
+    <string name="alarm_notification_text">Wind Alarm für ...</string>
 
 
 </resources>
