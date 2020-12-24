@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import windescalator.alert.AlarmService
 import windescalator.di.Injector
 import windescalator.alert.AlertFragment
 
@@ -34,6 +35,9 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         if (savedInstanceState == null) {
             replaceFragment(AlertFragment())
         }
+
+        val alarmServiceIntent = Intent(this, AlarmService::class.java)
+        startService(alarmServiceIntent)
     }
 
     override fun onResume() {

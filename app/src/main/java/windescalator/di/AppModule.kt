@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import windescalator.alert.AlertRecyclerAdapter
 import windescalator.alert.AlertService
+import windescalator.alert.WindDataService
 import windescalator.alert.detail.WindResourceAdapter
 import windescalator.data.AppDatabase
 import windescalator.data.dao.AlertDao
@@ -43,6 +44,12 @@ class AppModule {
             context: Context,
             alertRepo: AlertRepo):
             AlertService = AlertService(context, alertRepo)
+
+    @Provides
+    @Singleton
+    fun provideWindDataService(
+            context: Context):
+            WindDataService = WindDataService(context)
 
     @Provides
     @Singleton

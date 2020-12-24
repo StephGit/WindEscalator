@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.util.Log
 import windescalator.TAG
+import windescalator.alert.AlarmService
 import windescalator.alert.AlertService
 import windescalator.di.Injector
 import javax.inject.Inject
@@ -19,6 +20,8 @@ class BootBroadcastReceiver : BroadcastReceiver() {
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "handling BOOT_COMPLETED")
+        val alarmServiceIntent = Intent(context, AlarmService::class.java)
+        context.startService(alarmServiceIntent)
         val pendingResult: PendingResult = goAsync()
         val asyncTask = BootReceiverTask(pendingResult, intent)
         asyncTask.execute()

@@ -1,9 +1,7 @@
-package windescalator.alert.receiver
+package windescalator.alert
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.core.app.JobIntentService
 import ch.stephgit.windescalator.R
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -13,22 +11,17 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import windescalator.TAG
 import windescalator.di.Injector
+import javax.inject.Inject
 
-class WindDataJobIntentService : JobIntentService() {
-
-
-    private val jobId = 654
+class WindDataService @Inject constructor(
+        private val context: Context) {
 
     init {
         Injector.appComponent.inject(this)
     }
 
-    fun enqueueWork(context: Context, intent: Intent) {
-        enqueueWork(context, WindDataJobIntentService::class.java, jobId, intent)
-    }
-
-    override fun onHandleWork(intent: Intent) {
-        val cache = DiskBasedCache(cacheDir, 1024 * 1024) // 1MB cap
+    public fun getData() {
+        val cache = DiskBasedCache(context.cacheDir, 1024 * 1024) // 1MB cap
 
 // Set up the network to use HttpURLConnection as the HTTP client.
         val network = BasicNetwork(HurlStack())
@@ -38,23 +31,24 @@ class WindDataJobIntentService : JobIntentService() {
             start()
         }
 
-        val url = getString(R.string.thun)
+        val url = context.getString(R.string.thun)
 
 // Formulate the request and handle the response.
         val stringRequest = StringRequest(
-            Request.Method.GET, url,
-            { response ->
-                Log.d(TAG, "response: " + response)
-            },
-            { error ->
-                // Handle error
-                Log.e(TAG, "ERROR: %s".format(error.toString()))
-            })
+                Request.Method.GET, url,
+                { response ->
+                    Log.d(TAG, "response: " + response)
+                },
+                { error ->
+                    // Handle error
+                    Log.e(TAG, "ERROR: %s".format(error.toString()))
+                })
 
 // Add the request to the RequestQueue.
         requestQueue.add(stringRequest)
         // get event
         // check event for errors
         // handle Event
+
     }
 }
