@@ -10,7 +10,7 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
-import windescalator.alert.AlertService
+import windescalator.alert.service.AlertService
 import windescalator.alert.detail.direction.DirectionChart
 import windescalator.alert.detail.direction.DirectionChartData
 import windescalator.data.entity.Alert
@@ -32,10 +32,6 @@ class AlertDetailActivity : AppCompatActivity() {
     private val windDirectionData = DirectionChartData()
     private lateinit var directionChart: DirectionChart
     private lateinit var saveButton: Button
-
-
-    @Inject
-    lateinit var alertService: AlertService
 
     @Inject
     lateinit var alertRepo: AlertRepo
@@ -210,12 +206,11 @@ class AlertDetailActivity : AppCompatActivity() {
 
             alert.id?.let {
                 alertRepo.update(alert)
-                if (alert.active) {
-                    alertService.addOrUpdate(alert)
-                }
             } ?: run {
                 alert.active = true
                 alertRepo.insert(alert)
+                val alertServiceIntent = Intent(this.applicationContext, AlertService::class.java)
+                startService(alertServiceIntent)
             }
             finish()
             Toast.makeText(

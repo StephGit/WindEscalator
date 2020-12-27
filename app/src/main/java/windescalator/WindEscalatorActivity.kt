@@ -3,18 +3,24 @@ package windescalator
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import windescalator.alert.AlarmService
 import windescalator.di.Injector
 import windescalator.alert.AlertFragment
+import windescalator.alert.service.AlertService
+import windescalator.alert.service.NoiseControl
+import javax.inject.Inject
 
 
 class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
+
+    @Inject
+    lateinit var noiseControl: NoiseControl
 
     private lateinit var navigation: BottomNavigationView
     private lateinit var prefs: SharedPreferences
@@ -32,16 +38,22 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         Injector.appComponent.inject(this)
         prefs = getSharedPreferences("windescalator", Context.MODE_PRIVATE)
 
-        if (savedInstanceState == null) {
+        val extras = intent.extras
+        val alertResource = extras?.get("STOP_ALARM") as String?
+        if (!alertResource.isNullOrEmpty()) {
+            noiseControl.stopNoise()
+            replaceFragment(WindFragment())
+        } else {
             replaceFragment(AlertFragment())
-        }
 
-        val alarmServiceIntent = Intent(this, AlarmService::class.java)
-        startService(alarmServiceIntent)
+            val alertServiceIntent = Intent(this, AlertService::class.java)
+            startService(alertServiceIntent)
+        }
     }
 
     override fun onResume() {
         super.onResume()
+
     }
 
     override fun onDestroy() {

@@ -26,6 +26,7 @@ import windescalator.data.entity.Alert
 import windescalator.di.Injector
 import javax.inject.Inject
 
+
 class AlertFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var noAlertInfo: ConstraintLayout
@@ -34,6 +35,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var swipeBackgroundColor: ColorDrawable
     private lateinit var deleteIcon: Drawable
+
     // TODO set permissions
 //    private lateinit var permissionHandler: PermissionHandler
     private lateinit var prefs: SharedPreferences
@@ -43,9 +45,6 @@ class AlertFragment : androidx.fragment.app.Fragment() {
 
     @Inject
     lateinit var recyclerAdapter: AlertRecyclerAdapter
-
-    @Inject
-    lateinit var alertService: AlertService
 
     companion object {
         fun newFragment(): androidx.fragment.app.Fragment = AlertFragment()
@@ -121,13 +120,11 @@ class AlertFragment : androidx.fragment.app.Fragment() {
                         .setAction(context!!.getString(R.string.rollback)) {
                             noAlertInfo.visibility = View.GONE
                             viewModel.insert(removedAlert)
-                            if (removedAlert.active) {
-                                alertService.addOrUpdate(removedAlert)
-                            }
                         }
                         .setActionTextColor(ResourcesCompat.getColor(resources, R.color.windEscalator_colorSnackAction, null))
                         .show()
             }
+
             override fun onChildDraw(
                     c: Canvas,
                     recyclerView: RecyclerView,
@@ -176,7 +173,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun addAlert() {
-            startActivity(AlertDetailActivity.newIntent(requireContext()))
+        startActivity(AlertDetailActivity.newIntent(requireContext()))
     }
 
     private fun showAlertDetail(item: Alert) {

@@ -6,11 +6,10 @@ import dagger.Component
 import windescalator.WebcamFragment
 import windescalator.WindEscalatorActivity
 import windescalator.WindFragment
-import windescalator.alert.AlarmService
 import windescalator.alert.detail.AlertDetailActivity
 import windescalator.alert.AlertFragment
-import windescalator.alert.WindDataService
-import windescalator.alert.receiver.BootBroadcastReceiver
+import windescalator.alert.service.AlertService
+import windescalator.alert.service.NoiseControl
 import javax.inject.Singleton
 
 @Singleton
@@ -28,9 +27,8 @@ interface AppComponent {
 
     fun inject(alertFragment: AlertFragment)
     fun inject(alertDetailActivity: AlertDetailActivity)
-    fun inject(windDataService: WindDataService)
-    fun inject(bootBroadcastReceiverTask: BootBroadcastReceiver.BootReceiverTask)
-    fun inject(alarmService: AlarmService)
+    fun inject(alertService: AlertService)
+    fun inject(noiseControl: NoiseControl)
 
     fun inject(windFragment: WindFragment)
     fun inject(webcamFragment: WebcamFragment)

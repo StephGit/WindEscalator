@@ -11,25 +11,36 @@ import androidx.core.app.NotificationCompat
 import ch.stephgit.windescalator.BuildConfig
 import ch.stephgit.windescalator.R
 import windescalator.WindEscalatorActivity
+import windescalator.WindFragment
+import javax.inject.Inject
 
-class NotificationHandler(val context: Context) {
+class NotificationHandler @Inject constructor(
+        val context: Context) {
 
     private val notificationChannelId = BuildConfig.APPLICATION_ID + ".channel"
     private val notificationId = 789556
 
-    fun createAlarmNotification() {
+    fun createAlarmNotification(resource: String) {
+
+        // Create an explicit intent for an Activity in your app
+        val targetIntent = Intent(context, WindEscalatorActivity::class.java).apply {
+            putExtra("STOP_ALARM", resource)
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, targetIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         createNotificationChannel(notificationChannelId)
         val builder = NotificationCompat.Builder(context, notificationChannelId)
-            .setSmallIcon(R.drawable.ic_windbag_black_24)
-            .setContentTitle(context.getString(R.string.alert_notification_title))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.alarm_notification_text)))
-            .setVibrate(longArrayOf(500, 1000, 500, 1000))
-            .setAutoCancel(true)
+                .setSmallIcon(R.drawable.ic_windbag_black_24)
+                .setContentTitle(context.getString(R.string.alert_notification_title))
+                .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.alarm_notification_text) + resource))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVibrate(longArrayOf(500, 1000, 500, 1000))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
 
-        val targetIntent = Intent(context, WindEscalatorActivity::class.java)
-        val contentIntent = PendingIntent.getActivity(context, 0, targetIntent, PendingIntent.FLAG_CANCEL_CURRENT)
-        builder.setContentIntent(contentIntent)
+//        val targetIntent = Intent(context, WindEscalatorActivity::class.java)
+//        val contentIntent = PendingIntent.getActivity(context, 0, targetIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+//        builder.setContentIntent(contentIntent)
         val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nManager.notify(notificationId, builder.build())
     }
@@ -39,7 +50,7 @@ class NotificationHandler(val context: Context) {
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val descriptionText = context.getString(R.string.app_name)
-            val importance = NotificationManager.IMPORTANCE_LOW
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(notificationChannelId, name, importance).apply {
                 description = descriptionText
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC

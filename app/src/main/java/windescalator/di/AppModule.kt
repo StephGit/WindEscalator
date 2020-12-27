@@ -6,9 +6,8 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import windescalator.alert.AlertRecyclerAdapter
-import windescalator.alert.AlertService
-import windescalator.alert.WindDataService
 import windescalator.alert.detail.WindResourceAdapter
+import windescalator.alert.service.NoiseControl
 import windescalator.data.AppDatabase
 import windescalator.data.dao.AlertDao
 import windescalator.data.repo.AlertRepo
@@ -40,21 +39,9 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideAlertService(
-            context: Context,
-            alertRepo: AlertRepo):
-            AlertService = AlertService(context, alertRepo)
-
-    @Provides
-    @Singleton
-    fun provideWindDataService(
+    fun provideAlertRecyclerAdapter(
             context: Context):
-            WindDataService = WindDataService(context)
-
-    @Provides
-    @Singleton
-    fun provideAlertRecyclerAdapter(alertService: AlertService):
-            AlertRecyclerAdapter = AlertRecyclerAdapter(alertService)
+            AlertRecyclerAdapter = AlertRecyclerAdapter(context)
 
     @Provides
     @Singleton
@@ -65,4 +52,10 @@ class AppModule {
     @Singleton
     fun provideNotificationHandler(context: Context):
             NotificationHandler = NotificationHandler(context)
+
+    @Provides
+    @Singleton
+    fun provideNoiseControl(context: Context):
+            NoiseControl = NoiseControl(context)
+
 }
