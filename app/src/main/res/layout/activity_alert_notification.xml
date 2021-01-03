@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/iv_alert_notification"
-        android:layout_width="@dimen/windEscalator_empty_fragment_icon_width"
-        android:layout_height="@dimen/windEscalator_empty_fragment_icon_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/windEscalator_empty_fragment_icon_marginTop"
         android:layout_marginBottom="@dimen/windEscalator_empty_fragment_icon_marginBottom"
         app:backgroundTint="@color/windEscalator_colorBrand"
@@ -19,9 +19,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3"
         app:layout_constraintVertical_chainStyle="packed"
-        app:srcCompat="@drawable/ic_baseline_run_circle_24"
+        android:src="@drawable/ic_baseline_directions_run_24"
         android:contentDescription="@string/iv_alert_notification_description" />
 
     <TextView
@@ -29,8 +28,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Run!"
+        android:textColor="@color/windEscalator_colorWhite"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/btn_stopAlert"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,9 +41,9 @@
         android:id="@+id/btn_showWindData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="30dp"
         android:layout_marginBottom="140dp"
-        android:src="@drawable/ic_windbag_black_24"
+        android:src="@drawable/ic_windbag_24"
         app:backgroundTint="@color/windEscalator_colorSelected"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_stopAlert"
@@ -56,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="140dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="30dp"
         android:src="@drawable/ic_baseline_clear_24"
         app:backgroundTint="@color/windEscalator_colorSelected"
         app:layout_constraintBottom_toBottomOf="parent"

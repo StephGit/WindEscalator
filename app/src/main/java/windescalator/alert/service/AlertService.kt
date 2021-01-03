@@ -89,6 +89,7 @@ class AlertService : Service() {
     }
 
     private fun sendAlertBroadcast(alertId: Long) {
+        Log.d(TAG, alertId.toString())
         val intent = Intent(applicationContext, AlertBroadcastReceiver::class.java).apply {
             action = alertReceiver.getFilter().getAction(0)
             putExtra("ALERT_ID", alertId)

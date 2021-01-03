@@ -31,6 +31,7 @@
                   android:screenOrientation="portrait">
         </activity>
         <activity android:name="windescalator.alert.detail.AlertDetailActivity"
+            android:showOnLockScreen="true"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
         </activity>
