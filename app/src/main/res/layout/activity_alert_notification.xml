@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/AlertNotificationActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windEscalator_colorBrand"
+    tools:context="windescalator.alert.AlertNotificationActivity">
+
+    <ImageView
+        android:id="@+id/iv_alert_notification"
+        android:layout_width="@dimen/windEscalator_empty_fragment_icon_width"
+        android:layout_height="@dimen/windEscalator_empty_fragment_icon_height"
+        android:layout_marginTop="@dimen/windEscalator_empty_fragment_icon_marginTop"
+        android:layout_marginBottom="@dimen/windEscalator_empty_fragment_icon_marginBottom"
+        app:backgroundTint="@color/windEscalator_colorBrand"
+        app:layout_constraintBottom_toTopOf="@id/tv_alertText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:srcCompat="@drawable/ic_baseline_run_circle_24"
+        android:contentDescription="@string/iv_alert_notification_description" />
+
+    <TextView
+        android:id="@+id/tv_alertText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Run!"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toTopOf="@+id/btn_stopAlert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_alert_notification"
+        app:layout_constraintVertical_bias="0.3"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_showWindData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="140dp"
+        android:src="@drawable/ic_windbag_black_24"
+        app:backgroundTint="@color/windEscalator_colorSelected"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_stopAlert"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="Show Wind Data" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_stopAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="140dp"
+        android:layout_marginEnd="40dp"
+        android:src="@drawable/ic_baseline_clear_24"
+        app:backgroundTint="@color/windEscalator_colorSelected"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_showWindData"
+        android:tooltipText="Stop Alert"
+        android:contentDescription="Stop Alert" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

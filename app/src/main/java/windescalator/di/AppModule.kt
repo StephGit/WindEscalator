@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import windescalator.alert.AlertRecyclerAdapter
 import windescalator.alert.detail.WindResourceAdapter
+import windescalator.alert.receiver.AlertBroadcastReceiver
 import windescalator.alert.service.NoiseControl
 import windescalator.data.AppDatabase
 import windescalator.data.dao.AlertDao
@@ -57,5 +58,9 @@ class AppModule {
     @Singleton
     fun provideNoiseControl(context: Context):
             NoiseControl = NoiseControl(context)
+
+    @Provides
+    @Singleton
+    fun provideAlertBroadcastReceiver(): AlertBroadcastReceiver = AlertBroadcastReceiver()
 
 }

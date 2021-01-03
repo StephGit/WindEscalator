@@ -74,7 +74,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
             onSwitch = { onSwitch(it) }
         }
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AlertViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AlertViewModel::class.java)
         subscribeViewModel(recyclerAdapter)
 
         initSwipe()

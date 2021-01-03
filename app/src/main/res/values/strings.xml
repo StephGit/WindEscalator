@@ -33,6 +33,7 @@
     <string name="alert_detail_activity_toast_error_missing_resource">Select wind resource to alert!</string>
     <string name="alert_notification_title">WindEscalator Alert!</string>
     <string name="alarm_notification_text">Wind alert for: </string>
+    <string name="iv_alert_notification_description">Run!</string>
 
 
 </resources>

@@ -1,8 +1,10 @@
 package windescalator.alert.service
 
 import android.app.Service
+import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.media.MediaPlayer
+import android.media.session.PlaybackState
 import android.os.IBinder
 import android.os.Vibrator
 import android.util.Log
@@ -17,7 +19,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 import windescalator.TAG
+import windescalator.alert.AlertNotificationActivity
+import windescalator.alert.detail.AlertDetailActivity
 import windescalator.alert.detail.WindResource
+import windescalator.alert.receiver.AlertBroadcastReceiver
 import windescalator.data.entity.Alert
 import windescalator.data.repo.AlertRepo
 import windescalator.di.Injector
@@ -35,7 +40,7 @@ class AlertService : Service() {
     lateinit var notificationHandler: NotificationHandler
 
     @Inject
-    lateinit var noiseControl: NoiseControl
+    lateinit var alertReceiver:AlertBroadcastReceiver
 
     private var timer: Timer? = null
     private var lastExecution: LocalDateTime? = LocalDateTime()
@@ -43,7 +48,6 @@ class AlertService : Service() {
     private lateinit var cache: DiskBasedCache
     private lateinit var network: BasicNetwork
     private lateinit var requestQueue: RequestQueue
-    var STARTED: Boolean = false
 
     init {
         Injector.appComponent.inject(this)
@@ -51,8 +55,9 @@ class AlertService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(TAG, "Service started")
+        registerReceiver(alertReceiver, alertReceiver.getFilter())
         timer?.cancel()
-        STARTED = true
+
         var alerts = alertRepo.getActiveAlerts()
         if (alerts.isNullOrEmpty()) {
             Log.d(TAG, "Service stopped")
@@ -71,9 +76,9 @@ class AlertService : Service() {
                     }
                     GlobalScope.launch {
                         alerts.forEach { alert ->
-                            getWindData(alert)
-                            notificationHandler.createAlarmNotification(alert.resource!!)
-                            noiseControl.makeNoise()
+//                            getWindData(alert)
+//                            notificationHandler.createAlarmNotification(alert.resource!!)
+                            sendAlertBroadcast(alert.id!!)
                         }
                     }
                     lastExecution = LocalDateTime()
@@ -83,9 +88,17 @@ class AlertService : Service() {
         return START_STICKY
     }
 
+    private fun sendAlertBroadcast(alertId: Long) {
+        val intent = Intent(applicationContext, AlertBroadcastReceiver::class.java).apply {
+            action = alertReceiver.getFilter().getAction(0)
+            putExtra("ALERT_ID", alertId)
+        }
+        applicationContext.sendBroadcast(intent)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        STARTED = false
+        unregisterReceiver(alertReceiver)
     }
 
     override fun onBind(intent: Intent?): IBinder? {

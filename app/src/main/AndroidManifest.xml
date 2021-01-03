@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
             android:name="windescalator.WindEscalatorApp"
@@ -34,6 +35,11 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity android:name="windescalator.alert.AlertNotificationActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
+
         <receiver android:name="windescalator.alert.receiver.BootBroadcastReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             android:enabled="true"
@@ -42,10 +48,14 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <receiver android:name="windescalator.alert.receiver.AlertBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
         <service
             android:name="windescalator.alert.service.AlertService"
             android:permission="android.permission.FOREGROUND_SERVICE"
-            android:process=":myBackgroundServiceProcess"
+            android:process=":windescalator.AlertService"
             android:enabled="true"
             android:exported="true">
         </service>
