@@ -1,26 +1,17 @@
 package windescalator.alert.service
 
 import android.app.Service
-import android.appwidget.AppWidgetManager
 import android.content.Intent
-import android.media.MediaPlayer
-import android.media.session.PlaybackState
 import android.os.IBinder
-import android.os.Vibrator
 import android.util.Log
-import ch.stephgit.windescalator.R
 import com.android.volley.Request
 import com.android.volley.RequestQueue
-import com.android.volley.toolbox.BasicNetwork
-import com.android.volley.toolbox.DiskBasedCache
-import com.android.volley.toolbox.HurlStack
-import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
+import org.jsoup.Jsoup
 import windescalator.TAG
-import windescalator.alert.AlertNotificationActivity
-import windescalator.alert.detail.AlertDetailActivity
 import windescalator.alert.detail.WindResource
 import windescalator.alert.receiver.AlertBroadcastReceiver
 import windescalator.data.entity.Alert
@@ -40,7 +31,7 @@ class AlertService : Service() {
     lateinit var notificationHandler: NotificationHandler
 
     @Inject
-    lateinit var alertReceiver:AlertBroadcastReceiver
+    lateinit var alertReceiver: AlertBroadcastReceiver
 
     private var timer: Timer? = null
     private var lastExecution: LocalDateTime? = LocalDateTime()
@@ -76,9 +67,8 @@ class AlertService : Service() {
                     }
                     GlobalScope.launch {
                         alerts.forEach { alert ->
-//                            getWindData(alert)
+                            if (isFiring(alert)) sendAlertBroadcast(alert.id!!)
 //                            notificationHandler.createAlarmNotification(alert.resource!!)
-                            sendAlertBroadcast(alert.id!!)
                         }
                     }
                     lastExecution = LocalDateTime()
@@ -86,6 +76,12 @@ class AlertService : Service() {
             }
         }
         return START_STICKY
+    }
+
+    private fun isFiring(alert: Alert): Boolean {
+        getWindData(alert)
+        return false
+
     }
 
     private fun sendAlertBroadcast(alertId: Long) {
@@ -123,6 +119,10 @@ class AlertService : Service() {
         val stringRequest = StringRequest(
                 Request.Method.GET, url,
                 { response ->
+                    var doc = Jsoup.parse(response)
+
+                    // extract response depending on source
+
                     Log.d(TAG, "response: " + response)
                 },
                 { error ->

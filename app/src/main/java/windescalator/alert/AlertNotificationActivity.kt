@@ -39,7 +39,6 @@ class AlertNotificationActivity : Activity() {
         val alertId = intent.getLongExtra("ALERT_ID", -1)
         if (alertId != -1L ) {
             noiseControl.makeNoise()
-
         }
 
         findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener{
@@ -64,11 +63,13 @@ class AlertNotificationActivity : Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        lock.release()
+        if (lock.isHeld) lock.release()
     }
 
     private fun stopAlert() {
+        // deactivate alert ?
         noiseControl.stopNoise()
+        finish()
     }
 
     private fun showWindData() {
