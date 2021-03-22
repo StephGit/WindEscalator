@@ -27,6 +27,7 @@ fun extractWsctData(data: String): WindData {
             windData.windForce = (windText.toDouble() / 1.852).roundToInt()
         } else if (!element.text().contains(":") && (!element.text().contains("Bft"))) {
             var tmp = element.text().replace("&nbsp;", "")
+            // FIXME origin sends too much detail (f.empl.'Nord Nordost')
             Direction.getByFullName(tmp.replace("\n ", ""))?.name.also {
                 if (it != null) {
                     windData.windDirection = it
