@@ -9,6 +9,7 @@ import windescalator.alert.AlertRecyclerAdapter
 import windescalator.alert.detail.WindResourceAdapter
 import windescalator.alert.receiver.AlertBroadcastReceiver
 import windescalator.alert.service.NoiseControl
+import windescalator.alert.service.WindDataHandler
 import windescalator.data.AppDatabase
 import windescalator.data.dao.AlertDao
 import windescalator.data.repo.AlertRepo
@@ -58,6 +59,11 @@ class AppModule {
     @Singleton
     fun provideNoiseControl(context: Context):
             NoiseControl = NoiseControl(context)
+
+    @Provides
+    @Singleton
+    fun provideWindDataHandler(context: Context):
+            WindDataHandler = WindDataHandler(context)
 
     @Provides
     @Singleton

@@ -13,6 +13,7 @@ import windescalator.alert.receiver.AlertBroadcastReceiver
 import windescalator.alert.receiver.BootBroadcastReceiver
 import windescalator.alert.service.AlertService
 import windescalator.alert.service.NoiseControl
+import windescalator.alert.service.WindDataHandler
 import javax.inject.Singleton
 
 @Singleton
@@ -33,6 +34,7 @@ interface AppComponent {
     fun inject(alertNotificationActivity: AlertNotificationActivity)
     fun inject(alertService: AlertService)
     fun inject(noiseControl: NoiseControl)
+    fun inject(windDataAdapter: WindDataHandler)
 
     fun inject(windFragment: WindFragment)
     fun inject(webcamFragment: WebcamFragment)

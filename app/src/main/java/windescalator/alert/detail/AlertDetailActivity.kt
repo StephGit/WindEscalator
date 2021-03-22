@@ -10,9 +10,10 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
-import windescalator.alert.service.AlertService
+import windescalator.alert.detail.direction.Direction
 import windescalator.alert.detail.direction.DirectionChart
 import windescalator.alert.detail.direction.DirectionChartData
+import windescalator.alert.service.AlertService
 import windescalator.data.entity.Alert
 import windescalator.data.repo.AlertRepo
 import windescalator.di.Injector
@@ -118,10 +119,10 @@ class AlertDetailActivity : AppCompatActivity() {
     @SuppressLint("ResourceType")
     private fun initChartData() {
         directionChart = findViewById(R.id.btn_alert_wind_direction)
-        val directions: Array<String> = arrayOf("E", "SE", "S", "SW", "W", "NW", "N", "NE")
+        val directions: Array<Direction> = Direction.values()
         val initColorSlice = resources.getString(R.color.windEscalator_colorSelectedLight)
         directions.forEach {
-            windDirectionData.add(it, initColorSlice)
+            windDirectionData.add(it.name, initColorSlice)
         }
         directionChart.setInitialData(windDirectionData)
     }
