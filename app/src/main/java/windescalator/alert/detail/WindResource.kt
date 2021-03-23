@@ -23,12 +23,18 @@ fun extractWsctData(data: String): WindData {
     val windData = WindData()
     elements.forEach { element ->
         if (element.text().contains("km/h")) {
-            var windText = element.text().filter { it.isDigit() || it == '.' }
+            val windText = element.text().filter { it.isDigit() || it == '.' }
             windData.windForce = (windText.toDouble() / 1.852).roundToInt()
         } else if (!element.text().contains(":") && (!element.text().contains("Bft"))) {
-            var tmp = element.text().replace("&nbsp;", "")
-            // FIXME origin sends too much detail (f.empl.'Nord Nordost')
-            Direction.getByFullName(tmp.replace("\n ", ""))?.name.also {
+            var tmp = element.text().replace("&nbsp;", "").also {
+                it.replace("\n", "")
+            }
+            if (tmp.contains(' ')) {
+                val dirs = tmp.split(" ")
+                tmp = dirs[0]
+            }
+
+            Direction.getByFullName(tmp)?.name.also {
                 if (it != null) {
                     windData.windDirection = it
                 }
@@ -37,7 +43,8 @@ fun extractWsctData(data: String): WindData {
     }
     elements = doc.select("span")
     elements.forEach { element ->
-        windData.messureTime = element.text().filter { it.isDigit() || it == ':' }
+        val times = element.text().split(" ")
+        windData.messureTime = times[3].filter { it.isDigit() || it == ':' }
     }
     return windData
 }

@@ -2,7 +2,6 @@ package windescalator.alert.service
 
 import android.content.Context
 import android.media.MediaPlayer
-import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat.getSystemService
 import ch.stephgit.windescalator.R
@@ -19,12 +18,16 @@ class NoiseControl @Inject constructor(
         Injector.appComponent.inject(this)
     }
 
+    // TODO
+    // Ask for permission to start media on silent modes!
+    // Add preferences for alarm settings
     fun makeNoise() {
+        mediaPlayer.prepare()
         mediaPlayer.isLooping = true
         vibrator = getSystemService(context, Vibrator::class.java) as Vibrator
 
-        val pattern = longArrayOf(500, 1000, 500, 1000)
-        vibrator.vibrate(pattern, 5)
+        val pattern = longArrayOf(500, 1000, 500, 1000, 500, 1000, 500)
+        vibrator.vibrate(pattern, 4)
         mediaPlayer.start()
     }
 

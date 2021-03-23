@@ -12,6 +12,9 @@ interface AlertDao {
     @Query("SELECT * FROM alert where active = 1")
     fun getActiveAlerts(): List<Alert>
 
+    @Query("SELECT * FROM alert where active = 1 and startTime <= :time and endTime >= :time ")
+    fun getActiveAndInTimeAlerts(time: String): List<Alert>
+
     @Query("SELECT * FROM alert")
     fun getAlerts(): LiveData<List<Alert>>
 

@@ -18,6 +18,10 @@ class AlertRepo @Inject constructor(private var alertDao: AlertDao) {
         return GetActiveAsyncTask(alertDao).execute().get()
     }
 
+    fun getActiveAndInTimeAlerts(time: String): List<Alert> {
+        return GetActiveAndInTimeAsyncTask(alertDao).execute(time).get()
+    }
+
     fun getAlert(alertId: Long): Alert? {
         return GetByIdAsyncTask(alertDao).execute(alertId).get()
     }
@@ -53,6 +57,13 @@ class AlertRepo @Inject constructor(private var alertDao: AlertDao) {
             AsyncTask<Void, Void, List<Alert>>() {
         override fun doInBackground(vararg params: Void): List<Alert> {
             return (alertDao.getActiveAlerts())
+        }
+    }
+
+    private class GetActiveAndInTimeAsyncTask internal constructor(private val alertDao: AlertDao) :
+            AsyncTask<String, Void, List<Alert>>() {
+        override fun doInBackground(vararg params: String): List<Alert> {
+            return (alertDao.getActiveAndInTimeAlerts(params[0]))
         }
     }
 

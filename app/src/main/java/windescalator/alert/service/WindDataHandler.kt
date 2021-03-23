@@ -20,7 +20,7 @@ class WindDataHandler @Inject constructor(val context: Context) {
     private lateinit var cache: DiskBasedCache
     private lateinit var network: BasicNetwork
     private lateinit var requestQueue: RequestQueue
-    private lateinit var windData: WindData
+    private var windData: WindData = WindData()
 
     init {
         Injector.appComponent.inject(this)
@@ -39,6 +39,7 @@ class WindDataHandler @Inject constructor(val context: Context) {
 
     fun isFiring(alert: Alert): Boolean {
         getWindData(alert)
+        Log.d(TAG, "WindDataHandler: $windData $alert")
         return isAlert(alert, windData)
     }
 
@@ -52,13 +53,13 @@ class WindDataHandler @Inject constructor(val context: Context) {
     private fun getWindData(alert: Alert) {
         val windResource = WindResource.valueOf(alert.resource!!)
         val url = context.getString(windResource.url)
-        Log.d(TAG, "getWinddata")
+        Log.d(TAG, "WindDataHandler: getWinddata")
         // Formulate the request and handle the response.
         val stringRequest = StringRequest(
             Request.Method.GET, url,
             { response ->
                 // extract response depending on source
-                windData = windResource.extractData(response)
+                this.windData = windResource.extractData(response)
             },
             { error ->
                 // Handle error

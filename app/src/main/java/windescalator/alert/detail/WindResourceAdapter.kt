@@ -62,7 +62,6 @@ class WindResourceAdapter @Inject constructor(
         val tvResource = view.findViewById<TextView>(R.id.tvAlertResource)
         val ivResource = view.findViewById<ImageView>(R.id.ivAlertResource)
         tvResource.text = resource.fullName
-        resource.icon?.let { icon -> ivResource.setBackgroundResource(icon) }
-//        ivResource.setBackgroundResource(resource.icon)
+        resource.icon.let { icon -> ivResource.setBackgroundResource(icon) }
     }
 }
