@@ -1,7 +1,5 @@
 package windescalator.alert
 
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +9,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
 import com.google.android.material.switchmaterial.SwitchMaterial
-import windescalator.alert.service.AlertService
+import windescalator.alert.service.AlarmHandler
 import windescalator.data.entity.Alert
 import javax.inject.Inject
 
 class AlertRecyclerAdapter  @Inject constructor(
-        private val context: Context)  :
+        private val alarmHandler: AlarmHandler) :
         ListAdapter<Alert, AlertRecyclerAdapter.ViewHolder>(AlertDiffCallback()) {
+
 
     var onItemClick: ((Alert) -> Unit)? = null
     var onSwitch: ((Alert) -> Unit)? = null
@@ -43,8 +42,9 @@ class AlertRecyclerAdapter  @Inject constructor(
 
     private fun onSwitchChange(alert: Alert) {
         if (alert.active) {
-            val alertServiceIntent = Intent(context, AlertService::class.java)
-            context.startService(alertServiceIntent)
+            alarmHandler.addOrUpdate(alert)
+        } else {
+            alarmHandler.removeAlarm(alert)
         }
     }
 

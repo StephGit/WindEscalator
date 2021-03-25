@@ -13,7 +13,6 @@ import ch.stephgit.windescalator.R
 import windescalator.alert.detail.direction.Direction
 import windescalator.alert.detail.direction.DirectionChart
 import windescalator.alert.detail.direction.DirectionChartData
-import windescalator.alert.service.AlertService
 import windescalator.data.entity.Alert
 import windescalator.data.repo.AlertRepo
 import windescalator.di.Injector
@@ -210,8 +209,9 @@ class AlertDetailActivity : AppCompatActivity() {
             } ?: run {
                 alert.active = true
                 alertRepo.insert(alert)
-                val alertServiceIntent = Intent(this.applicationContext, AlertService::class.java)
-                startService(alertServiceIntent)
+                // TODO needs start of alert?
+//                val alertServiceIntent = Intent(this.applicationContext, AlertService::class.java)
+//                startService(alertServiceIntent)
             }
             finish()
             Toast.makeText(

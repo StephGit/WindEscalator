@@ -11,7 +11,6 @@ import androidx.core.app.NotificationCompat
 import ch.stephgit.windescalator.BuildConfig
 import ch.stephgit.windescalator.R
 import windescalator.WindEscalatorActivity
-import windescalator.WindFragment
 import javax.inject.Inject
 
 class NotificationHandler @Inject constructor(
@@ -34,7 +33,6 @@ class NotificationHandler @Inject constructor(
                 .setContentTitle(context.getString(R.string.alert_notification_title))
                 .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.alarm_notification_text) + resource))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setVibrate(longArrayOf(500, 1000, 500, 1000))
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
 
@@ -59,5 +57,14 @@ class NotificationHandler @Inject constructor(
             val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    fun getServiceNotification(): Notification {
+        createNotificationChannel(notificationChannelId)
+        return NotificationCompat.Builder(context, notificationChannelId)
+                .setSmallIcon(R.drawable.ic_windbag_black_24)
+                .setContentTitle("WindEscalator: Started service")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true).build()
     }
 }

@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import windescalator.alert.AlertFragment
-import windescalator.alert.service.AlertService
 import windescalator.di.Injector
 
 
@@ -30,8 +29,9 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
         replaceFragment(AlertFragment())
 
-        val alertServiceIntent = Intent(this, AlertService::class.java)
-        startService(alertServiceIntent)
+        //TODO start alarm Manager?
+//        val alertServiceIntent = Intent(applicationContext, AlertService::class.java)
+//        startService(alertServiceIntent)
 
     }
 

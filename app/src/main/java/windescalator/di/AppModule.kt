@@ -7,7 +7,9 @@ import dagger.Module
 import dagger.Provides
 import windescalator.alert.AlertRecyclerAdapter
 import windescalator.alert.detail.WindResourceAdapter
+import windescalator.alert.receiver.AlarmBroadcastReceiver
 import windescalator.alert.receiver.AlertBroadcastReceiver
+import windescalator.alert.service.AlarmHandler
 import windescalator.alert.service.NoiseControl
 import windescalator.alert.service.WindDataHandler
 import windescalator.data.AppDatabase
@@ -41,9 +43,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideAlertRecyclerAdapter(
-            context: Context):
-            AlertRecyclerAdapter = AlertRecyclerAdapter(context)
+    fun provideAlertRecyclerAdapter(alarmHandler: AlarmHandler):
+            AlertRecyclerAdapter = AlertRecyclerAdapter(alarmHandler)
 
     @Provides
     @Singleton
@@ -65,8 +66,19 @@ class AppModule {
     fun provideWindDataHandler(context: Context):
             WindDataHandler = WindDataHandler(context)
 
+
+    @Provides
+    @Singleton
+    fun provideAlarmHandler(
+            context: Context,
+            alertRepo: AlertRepo):
+            AlarmHandler = AlarmHandler(context, alertRepo)
+
     @Provides
     @Singleton
     fun provideAlertBroadcastReceiver(): AlertBroadcastReceiver = AlertBroadcastReceiver()
 
+    @Provides
+    @Singleton
+    fun provideAlarmBroadcastReceiver(): AlarmBroadcastReceiver = AlarmBroadcastReceiver()
 }

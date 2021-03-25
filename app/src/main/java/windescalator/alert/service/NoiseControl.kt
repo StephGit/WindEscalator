@@ -8,6 +8,7 @@ import ch.stephgit.windescalator.R
 import windescalator.di.Injector
 import javax.inject.Inject
 
+
 class NoiseControl @Inject constructor(
         val context: Context) {
 
@@ -22,13 +23,17 @@ class NoiseControl @Inject constructor(
     // Ask for permission to start media on silent modes!
     // Add preferences for alarm settings
     fun makeNoise() {
-        mediaPlayer.prepare()
-        mediaPlayer.isLooping = true
+
         vibrator = getSystemService(context, Vibrator::class.java) as Vibrator
 
         val pattern = longArrayOf(500, 1000, 500, 1000, 500, 1000, 500)
         vibrator.vibrate(pattern, 4)
-        mediaPlayer.start()
+
+        mediaPlayer.setOnPreparedListener {
+            mediaPlayer.isLooping = true
+            mediaPlayer.start()
+        }
+
     }
 
     fun stopNoise() {

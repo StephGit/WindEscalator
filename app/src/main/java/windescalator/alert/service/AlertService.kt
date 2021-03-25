@@ -41,8 +41,14 @@ class AlertService : Service() {
         Injector.appComponent.inject(this)
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        startForeground(1, notificationHandler.getServiceNotification())
+    }
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d(TAG, "AlertService started")
+        Log.d(TAG, "AlertService started $this")
+
         registerReceiver(alertReceiver, alertReceiver.getFilter())
         timer?.cancel()
 
@@ -52,14 +58,16 @@ class AlertService : Service() {
             stopService(intent)
             return START_NOT_STICKY
         } else {
+            Log.d(TAG, "AlertService starting timer")
             val fiveMinutes = 1000L * 10//60 * 5  // TODO set to 5 min
+
             timer = fixedRateTimer("AlertService", true, initialDelay = 0, period = fiveMinutes) {
                 // track last execution to handle windescalator.alert.service restarts
                 if (lastExecution?.plusMinutes(1)?.isBefore(LocalDateTime()) == true) {
-                    Log.d(TAG, "AlertService: LastExecution: " + lastExecution)
+                    Log.d(TAG, "AlertService: LastExecution: $lastExecution")
                     alerts = alertRepo.getActiveAndInTimeAlerts(LocalDateTime.now().toString(fmt))
                     if (alerts.isNullOrEmpty()) {
-                        this.cancel()
+                        stopService(intent)
                     }
                     GlobalScope.launch {
                         alerts.forEach { alert ->
@@ -70,6 +78,7 @@ class AlertService : Service() {
                     lastExecution = LocalDateTime()
                 }
             }
+            Log.d(TAG, "AlertService timer $timer")
         }
         return START_STICKY
     }
