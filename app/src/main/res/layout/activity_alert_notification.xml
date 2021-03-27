@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/windEscalator_colorBrand"
-    tools:context="windescalator.alert.AlertNotificationActivity">
+    tools:context="ch.stephgit.windescalator.alert.AlertNotificationActivity">
 
     <ImageView
         android:id="@+id/iv_alert_notification"

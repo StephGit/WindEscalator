@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/windEscalator_colorBackground"
-    tools:context="windescalator.alert.detail.AlertDetailActivity">
+    tools:context="ch.stephgit.windescalator.alert.detail.AlertDetailActivity">
 
     <EditText
         android:id="@+id/et_add_alert_name"
@@ -124,7 +124,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_time_delimiter" />
 
-    <windescalator.alert.detail.direction.DirectionChart
+    <ch.stephgit.windescalator.alert.detail.direction.DirectionChart
         android:id="@+id/btn_alert_wind_direction"
         android:layout_width="match_parent"
         android:layout_height="200dp"

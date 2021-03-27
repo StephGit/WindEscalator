@@ -1,5 +1,0 @@
-package windescalator
-
-interface WindEscalatorNavigator {
-
-}
