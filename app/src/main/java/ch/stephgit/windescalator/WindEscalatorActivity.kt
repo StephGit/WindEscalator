@@ -6,10 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import ch.stephgit.windescalator.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import ch.stephgit.windescalator.alert.AlertFragment
 import ch.stephgit.windescalator.di.Injector
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
@@ -30,9 +29,6 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         replaceFragment(AlertFragment())
 
         //TODO start alarm Manager?
-//        val alertServiceIntent = Intent(applicationContext, AlertService::class.java)
-//        startService(alertServiceIntent)
-
     }
 
     private fun selectMenuItem(clickedMenuItem: MenuItem): Boolean {

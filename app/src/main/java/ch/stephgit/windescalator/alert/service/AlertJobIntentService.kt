@@ -3,13 +3,13 @@ package ch.stephgit.windescalator.alert.service
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
-import org.joda.time.LocalDateTime
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
 import ch.stephgit.windescalator.di.Injector
+import org.joda.time.LocalDateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class AlertJobIntentService : JobIntentService() {
@@ -28,7 +28,7 @@ class AlertJobIntentService : JobIntentService() {
 
     private val fmt: DateTimeFormatter = DateTimeFormat.forPattern("HH:mm")
     private val jobId = 111
-    private val interval = 5 // TODO make interval customizable
+
 
     init {
         Injector.appComponent.inject(this)
@@ -39,19 +39,21 @@ class AlertJobIntentService : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
+        var alertId = intent.getLongExtra("ALERT_ID", -1)
         val currentTimeString = LocalDateTime.now().toString(fmt)
-        val alerts = alertRepo.getActiveAndInTimeAlerts(currentTimeString)
-        if (!alerts.isNullOrEmpty()) { // maybe some ghost alarm?!
-            alerts.forEach { alert ->
-                if (windDataAdapter.isFiring(alert)) sendAlertBroadcast(alert.id!!)
+        if (alertId == -1L) {
+            val alerts = alertRepo.getActiveAndInTimeAlerts(currentTimeString)
+            if (!alerts.isNullOrEmpty()) { // maybe some ghost alarm?!
+                alerts.forEach { alert ->
+                    handleAlert(alert)
+                }
             }
-            // Trigger AlertJobIntentService in interval-time again
-            alarmHandler.addOrUpdate(Alert("", true, "",
-                    LocalDateTime.now().plusMinutes(interval).toString(fmt), "",
-                    0, null, 666))
-        }
+        } else alertRepo.getAlert(alertId)?.let { handleAlert(it) }
+    }
 
-
+    private fun handleAlert(alert: Alert) {
+        if (windDataAdapter.isFiring(alert)) sendAlertBroadcast(alert.id!!)
+        alarmHandler.addOrUpdate(alert)
     }
 
     private fun sendAlertBroadcast(alertId: Long) {

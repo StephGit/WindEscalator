@@ -12,6 +12,7 @@ data class Alert(
     var endTime: String?,
     var windForceKts: Int?,
     var directions: List<String>?,
+    var pending: Boolean = false,
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null
 )

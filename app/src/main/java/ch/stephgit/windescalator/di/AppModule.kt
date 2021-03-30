@@ -3,19 +3,19 @@ package ch.stephgit.windescalator.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import dagger.Module
-import dagger.Provides
 import ch.stephgit.windescalator.alert.AlertRecyclerAdapter
 import ch.stephgit.windescalator.alert.detail.WindResourceAdapter
 import ch.stephgit.windescalator.alert.receiver.AlarmBroadcastReceiver
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlarmHandler
-import ch.stephgit.windescalator.alert.service.NoiseControl
+import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.alert.service.WindDataHandler
 import ch.stephgit.windescalator.data.AppDatabase
 import ch.stephgit.windescalator.data.dao.AlertDao
 import ch.stephgit.windescalator.data.repo.AlertRepo
 import ch.stephgit.windescalator.remote.NotificationHandler
+import dagger.Module
+import dagger.Provides
 import javax.inject.Singleton
 
 
@@ -58,8 +58,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideNoiseControl(context: Context):
-            NoiseControl = NoiseControl(context)
+    fun provideNoiseHandler(context: Context):
+            NoiseHandler = NoiseHandler(context)
 
     @Provides
     @Singleton

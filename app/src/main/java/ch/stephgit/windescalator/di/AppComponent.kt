@@ -14,7 +14,7 @@ import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.receiver.BootBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.alert.service.AlertJobIntentService
-import ch.stephgit.windescalator.alert.service.NoiseControl
+import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.alert.service.WindDataHandler
 import javax.inject.Singleton
 
@@ -35,7 +35,7 @@ interface AppComponent {
     fun inject(alertDetailActivity: AlertDetailActivity)
     fun inject(alertNotificationActivity: AlertNotificationActivity)
     fun inject(alertJobIntentService: AlertJobIntentService)
-    fun inject(noiseControl: NoiseControl)
+    fun inject(noiseHandler: NoiseHandler)
     fun inject(windDataAdapter: WindDataHandler)
     fun inject(alarmHandler: AlarmHandler)
 

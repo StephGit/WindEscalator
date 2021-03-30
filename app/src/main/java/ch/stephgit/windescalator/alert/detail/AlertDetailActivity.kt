@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.view.View
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
@@ -80,7 +81,8 @@ class AlertDetailActivity : AppCompatActivity() {
         endTime = findViewById(R.id.et_alert_end_time)
         endTime.inputType = InputType.TYPE_NULL
         startTime.setOnClickListener {
-            getTimePickerDialog(startTime)
+//            getTimePickerDialog(startTime)
+            showTimePickerDialog(it)
         }
         endTime.setOnClickListener {
             getTimePickerDialog(endTime)
@@ -221,6 +223,10 @@ class AlertDetailActivity : AppCompatActivity() {
             )
                     .show()
         }
+    }
+
+    private fun showTimePickerDialog(v: View) {
+        TimePickerFragment().show(supportFragmentManager, "timePicker")
     }
 }
 

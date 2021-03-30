@@ -34,6 +34,11 @@
     <string name="alert_notification_title">WindEscalator Alert!</string>
     <string name="alarm_notification_text">Wind alert for: </string>
     <string name="iv_alert_notification_description">Run!</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="kts">Kts:</string>
+    <string name="kts_threshold">Kts Threshold</string>
+    <string name="save">Save</string>
 
 
 </resources>

@@ -11,6 +11,8 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import ch.stephgit.windescalator.R
+import kotlin.math.cos
+import kotlin.math.sin
 
 class DirectionChart @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -95,14 +97,14 @@ class DirectionChart @JvmOverloads constructor(
      * @param key key of chart slice being altered
      */
     private fun setLabelLocation(key: String) {
-        chartData.slices.get(key)?.let {
+        chartData.slices[key]?.let {
             val middleAngle = it.sweepAngle / 2 + it.startAngle
-            val distanceToCenter = (3 * layoutParams.height / chartData!!.totalValue)
+            val distanceToCenter = (3 * layoutParams.height / chartData.totalValue)
 
             it.labelLocation.x = distanceToCenter *
-                    Math.cos(Math.toRadians(middleAngle.toDouble())).toFloat() + width / 2
+                    cos(Math.toRadians(middleAngle.toDouble())).toFloat() + width / 2
             it.labelLocation.y = distanceToCenter *
-                    Math.sin(Math.toRadians(middleAngle.toDouble())).toFloat() +layoutParams.height / 2
+                    sin(Math.toRadians(middleAngle.toDouble())).toFloat() +layoutParams.height / 2
         }
     }
 
@@ -184,7 +186,6 @@ class DirectionChart @JvmOverloads constructor(
                 when (it.value.state) {
                     SliceState.UNSELECTED -> updateColorState(it.value, colorSelected, SliceState.SELECTED)
                     SliceState.SELECTED -> updateColorState(it.value, colorSlice, SliceState.UNSELECTED)
-                    else -> {}
                 }
                 return@forEach
             }
