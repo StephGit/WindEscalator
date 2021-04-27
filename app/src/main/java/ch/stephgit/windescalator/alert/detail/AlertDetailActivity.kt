@@ -1,7 +1,6 @@
 package ch.stephgit.windescalator.alert.detail
 
 import android.annotation.SuppressLint
-import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +9,8 @@ import android.view.View
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChart
@@ -17,7 +18,6 @@ import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
 import ch.stephgit.windescalator.di.Injector
-import java.util.*
 import javax.inject.Inject
 
 
@@ -33,12 +33,16 @@ class AlertDetailActivity : AppCompatActivity() {
     private val windDirectionData = DirectionChartData()
     private lateinit var directionChart: DirectionChart
     private lateinit var saveButton: Button
+    private lateinit var timeViewModel: TimeViewModel
 
     @Inject
     lateinit var alertRepo: AlertRepo
 
     @Inject
     lateinit var windResourceAdapter: WindResourceAdapter
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, AlertDetailActivity::class.java)
@@ -51,6 +55,8 @@ class AlertDetailActivity : AppCompatActivity() {
 
         Injector.appComponent.inject(this)
         initViewElements()
+
+        timeViewModel = ViewModelProvider(this).get(TimeViewModel::class.java)
 
         val extras = intent.extras
         val alertId = extras?.get("ALERT_ID") as Long?
@@ -81,23 +87,36 @@ class AlertDetailActivity : AppCompatActivity() {
         endTime = findViewById(R.id.et_alert_end_time)
         endTime.inputType = InputType.TYPE_NULL
         startTime.setOnClickListener {
-//            getTimePickerDialog(startTime)
+            subscribeViewModel(startTime)
             showTimePickerDialog(it)
         }
         endTime.setOnClickListener {
-            getTimePickerDialog(endTime)
+            subscribeViewModel(endTime)
+            showTimePickerDialog(it)
         }
     }
 
-    private fun getTimePickerDialog(text: EditText) {
-        val cldr = Calendar.getInstance()
-        val hour = cldr[Calendar.HOUR_OF_DAY]
-        val minutes = cldr[Calendar.MINUTE]
-        val timePickerDialog = TimePickerDialog(
-                this@AlertDetailActivity,
-                { _, sHour, sMinute -> text.setText(String.format("%02d:%02d", sHour, sMinute)) }, hour, minutes, true)
-        timePickerDialog.show()
+    private fun subscribeViewModel(text: EditText) {
+        timeViewModel.time.removeObservers(this)
+        timeViewModel.time.observe(this, Observer {
+            text.setText(it)
+        })
     }
+
+//
+//    private fun getTimePickerDialog(text: EditText) {
+//        val cldr = Calendar.getInstance()
+//        val hour = cldr[Calendar.HOUR_OF_DAY]
+//        val minutes = cldr[Calendar.MINUTE]
+//        val timePickerDialog = TimePickerDialog(
+//            this@AlertDetailActivity,
+//            { _, sHour, sMinute -> text.setText(String.format("%02d:%02d", sHour, sMinute)) },
+//            hour,
+//            minutes,
+//            true
+//        )
+//        timePickerDialog.show()
+//    }
 
     private fun initSeekBar() {
         seekBar = findViewById(R.id.sb_alert_threshold)
@@ -168,9 +187,11 @@ class AlertDetailActivity : AppCompatActivity() {
                 false
             }
             (windResourceSpinner.selectedItemId == 0L) -> {
-                Toast.makeText(this,
-                        getString(R.string.alert_detail_activity_toast_error_missing_resource),
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.alert_detail_activity_toast_error_missing_resource),
+                    Toast.LENGTH_SHORT
+                ).show()
                 false
             }
             startTime.text.isNullOrBlank() -> {
@@ -182,15 +203,19 @@ class AlertDetailActivity : AppCompatActivity() {
                 false
             }
             (seekBar.progress == 0) -> {
-                Toast.makeText(this,
-                        getString(R.string.alert_detail_activity_toast_error_missing_threshold),
-                        Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.alert_detail_activity_toast_error_missing_threshold),
+                    Toast.LENGTH_LONG
+                ).show()
                 false
             }
             (directionChart.getSelectedData().isNullOrEmpty()) -> {
-                Toast.makeText(this,
-                        getString(R.string.alert_detail_activity_toast_error_missing_directions),
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.alert_detail_activity_toast_error_missing_directions),
+                    Toast.LENGTH_SHORT
+                ).show()
                 false
             }
             else -> true
@@ -217,16 +242,16 @@ class AlertDetailActivity : AppCompatActivity() {
             }
             finish()
             Toast.makeText(
-                    this,
-                    getString(R.string.alert_detail_activity_toast_saved_alert),
-                    Toast.LENGTH_SHORT
+                this,
+                getString(R.string.alert_detail_activity_toast_saved_alert),
+                Toast.LENGTH_SHORT
             )
-                    .show()
+                .show()
         }
     }
 
     private fun showTimePickerDialog(v: View) {
-        TimePickerFragment().show(supportFragmentManager, "timePicker")
+        TimePickerFragment().show(supportFragmentManager, TimePickerFragment.TAG)
     }
 }
 
