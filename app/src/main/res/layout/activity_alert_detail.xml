@@ -67,7 +67,6 @@
         app:layout_constraintRight_toLeftOf="@id/et_alert_end_time"
         app:layout_constraintTop_toBottomOf="@id/sp_select_alert_resource" />
 
-
     <EditText
         android:id="@+id/et_alert_end_time"
         android:layout_width="wrap_content"
@@ -84,7 +83,6 @@
         app:layout_constraintLeft_toRightOf="@id/tv_time_delimiter"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sp_select_alert_resource" />
-
 
     <TextView
         android:layout_width="wrap_content"

@@ -27,10 +27,12 @@
     <string name="alert_detail_activity_toast_saved_alert">Alert saved!</string>
     <string name="header_wind_resource">Select wind resource...</string>
     <string name="alert_detail_activity_toast_error_missing_directions">Really! Alerting for wind from no direction?! Are you on the moon?!</string>
-    <string name="alert_detail_activity_toast_error_missing_threshold">Select minimal wind force to trigger alert!</string>
+    <string name="alert_detail_activity_toast_error_missing_threshold">Select a minimal wind force to trigger the alert!</string>
     <string name="alert_detail_activity_error_missing_endtime">Set end time to watch for wind!</string>
+    <string name="alert_detail_activity_error_same_start_and_endtime">Set different times for start and end!</string>
+    <string name="alert_detail_activity_error_endtime_before_starttime">Make sure you set the starttime before the endtime"</string>
     <string name="alert_detail_activity_error_missing_starttime">Set time to start watching for wind!</string>
-    <string name="alert_detail_activity_toast_error_missing_resource">Select wind resource to alert!</string>
+    <string name="alert_detail_activity_toast_error_missing_resource">Select a wind resource to alert!</string>
     <string name="alert_notification_title">WindEscalator Alert!</string>
     <string name="alarm_notification_text">Wind alert for: </string>
     <string name="iv_alert_notification_description">Run!</string>

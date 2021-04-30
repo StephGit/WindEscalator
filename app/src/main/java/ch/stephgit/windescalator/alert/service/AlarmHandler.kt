@@ -9,7 +9,9 @@ import ch.stephgit.windescalator.alert.receiver.AlarmBroadcastReceiver
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
 import ch.stephgit.windescalator.di.Injector
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -61,19 +63,10 @@ class AlarmHandler @Inject constructor(
 
     private fun createAlarm(alert: Alert) {
 
-        val alarmTimeInMillis: Long = if (alert.pending) {
-            // is endtime arrived
-            if (alert.endTime!! <= LocalDateTime.now().format(fmt).toString()) {
-                // set the alarm to next day starttime
-                getMillis(LocalDateTime.parse(alert.startTime, fmt).plusDays(1))
-            } else {
-                // set to interval
-                getMillis(LocalDateTime.now().plusMinutes(interval))
-            }
-        } else {
-            // set to starttime
-            getMillis(LocalDateTime.parse(alert.startTime, fmt))
-        }
+        val alarmTimeInMillis: Long =
+                // is endtime arrived
+                calculateNextAlarm(alert, alert.pending)
+
 
         alarmIntent = getPendingIntent(alert.id!!.toInt())
 
@@ -83,6 +76,23 @@ class AlarmHandler @Inject constructor(
                 0,
                 alarmIntent
         )
+    }
+
+    private fun calculateNextAlarm(alert: Alert, pendingAlert: Boolean): Long {
+        return when {
+            alert.endTime!! <= LocalDateTime.now().format(fmt).toString() -> {
+                // set the alarm to next day starttime
+                getMillis(LocalDateTime.of(LocalDate.now(), LocalTime.parse(alert.startTime, fmt)).plusDays(1));
+            }
+            pendingAlert -> {
+                // set to interval
+                getMillis(LocalDateTime.now().plusMinutes(interval))
+            }
+            else -> {
+                // set to starttime
+                getMillis(LocalDateTime.of(LocalDate.now(), LocalTime.parse(alert.startTime, fmt)));
+            }
+        }
     }
 
     private fun cancelAlarm(alert: Alert) {

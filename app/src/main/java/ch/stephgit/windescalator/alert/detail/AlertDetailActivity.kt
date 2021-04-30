@@ -103,21 +103,6 @@ class AlertDetailActivity : AppCompatActivity() {
         })
     }
 
-//
-//    private fun getTimePickerDialog(text: EditText) {
-//        val cldr = Calendar.getInstance()
-//        val hour = cldr[Calendar.HOUR_OF_DAY]
-//        val minutes = cldr[Calendar.MINUTE]
-//        val timePickerDialog = TimePickerDialog(
-//            this@AlertDetailActivity,
-//            { _, sHour, sMinute -> text.setText(String.format("%02d:%02d", sHour, sMinute)) },
-//            hour,
-//            minutes,
-//            true
-//        )
-//        timePickerDialog.show()
-//    }
-
     private fun initSeekBar() {
         seekBar = findViewById(R.id.sb_alert_threshold)
         labelSeekBar = findViewById(R.id.sb_label)
@@ -200,6 +185,14 @@ class AlertDetailActivity : AppCompatActivity() {
             }
             endTime.text.isNullOrBlank() -> {
                 endTime.error = getString(R.string.alert_detail_activity_error_missing_endtime)
+                false
+            }
+            startTime.text.equals(endTime.text) -> {
+                endTime.error = getString(R.string.alert_detail_activity_error_same_start_and_endtime)
+                false
+            }
+            (startTime.text.toString() > endTime.text.toString()) -> {
+                endTime.error = getString(R.string.alert_detail_activity_error_same_start_and_endtime)
                 false
             }
             (seekBar.progress == 0) -> {
