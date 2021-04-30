@@ -172,47 +172,43 @@ class AlertDetailActivity : AppCompatActivity() {
                 false
             }
             (windResourceSpinner.selectedItemId == 0L) -> {
-                Toast.makeText(
-                    this,
-                    getString(R.string.alert_detail_activity_toast_error_missing_resource),
-                    Toast.LENGTH_SHORT
-                ).show()
+                showErrorToast( getString(R.string.alert_detail_activity_toast_error_missing_resource))
                 false
             }
             startTime.text.isNullOrBlank() -> {
-                startTime.error = getString(R.string.alert_detail_activity_error_missing_starttime)
+                showErrorToast(getString(R.string.alert_detail_activity_error_missing_starttime))
                 false
             }
             endTime.text.isNullOrBlank() -> {
-                endTime.error = getString(R.string.alert_detail_activity_error_missing_endtime)
+                showErrorToast(getString(R.string.alert_detail_activity_error_missing_endtime))
                 false
             }
             startTime.text.equals(endTime.text) -> {
-                endTime.error = getString(R.string.alert_detail_activity_error_same_start_and_endtime)
+                showErrorToast(getString(R.string.alert_detail_activity_error_same_start_and_endtime))
                 false
             }
             (startTime.text.toString() > endTime.text.toString()) -> {
-                endTime.error = getString(R.string.alert_detail_activity_error_same_start_and_endtime)
+                showErrorToast(getString(R.string.alert_detail_activity_error_endtime_before_starttime))
                 false
             }
             (seekBar.progress == 0) -> {
-                Toast.makeText(
-                    this,
-                    getString(R.string.alert_detail_activity_toast_error_missing_threshold),
-                    Toast.LENGTH_LONG
-                ).show()
+                showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_threshold))
                 false
             }
             (directionChart.getSelectedData().isNullOrEmpty()) -> {
-                Toast.makeText(
-                    this,
-                    getString(R.string.alert_detail_activity_toast_error_missing_directions),
-                    Toast.LENGTH_SHORT
-                ).show()
+                showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_directions))
                 false
             }
             else -> true
         }
+    }
+
+    private fun showErrorToast(error: String) {
+        Toast.makeText(
+                this,
+                error,
+                Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun saveOrUpdate() {
