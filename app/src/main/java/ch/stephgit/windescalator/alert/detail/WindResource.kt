@@ -48,34 +48,15 @@ private fun isActualData(s: String, values: List<String>): Boolean {
 
 private fun extractWsctData(data: String): WindData {
     val doc = Jsoup.parse(data)
-    var elements = doc.select("td[width=120]")
-    val windData = WindData()
-    elements.forEach { element ->
-        if (element.text().contains("km/h")) {
-            val windText = element.text().filter { it.isDigit() || it == '.' }
-            windData.windForce = calcKnotsByKmh(windText)
-        } else if (!element.text().contains(":") && (!element.text().contains("Bft"))) {
-            var tmp = element.text().replace("&nbsp;", "").also {
-                it.replace("\n", "")
-            }
-            if (tmp.contains(' ')) {
-                val dirs = tmp.split(" ")
-                tmp = dirs[0]
-            }
+    val knots = doc.select("windkts").text();
+    val degrees = doc.select("curval_winddir").text();
+    val time = doc.select("time").text();
 
-            Direction.getByFullName(tmp)?.name.also {
-                if (it != null) {
-                    windData.windDirection = it
-                }
-            }
-        }
-    }
-    elements = doc.select("span")
-    elements.forEach { element ->
-        val times = element.text().split(" ")
-        windData.messureTime = times[3].filter { it.isDigit() || it == ':' }
-    }
-    return windData
+    return WindData(
+        knots.toDouble().roundToInt(),
+        Direction.getByDegree(Integer.parseInt(degrees)).name,
+        time)
+
 }
 
 private fun calcKnotsByKmh(windText: String) = (windText.toDouble() / 1.852).roundToInt()
