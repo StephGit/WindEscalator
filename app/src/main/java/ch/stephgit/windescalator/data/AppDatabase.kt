@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import ch.stephgit.windescalator.data.dao.AlertDao
 import ch.stephgit.windescalator.data.entity.Alert
 
-@Database(entities = [Alert::class], version = 1)
+@Database(entities = [Alert::class], version = 1, exportSchema = false)
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun alertDao(): AlertDao
