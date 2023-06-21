@@ -1,6 +1,6 @@
 # WindEscalator App
 
-[![Build Status](https://travis-ci.com/StephGit/WindEscalator.svg?branch=master)](https://travis-ci.com/StephGit/WindEscalator)
+[![Build app](https://github.com/StephGit/WindEscalator/actions/workflows/push.yml/badge.svg)](https://github.com/StephGit/WindEscalator/actions/workflows/push.yml)
 
 Simple wind alerting app for Android in Kotlin.
 
@@ -17,12 +17,11 @@ Android-App to alert driven windsurfers in Thun when the local Ober-Wind kicks i
 
 ## Technologies
 
-- Android SDK v28 (min v21)
-- Kotlin 1.3.21
-- Dagger 2.20 
-- Lifecycle 2.2.0
-- Room 2.0.0
-- Coroutines 1.1.1
+- Android SDK v33 (min v26)
+- Kotlin 1.8.0
+- Dagger 2.33
+- Lifecycle 2.4.1
+- Room 2.5.1
 
 ## Getting Started
 
