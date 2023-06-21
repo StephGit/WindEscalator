@@ -20,7 +20,8 @@ class TimePickerFragment : DialogFragment() {
     private lateinit var cancelButton: Button
     private lateinit var okButton: Button
     private lateinit var viewModel: TimeViewModel
-    private var leadingZero: String = ""
+    private var leadingZeroMin: String = ""
+    private var leadingZeroHour: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_timepicker, container, false)
@@ -41,8 +42,9 @@ class TimePickerFragment : DialogFragment() {
         okButton = view.findViewById(R.id.btn_time_ok)
         cancelButton = view.findViewById(R.id.btn_time_cancel)
         okButton.setOnClickListener {
-            if (picker.minute < 10) { leadingZero = "0" }
-            viewModel.sendTime(picker.hour.toString() + ":" + leadingZero + picker.minute.toString())
+            if (picker.minute < 10) { leadingZeroMin = "0" }
+            if (picker.hour < 10) { leadingZeroHour = "0" }
+            viewModel.sendTime( leadingZeroHour + picker.hour.toString() + ":" + leadingZeroMin + picker.minute.toString())
             dismiss()
         }
 

@@ -9,6 +9,9 @@ import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.di.Injector
 import javax.inject.Inject
 
+/*
+ Start AlarmHandler on boot
+ */
 class BootBroadcastReceiver : BroadcastReceiver() {
 
     /**

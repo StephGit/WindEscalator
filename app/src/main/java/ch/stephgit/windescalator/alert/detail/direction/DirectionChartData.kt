@@ -6,7 +6,6 @@ import android.graphics.PointF
 import android.util.Log
 import ch.stephgit.windescalator.TAG
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 class DirectionChartData {
     val totalValue = 8 // fixed amount of slices

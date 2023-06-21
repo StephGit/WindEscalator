@@ -1,7 +1,6 @@
 package ch.stephgit.windescalator.alert.detail
 
 import ch.stephgit.windescalator.R
-import ch.stephgit.windescalator.alert.WindData
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
@@ -30,9 +29,9 @@ private fun extractScniData(data: String): WindData {
     if (lines.isNotEmpty()) {
         var values = lines[lines.lastIndex - 1].split(" ")
         if (isActualData(lines[0], values)) {
-            windData.messureTime = values[1]
-            windData.windDirection = Direction.getByDegree(values[2].toInt()).toString()
-            windData.windForce = calcKnotsByKmh(values[3])
+            windData.time = values[1]
+            windData.direction = Direction.getByDegree(values[2].toInt()).toString()
+            windData.force = calcKnotsByKmh(values[3])
         }
     }
     return windData
@@ -42,7 +41,7 @@ private fun isActualData(s: String, values: List<String>): Boolean {
     val fmt: DateTimeFormatter = DateTimeFormat.forPattern("DD/MM/yy")
     var date = s.split(' ')[0]
     return LocalDate.now().toString(fmt)
-        .equals(date.toString()) && LocalDateTime.now().hourOfDay.toString() == values[1].split(':')[0]
+        .equals(date) && LocalDateTime.now().hourOfDay.toString() == values[1].split(':')[0]
 
 }
 

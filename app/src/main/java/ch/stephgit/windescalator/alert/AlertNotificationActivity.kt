@@ -20,6 +20,10 @@ import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
+/*
+ Activity to show ongoing alert
+ */
+
 class AlertNotificationActivity : AppCompatActivity() {
 
     @Inject
@@ -42,7 +46,7 @@ class AlertNotificationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_alert_notification)
 
@@ -52,9 +56,6 @@ class AlertNotificationActivity : AppCompatActivity() {
         val alertId = intent.getLongExtra("ALERT_ID", -1)
         if (alertId != -1L ) {
 
-            alert = alertRepo.getAlert(alertId)!!
-            noiseHandler.makeNoise()
-
             findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener{
                 showWindData()
             }
@@ -62,6 +63,9 @@ class AlertNotificationActivity : AppCompatActivity() {
             findViewById<FloatingActionButton>(R.id.btn_stopAlert).setOnClickListener{
                 stopAlert()
             }
+
+            alert = alertRepo.getAlert(alertId)!!
+            noiseHandler.makeNoise()
 
             wakeUp()
 

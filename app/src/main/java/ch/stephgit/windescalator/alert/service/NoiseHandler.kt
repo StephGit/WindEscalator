@@ -2,9 +2,12 @@ package ch.stephgit.windescalator.alert.service
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
 import androidx.core.content.ContextCompat.getSystemService
 import ch.stephgit.windescalator.R
+import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.di.Injector
 import javax.inject.Inject
 
@@ -26,17 +29,20 @@ class NoiseHandler @Inject constructor(
         mediaPlayer = MediaPlayer.create(context, R.raw.alarm_sound)
         vibrator = getSystemService(context, Vibrator::class.java) as Vibrator
 
-        val pattern = longArrayOf(500, 1000, 500, 1000, 500, 1000, 500)
-        vibrator.vibrate(pattern, 4)
+        val vibe = VibrationEffect.createWaveform(longArrayOf(500, 1000, 500, 1000, 500, 1000, 500), 4)
+
+        vibrator.vibrate(vibe)
 
         mediaPlayer.setOnPreparedListener {
             mediaPlayer.isLooping = true
-            mediaPlayer.start()
+//            mediaPlayer.start()
         }
 
     }
 
     fun stopNoise() {
+        Log.d(TAG, "NoiseHandler: stopNoise called")
+        vibrator.cancel()
         if (mediaPlayer.isPlaying) {
             mediaPlayer.stop()
             vibrator.cancel()

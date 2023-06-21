@@ -18,14 +18,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import ch.stephgit.windescalator.alert.detail.AlertDetailActivity
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.di.Injector
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
-
+/*
+ view to show alerts in alertRecyclerAdater, add or remove alerts
+ */
 class AlertFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var noAlertInfo: ConstraintLayout
@@ -45,11 +47,16 @@ class AlertFragment : androidx.fragment.app.Fragment() {
     @Inject
     lateinit var recyclerAdapter: AlertRecyclerAdapter
 
+
     companion object {
         fun newFragment(): androidx.fragment.app.Fragment = AlertFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_alert, container, false)
         Injector.appComponent.inject(this)
         requireActivity().title = getString(R.string.alert_fragment_title)
@@ -92,15 +99,21 @@ class AlertFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun initSwipe() {
-        swipeBackgroundColor = ColorDrawable(ResourcesCompat.getColor(resources, R.color.windEscalator_colorDelete, null))
+        swipeBackgroundColor = ColorDrawable(
+            ResourcesCompat.getColor(
+                resources,
+                R.color.windEscalator_colorDelete,
+                null
+            )
+        )
         deleteIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_delete, null)!!
 
         val simpleItemTouchCallback = object :
-                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
             ): Boolean {
                 return false
             }
@@ -112,26 +125,32 @@ class AlertFragment : androidx.fragment.app.Fragment() {
                 }
                 viewModel.delete(removedAlert)
                 Snackbar.make(
-                        viewHolder.itemView,
-                        "${removedAlert.name} " + context!!.getString(R.string.alert_removed),
-                        Snackbar.LENGTH_LONG
+                    viewHolder.itemView,
+                    "${removedAlert.name} " + context!!.getString(R.string.alert_removed),
+                    Snackbar.LENGTH_LONG
                 )
-                        .setAction(context!!.getString(R.string.rollback)) {
-                            noAlertInfo.visibility = View.GONE
-                            viewModel.insert(removedAlert)
-                        }
-                        .setActionTextColor(ResourcesCompat.getColor(resources, R.color.windEscalator_colorSnackAction, null))
-                        .show()
+                    .setAction(context!!.getString(R.string.rollback)) {
+                        noAlertInfo.visibility = View.GONE
+                        viewModel.insert(removedAlert)
+                    }
+                    .setActionTextColor(
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.windEscalator_colorSnackAction,
+                            null
+                        )
+                    )
+                    .show()
             }
 
             override fun onChildDraw(
-                    c: Canvas,
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    dX: Float,
-                    dY: Float,
-                    actionState: Int,
-                    isCurrentlyActive: Boolean
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
             ) {
                 val itemView = viewHolder.itemView
                 with(itemView) {
@@ -139,14 +158,18 @@ class AlertFragment : androidx.fragment.app.Fragment() {
                     if (dX > 0) {
                         swipeBackgroundColor.setBounds(left, top, dX.toInt(), bottom)
                         deleteIcon.setBounds(
-                                left + iconMargin, top + iconMargin, left + iconMargin + deleteIcon.intrinsicWidth,
-                                bottom - iconMargin
+                            left + iconMargin,
+                            top + iconMargin,
+                            left + iconMargin + deleteIcon.intrinsicWidth,
+                            bottom - iconMargin
                         )
                     } else {
                         swipeBackgroundColor.setBounds(right + dX.toInt(), top, right, bottom)
                         deleteIcon.setBounds(
-                                right - iconMargin - deleteIcon.intrinsicWidth, top + iconMargin, right - iconMargin,
-                                bottom - iconMargin
+                            right - iconMargin - deleteIcon.intrinsicWidth,
+                            top + iconMargin,
+                            right - iconMargin,
+                            bottom - iconMargin
                         )
                     }
 
@@ -160,7 +183,15 @@ class AlertFragment : androidx.fragment.app.Fragment() {
                     deleteIcon.draw(c)
                     c.restore()
                 }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
             }
         }
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)

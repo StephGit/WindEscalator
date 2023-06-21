@@ -2,17 +2,17 @@ package ch.stephgit.windescalator.alert.service
 
 import android.content.Context
 import android.util.Log
+import ch.stephgit.windescalator.TAG
+import ch.stephgit.windescalator.alert.detail.WindData
+import ch.stephgit.windescalator.alert.detail.WindResource
+import ch.stephgit.windescalator.data.entity.Alert
+import ch.stephgit.windescalator.di.Injector
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.BasicNetwork
 import com.android.volley.toolbox.DiskBasedCache
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
-import ch.stephgit.windescalator.TAG
-import ch.stephgit.windescalator.alert.WindData
-import ch.stephgit.windescalator.alert.detail.WindResource
-import ch.stephgit.windescalator.data.entity.Alert
-import ch.stephgit.windescalator.di.Injector
 import javax.inject.Inject
 
 class WindDataHandler @Inject constructor(val context: Context) {
@@ -44,20 +44,21 @@ class WindDataHandler @Inject constructor(val context: Context) {
     }
 
     private fun isAlert(alert: Alert, windData: WindData): Boolean {
-        return ((alert.windForceKts!! <= windData.windForce) &&
-            (alert.startTime!! <= windData.messureTime) &&
-            (alert.endTime!! > windData.messureTime) &&
-            (alert.directions!!.contains(windData.windDirection)))
+        return ((alert.windForceKts!! <= windData.force) &&
+            (alert.startTime!! <= windData.time) &&
+            (alert.endTime!! > windData.time) &&
+            (alert.directions!!.contains(windData.direction)))
     }
 
     private fun getWindData(alert: Alert) {
         val windResource = WindResource.valueOf(alert.resource!!)
         val url = context.getString(windResource.url)
-        Log.d(TAG, "WindDataHandler: getWinddata")
+        Log.d(TAG, "WindDataHandler: getWinddata $url")
         // Formulate the request and handle the response.
         val stringRequest = StringRequest(
             Request.Method.GET, url,
             { response ->
+                // FIXME happens too late, wait for data
                 // extract response depending on source
                 this.windData = windResource.extractData(response)
             },
@@ -67,6 +68,5 @@ class WindDataHandler @Inject constructor(val context: Context) {
             })
         // Add the request to the RequestQueue.
         requestQueue.add(stringRequest)
-
     }
 }

@@ -1,5 +1,6 @@
 package ch.stephgit.windescalator.alert
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
+import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.data.entity.Alert
 import com.google.android.material.switchmaterial.SwitchMaterial
 import javax.inject.Inject
 
+/*
+ view to show alert list, activates alerts in alarmHandler
+ */
 class AlertRecyclerAdapter  @Inject constructor(
         private val alarmHandler: AlarmHandler) :
         ListAdapter<Alert, AlertRecyclerAdapter.ViewHolder>(AlertDiffCallback()) {
@@ -31,16 +36,18 @@ class AlertRecyclerAdapter  @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        Log.d(TAG, "ALERT_RECYCLER_ADAPTER: add new binding.")
         val currentAlert = getItem(position)
         holder.apply {
             bind(currentAlert)
             itemText.text = currentAlert.name
             switch.isChecked = currentAlert.active
+            alarmHandler.addOrUpdate(currentAlert)
         }
     }
 
     private fun onSwitchChange(alert: Alert) {
+        Log.d(TAG, "AlertRecyclerAdapter: switch change $alert")
         if (alert.active) {
             alarmHandler.addOrUpdate(alert)
         } else {
@@ -49,7 +56,9 @@ class AlertRecyclerAdapter  @Inject constructor(
     }
 
     fun removeItem(viewHolder: RecyclerView.ViewHolder): Alert {
-        return getItem(viewHolder.adapterPosition)
+        val alert = getItem(viewHolder.adapterPosition)
+        alarmHandler.removeAlarm(alert)
+        return alert;
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

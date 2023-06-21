@@ -166,9 +166,9 @@ class DirectionChart @JvmOverloads constructor(
             if (distanceSquare > 0 && distanceSquare < outerRadiusSquare) {
 
                 //get the theta-angle of polar coordinates
-                var angle = Math.atan2(dy.toDouble(), dx.toDouble())
+                val angle = Math.atan2(dy.toDouble(), dx.toDouble())
                 // calculate degrees to detect slice
-                var deg = (angle / Math.PI * 180) + (if (angle > 0) 0f else 360f)
+                val deg = (angle / Math.PI * 180) + (if (angle > 0) 0f else 360f)
 
                 handleTouchedSlice(deg)
             }

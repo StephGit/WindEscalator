@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.R
+import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChart
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
@@ -59,7 +61,7 @@ class AlertDetailActivity : AppCompatActivity() {
         timeViewModel = ViewModelProvider(this).get(TimeViewModel::class.java)
 
         val extras = intent.extras
-        val alertId = extras?.get("ALERT_ID") as Long?
+        val alertId = extras?.getLong("ALERT_ID")
         alertId?.let {
             getAlertFromRepo(alertId)
         }
@@ -222,12 +224,11 @@ class AlertDetailActivity : AppCompatActivity() {
 
             alert.id?.let {
                 alertRepo.update(alert)
+                Log.d(TAG, "AlertDetailActivity: update alert -> $alert")
             } ?: run {
+                Log.d(TAG, "AlertDetailActivity: add alert -> $alert")
                 alert.active = true
                 alertRepo.insert(alert)
-                // TODO needs start of alert?
-//                val alertServiceIntent = Intent(this.applicationContext, AlertService::class.java)
-//                startService(alertServiceIntent)
             }
             finish()
             Toast.makeText(

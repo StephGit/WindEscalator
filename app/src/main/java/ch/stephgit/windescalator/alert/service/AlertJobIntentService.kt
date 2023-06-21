@@ -24,7 +24,7 @@ class AlertJobIntentService : JobIntentService() {
     lateinit var alertReceiver: AlertBroadcastReceiver
 
     @Inject
-    lateinit var windDataAdapter: WindDataHandler
+    lateinit var windDataHandler: WindDataHandler
 
     private val fmt: DateTimeFormatter = DateTimeFormat.forPattern("HH:mm")
     private val jobId = 111
@@ -52,7 +52,7 @@ class AlertJobIntentService : JobIntentService() {
     }
 
     private fun handleAlert(alert: Alert) {
-        if (windDataAdapter.isFiring(alert)) sendAlertBroadcast(alert.id!!)
+        if (windDataHandler.isFiring(alert)) sendAlertBroadcast(alert.id!!)
         alarmHandler.addOrUpdate(alert)
     }
 
@@ -63,6 +63,7 @@ class AlertJobIntentService : JobIntentService() {
             putExtra("ALERT_ID", alertId)
         }
         applicationContext.sendBroadcast(intent)
+        unregisterReceiver(alertReceiver);
     }
 
 

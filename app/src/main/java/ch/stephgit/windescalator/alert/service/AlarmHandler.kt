@@ -16,7 +16,10 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-
+/*
+ Handles continues trigger to alertJobIntentService
+ Naming is really confusing *rofl*, but in android scheduling work handler is called AlarmManager
+ */
 class AlarmHandler @Inject constructor(
         val context: Context,
         val alertRepo: AlertRepo
@@ -101,7 +104,7 @@ class AlarmHandler @Inject constructor(
 
     private fun getPendingIntent(alertId: Int): PendingIntent {
         return Intent(context, AlarmBroadcastReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(context, alertId, intent, 0)
+            PendingIntent.getBroadcast(context, alertId, intent, PendingIntent.FLAG_IMMUTABLE)
         }
     }
 

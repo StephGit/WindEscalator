@@ -41,3 +41,25 @@ Follow these steps to connect your device:
 5. `adb tcpip 5555`
 6. `adb connect <XXX.XXX.X.XXX>:5555` > add the ip-adress of your device ('Settings > About phone > Status')
 7. Enjoy
+
+
+### BrainDump
+
+Simplyfied AlertHandling
+
+```mermaid
+flowchart TD
+    AlertFragment --renders alertEntries--> AlertRecyclerAdapter
+    AlertRecyclerAdapter -- activate alert --> AlertRecyclerAdapter 
+    AlertRecyclerAdapter --adds active alert--> AlarmHandler 
+    AlarmHandler --creates --> AlarmBroadcastReceiver
+    AlarmBroadcastReceiver -- enqueues work --> AlertJobIntentService
+    AlertJobIntentService <-- checks if something is firing --> WindDataHandler
+    AlertJobIntentService -- on fire, creates --> AlertBroadcastReceiver
+    AlertBroadcastReceiver -- starts --> AlertNotificationActivity
+    AlertNotificationActivity -- triggers --> NoiseHandler
+    WindDataHandler <-- network calls --> WindResources 
+    AlarmHandler -- calculates next alarm --> AlarmHandler
+    BootBroadcastReciever -- inits alarms on boot --> AlarmHandler
+    
+```
