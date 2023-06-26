@@ -2,10 +2,7 @@ package ch.stephgit.windescalator.alert.detail
 
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.alert.detail.direction.Direction
-import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
 import org.jsoup.Jsoup
 import kotlin.math.roundToInt
 
@@ -25,23 +22,22 @@ enum class WindResource(
 private fun extractScniData(data: String): WindData {
     val doc = Jsoup.parse(data)
     val windData = WindData()
-    var lines = doc.text().split("87.6")
+    // throw away titles
+    val dailyData = doc.text().split("0:00");
+    val lines = dailyData[dailyData.lastIndex].replace(' ', '_').split('_');
+    val pos = lines.size - 15;
     if (lines.isNotEmpty()) {
-        var values = lines[lines.lastIndex - 1].split(" ")
-        if (isActualData(lines[0], values)) {
-            windData.time = values[1]
-            windData.direction = Direction.getByDegree(values[2].toInt()).toString()
-            windData.force = calcKnotsByKmh(values[3])
+        if (isActualData(lines[pos])) {
+            windData.time = lines[pos]
+            windData.direction = Direction.getByDegree(lines[pos+1].toInt()).toString()
+            windData.force = calcKnotsByKmh(lines[pos+2])
         }
     }
     return windData
 }
 
-private fun isActualData(s: String, values: List<String>): Boolean {
-    val fmt: DateTimeFormatter = DateTimeFormat.forPattern("DD/MM/yy")
-    var date = s.split(' ')[0]
-    return LocalDate.now().toString(fmt)
-        .equals(date) && LocalDateTime.now().hourOfDay.toString() == values[1].split(':')[0]
+private fun isActualData(time: String): Boolean {
+    return LocalDateTime.now().hourOfDay.toString() == time.split(':')[0]
 
 }
 

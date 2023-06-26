@@ -52,7 +52,7 @@ class AlertJobIntentService : JobIntentService() {
     }
 
     private fun handleAlert(alert: Alert) {
-        if (windDataHandler.isFiring(alert)) sendAlertBroadcast(alert.id!!)
+        windDataHandler.isFiring(alert, ::sendAlertBroadcast)
         alarmHandler.addOrUpdate(alert)
     }
 

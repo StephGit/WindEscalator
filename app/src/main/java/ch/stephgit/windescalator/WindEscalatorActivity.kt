@@ -27,8 +27,6 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         Injector.appComponent.inject(this)
 
         replaceFragment(AlertFragment())
-
-        //TODO start alarm Manager?
     }
 
     private fun selectMenuItem(clickedMenuItem: MenuItem): Boolean {

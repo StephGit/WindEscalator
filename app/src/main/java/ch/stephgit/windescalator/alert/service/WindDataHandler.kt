@@ -37,10 +37,13 @@ class WindDataHandler @Inject constructor(val context: Context) {
         }
     }
 
-    fun isFiring(alert: Alert): Boolean {
-        getWindData(alert)
-        Log.d(TAG, "WindDataHandler: $windData $alert")
-        return isAlert(alert, windData)
+    fun isFiring(alert: Alert, sendAlertBroadcast: (alertId: Long) -> Unit) {
+        getWindData(alert, object : VolleyCallback {
+            override fun onSuccess(result: WindData) {
+                Log.d(TAG, "WindDataHandler: $result $alert")
+                if (isAlert(alert, result)) sendAlertBroadcast(alert.id!!)
+            }
+        });
     }
 
     private fun isAlert(alert: Alert, windData: WindData): Boolean {
@@ -50,23 +53,29 @@ class WindDataHandler @Inject constructor(val context: Context) {
             (alert.directions!!.contains(windData.direction)))
     }
 
-    private fun getWindData(alert: Alert) {
+    private fun getWindData(alert: Alert, callback: VolleyCallback) {
         val windResource = WindResource.valueOf(alert.resource!!)
         val url = context.getString(windResource.url)
         Log.d(TAG, "WindDataHandler: getWinddata $url")
         // Formulate the request and handle the response.
+
+
         val stringRequest = StringRequest(
             Request.Method.GET, url,
             { response ->
-                // FIXME happens too late, wait for data
-                // extract response depending on source
                 this.windData = windResource.extractData(response)
+                callback.onSuccess(this.windData);
             },
             { error ->
                 // Handle error
                 Log.e(TAG, "ERROR: %s".format(error.toString()))
             })
         // Add the request to the RequestQueue.
-        requestQueue.add(stringRequest)
+                requestQueue.add(stringRequest)
+    }
+
+    public interface VolleyCallback {
+        fun onSuccess(result: WindData);
+
     }
 }
