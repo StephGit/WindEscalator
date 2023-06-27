@@ -35,7 +35,7 @@ class AlertNotificationActivity : AppCompatActivity() {
     @Inject
     lateinit var alertRepo: AlertRepo
 
-    private lateinit var lock: PowerManager.WakeLock
+    private lateinit var wakeLock: PowerManager.WakeLock
     private lateinit var prefs: SharedPreferences
     private lateinit var alert: Alert
 
@@ -77,15 +77,15 @@ class AlertNotificationActivity : AppCompatActivity() {
     private fun wakeUp() {
         this.window.addFlags(FLAG_SHOW_WHEN_LOCKED)
         val power = this.getSystemService(POWER_SERVICE) as PowerManager
-        lock = power.newWakeLock(PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP
+        wakeLock = power.newWakeLock(PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP
                 or PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!"
         )
-        lock.acquire(1000)
+        wakeLock.acquire(10000)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (lock.isHeld) lock.release()
+        if (wakeLock.isHeld) wakeLock.release()
     }
 
     private fun stopAlert() {

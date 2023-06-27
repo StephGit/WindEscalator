@@ -30,7 +30,7 @@ class AlarmHandler @Inject constructor(
     private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     private lateinit var alarmIntent: PendingIntent
     private val alarms: MutableMap<Long, Alert> = HashMap()
-    private val interval = 5L // TODO make interval customizable
+    private val interval = 10L // TODO make interval customizable
 
 
     init {
@@ -72,11 +72,11 @@ class AlarmHandler @Inject constructor(
 
 
         alarmIntent = getPendingIntent(alert.id!!.toInt())
-
-        alarmManager?.setInexactRepeating(
+        //FIXME repeating alarms not wakeing up device in idle and `setAndAllowWhileIdle` not repeating
+        alarmManager?.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 alarmTimeInMillis,
-                0,
+                600000,
                 alarmIntent
         )
     }

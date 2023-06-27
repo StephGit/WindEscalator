@@ -7,6 +7,7 @@ val Any.TAG: String
     get() {
         return "WindEscalator"
     }
+val CHANNEL_ID: String = "WindEscalatorApp"
 class WindEscalatorApp : Application() {
 
     override fun onCreate() {

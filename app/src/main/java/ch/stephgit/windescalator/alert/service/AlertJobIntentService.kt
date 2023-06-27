@@ -32,6 +32,7 @@ class AlertJobIntentService : JobIntentService() {
 
     init {
         Injector.appComponent.inject(this)
+
     }
 
     fun enqueueWork(context: Context, intent: Intent) {
