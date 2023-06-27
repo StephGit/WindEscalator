@@ -5,7 +5,6 @@
     android:id="@+id/AlertDetailActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/windEscalator_colorBackground"
     tools:context="ch.stephgit.windescalator.alert.detail.AlertDetailActivity">
 
     <EditText
@@ -53,7 +52,8 @@
         app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/tv_time_delimiter"
-        app:layout_constraintTop_toBottomOf="@id/sp_select_alert_resource" />
+        app:layout_constraintTop_toBottomOf="@id/sp_select_alert_resource"
+        />
 
     <TextView
         android:id="@+id/tv_time_delimiter"

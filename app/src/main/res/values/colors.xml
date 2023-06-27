@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="colorPrimary">#008577</color>-->
-    <!--<color name="colorPrimaryDark">#00574B</color>-->
-    <!--<color name="colorAccent">#D81B60</color>-->
-
     <!-- WindEscalator colors -->
     <color name="windEscalator_colorWhite">#FFFFFF</color>
     <color name="windEscalator_colorBlack">#000</color>
     <color name="windEscalator_colorBrand">#1E1E1E</color>
     <color name="windEscalator_colorBrandLight">#2F2F2F</color>
-<!--    <color name="windEscalator_colorBrand">#ee3030</color>-->
     <color name="windEscalator_colorSelected">#ee3030</color>
     <color name="windEscalator_colorSelectedLight">#ED4646</color>
-<!--    <color name="windEscalator_colorSelected">#641818</color>-->
     <color name="windEscalator_colorBackgroundText">#CED4DA</color>
     <color name="windEscalator_colorBackgroundLight">#F9F9F9</color>
     <color name="windEscalator_colorBackground">#F1F3F5</color>
-    <color name="windEscalator_light_gray">#808080</color>
     <color name="windEscalator_colorDelete">#E26860</color>
     <color name="windEscalator_colorSnackAction">#FFEB3B</color>
-
-
 </resources>
 
 

@@ -13,7 +13,6 @@ import ch.stephgit.windescalator.alert.service.WindDataHandler
 import ch.stephgit.windescalator.data.AppDatabase
 import ch.stephgit.windescalator.data.dao.AlertDao
 import ch.stephgit.windescalator.data.repo.AlertRepo
-import ch.stephgit.windescalator.remote.NotificationHandler
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -50,11 +49,6 @@ class AppModule {
     @Singleton
     fun provideWindResourceAdapter(context: Context):
             WindResourceAdapter = WindResourceAdapter(context)
-
-    @Provides
-    @Singleton
-    fun provideNotificationHandler(context: Context):
-            NotificationHandler = NotificationHandler(context)
 
     @Provides
     @Singleton

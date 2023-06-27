@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="alerts_mock_array">
-        <item>Thun WSCT</item>
-        <item>Neuhaus SCNI</item>
-        <item>YvBeach</item>
-    </string-array>
-</resources>

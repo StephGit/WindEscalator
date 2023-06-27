@@ -83,9 +83,13 @@ class AlertNotificationActivity : AppCompatActivity() {
         wakeLock.acquire(10000)
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (wakeLock.isHeld) wakeLock.release()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        if (wakeLock.isHeld) wakeLock.release()
     }
 
     private fun stopAlert() {

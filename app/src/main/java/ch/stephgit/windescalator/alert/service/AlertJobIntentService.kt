@@ -3,6 +3,7 @@ package ch.stephgit.windescalator.alert.service
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
+import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
@@ -58,7 +59,8 @@ class AlertJobIntentService : JobIntentService() {
     }
 
     private fun sendAlertBroadcast(alertId: Long) {
-        registerReceiver(alertReceiver, alertReceiver.getFilter())
+
+        registerReceiver(alertReceiver, alertReceiver.getFilter(), R.string.broadcast_permission.toString(), null )
         val intent = Intent(applicationContext, AlertBroadcastReceiver::class.java).apply {
             action = alertReceiver.getFilter().getAction(0)
             putExtra("ALERT_ID", alertId)
