@@ -44,6 +44,6 @@
     <string name="broadcast_permission">WindEscalator.Broadcast.Permission</string>
     <string name="thun">https://www.thunerwetter.ch/current_sb.xml</string>
     <string name="scni">https://pmcjoder.ch/webcam/neuhaus/wetterstation/daily.txt</string>
-    <string name="neuch">http://webcam.ichtus.ch:8888/WebApiCoreIchtus/LetsKiteValue</string>
+    <string name="neuc">http://webcam.ichtus.ch:8888/WebApiCoreIchtus/LetsKiteValue</string>
 
 </resources>

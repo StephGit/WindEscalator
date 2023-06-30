@@ -1,10 +1,17 @@
 package ch.stephgit.windescalator.alert.detail
 
+import android.util.Log
 import ch.stephgit.windescalator.R
+import ch.stephgit.windescalator.alert.detail.TimePickerFragment.Companion.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import org.joda.time.LocalDateTime
+import org.joda.time.LocalTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
+import org.json.JSONObject
 import org.jsoup.Jsoup
 import kotlin.math.roundToInt
+
 
 enum class WindResource(
     val id: Int,
@@ -14,9 +21,23 @@ enum class WindResource(
     val extractData: (data: String) -> WindData
 ) {
     WSCT(1, "WSCT Thun", R.drawable.ic_windbag_black_24, R.string.thun, ::extractWsctData),
-    SCNI(2, "SCNI Interlaken", R.drawable.ic_windbag_black_24, R.string.scni, ::extractScniData)
+    SCNI(2, "SCNI Interlaken", R.drawable.ic_windbag_black_24, R.string.scni, ::extractScniData),
+    NEUC(3, "St. Blaise", R.drawable.ic_windbag_black_24, R.string.neuc, ::extractNeucData)
 }
 
+fun extractNeucData(data: String): WindData {
+    Log.d(TAG, data)
+    val json = JSONObject(data);
+    val windData = WindData()
+    val fmt: DateTimeFormatter = DateTimeFormat.forPattern("HH:mm")
+    val localTime: LocalTime = fmt.parseLocalTime(json.getString("recordTimeIchtus"))
+
+    return WindData(
+        json.getDouble("windSpeedKnotsIchtus").roundToInt(),
+        Direction.getByDegree(json.getInt("windDirectionDegreesIchtus")).toString(),
+        localTime.toString()
+    )
+}
 
 
 private fun extractScniData(data: String): WindData {
@@ -29,8 +50,8 @@ private fun extractScniData(data: String): WindData {
     if (lines.isNotEmpty()) {
         if (isActualData(lines[pos])) {
             windData.time = lines[pos]
-            windData.direction = Direction.getByDegree(lines[pos+1].toInt()).toString()
-            windData.force = calcKnotsByKmh(lines[pos+2])
+            windData.direction = Direction.getByDegree(lines[pos + 1].toInt()).toString()
+            windData.force = calcKnotsByKmh(lines[pos + 2])
         }
     }
     return windData
@@ -50,7 +71,8 @@ private fun extractWsctData(data: String): WindData {
     return WindData(
         knots.toDouble().roundToInt(),
         Direction.getByDegree(Integer.parseInt(degrees)).name,
-        time)
+        time
+    )
 
 }
 

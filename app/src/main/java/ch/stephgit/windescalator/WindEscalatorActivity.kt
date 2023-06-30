@@ -23,7 +23,7 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wind_escalator)
         navigation = findViewById(R.id.wind_escalator_navigation)
-        navigation.setOnNavigationItemSelectedListener { clickedMenuItem -> selectMenuItem(clickedMenuItem) }
+        navigation.setOnItemSelectedListener { clickedMenuItem -> selectMenuItem(clickedMenuItem) }
         Injector.appComponent.inject(this)
 
         replaceFragment(AlertFragment())

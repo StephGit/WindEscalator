@@ -29,13 +29,13 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-    lintOptions {
-        abortOnError false
-    }
     buildFeatures {
         viewBinding true
     }
     namespace 'ch.stephgit.windescalator'
+    lint {
+        abortOnError false
+    }
 }
 
 dependencies {

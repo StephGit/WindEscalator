@@ -47,6 +47,7 @@ class AlertNotificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+//        window.insetsController?.hide(WindowInsets.Type.statusBars());
         this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_alert_notification)
 
