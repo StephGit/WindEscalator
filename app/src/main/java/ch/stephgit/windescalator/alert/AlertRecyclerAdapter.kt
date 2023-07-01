@@ -41,6 +41,9 @@ class AlertRecyclerAdapter  @Inject constructor(
         holder.apply {
             bind(currentAlert)
             itemText.text = currentAlert.name
+            itemTime.text = currentAlert.startTime + "\n" + currentAlert.endTime
+            itemForce.text = currentAlert.windForceKts.toString()
+            itemDirs.text = currentAlert.directions!!.joinToString ('|'.toString())
             switch.isChecked = currentAlert.active
             alarmHandler.addOrUpdate(currentAlert)
         }
@@ -63,6 +66,9 @@ class AlertRecyclerAdapter  @Inject constructor(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemText: TextView = itemView.findViewById(R.id.tv_alertItemText)
+        val itemTime: TextView = itemView.findViewById(R.id.tv_alertTimeWindow)
+        val itemForce: TextView = itemView.findViewById(R.id.tv_alertForce)
+        val itemDirs: TextView = itemView.findViewById(R.id.tv_alertDirections)
         val switch: SwitchMaterial = itemView.findViewById(R.id.sw_alertActive)
 
         fun bind(alert: Alert) {

@@ -14,6 +14,7 @@ import ch.stephgit.windescalator.R
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 class DirectionChart @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
@@ -51,7 +52,7 @@ class DirectionChart @JvmOverloads constructor(
     }
 
     fun getSelectedData(): List<String> {
-        var selection = ArrayList<String>()
+        val selection = ArrayList<String>()
         this.chartData.slices.entries.forEach{
             if (it.value.state == SliceState.SELECTED) selection.add(it.key)
         }
