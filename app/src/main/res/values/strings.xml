@@ -45,5 +45,10 @@
     <string name="thun">https://www.thunerwetter.ch/current_sb.xml</string>
     <string name="scni">https://pmcjoder.ch/webcam/neuhaus/wetterstation/daily.txt</string>
     <string name="neuc">http://webcam.ichtus.ch:8888/WebApiCoreIchtus/LetsKiteValue</string>
+    <string name="run">Run!</string>
+    <string name="show_wind_data">Show Wind Data</string>
+    <string name="stop_alert">Stop Alert</string>
+    <string name="winddata">Force: %1$s \nDirection: %2$s \nTime: %3$s</string>
+    <string name="winddata_alertnotification">Location: %1$s \n%2$s</string>
 
 </resources>

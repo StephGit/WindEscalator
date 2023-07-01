@@ -41,11 +41,11 @@ class AlertJobIntentService : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        var alertId = intent.getLongExtra("ALERT_ID", -1)
+        val alertId = intent.getLongExtra("ALERT_ID", -1)
         val currentTimeString = LocalDateTime.now().toString(fmt)
         if (alertId == -1L) {
             val alerts = alertRepo.getActiveAndInTimeAlerts(currentTimeString)
-            if (!alerts.isNullOrEmpty()) { // maybe some ghost alarm?!
+            if (alerts.isNotEmpty()) { // maybe some ghost alarm?!
                 alerts.forEach { alert ->
                     handleAlert(alert)
                 }
@@ -58,12 +58,14 @@ class AlertJobIntentService : JobIntentService() {
         alarmHandler.addOrUpdate(alert)
     }
 
-    private fun sendAlertBroadcast(alertId: Long) {
+    private fun sendAlertBroadcast(alertId: Long, windData: String) {
 
         registerReceiver(alertReceiver, alertReceiver.getFilter(), R.string.broadcast_permission.toString(), null )
         val intent = Intent(applicationContext, AlertBroadcastReceiver::class.java).apply {
             action = alertReceiver.getFilter().getAction(0)
             putExtra("ALERT_ID", alertId)
+            putExtra("WIND_DATA", windData)
+
         }
         applicationContext.sendBroadcast(intent)
         unregisterReceiver(alertReceiver);

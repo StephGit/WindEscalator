@@ -8,6 +8,15 @@
     <dimen name="windEscalator_empty_fragment_title_marginBottom">30dp</dimen>
     <dimen name="windEscalator_empty_fragment_title_textSize">18sp</dimen>
 
+    <dimen name="windEscalator_alertnotification_icon_width">48dp</dimen>
+    <dimen name="windEscalator_alertnotification_icon_height">48dp</dimen>
+    <dimen name="windEscalator_alertnotification_icon_marginTop">40dp</dimen>
+    <dimen name="windEscalator_alertnotification_icon_marginBottom">8dp</dimen>
+
+    <dimen name="windEscalator_alertnotification_title_marginBottom">60dp</dimen>
+    <dimen name="windEscalator_alertnotification_title_textSize">22sp</dimen>
+    <dimen name="windEscalator_alertnotification_body_textSize">16sp</dimen>
+
     <dimen name="windEscalator_top_margin_list_elements">1dp</dimen>
     <dimen name="windEscalator_bottom_margin_list_elements">1dp</dimen>
     <dimen name="windEscalator_left_margin_list_elements">5dp</dimen>

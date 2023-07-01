@@ -1,7 +1,9 @@
 package ch.stephgit.windescalator.alert.service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.detail.WindData
 import ch.stephgit.windescalator.alert.detail.WindResource
@@ -20,7 +22,6 @@ class WindDataHandler @Inject constructor(val context: Context) {
     private lateinit var cache: DiskBasedCache
     private lateinit var network: BasicNetwork
     private lateinit var requestQueue: RequestQueue
-    private var windData: WindData = WindData()
 
     init {
         Injector.appComponent.inject(this)
@@ -37,11 +38,13 @@ class WindDataHandler @Inject constructor(val context: Context) {
         }
     }
 
-    fun isFiring(alert: Alert, sendAlertBroadcast: (alertId: Long) -> Unit) {
+    fun isFiring(alert: Alert, sendAlertBroadcast: (Long, String) -> Unit) {
         getWindData(alert, object : VolleyCallback {
+            @SuppressLint("StringFormatMatches")
             override fun onSuccess(result: WindData) {
-                Log.d(TAG, "WindDataHandler: $result $alert")
-                if (isAlert(alert, result)) sendAlertBroadcast(alert.id!!)
+                val windData = context.getString(R.string.winddata, result.force.toString(), result.direction, result.time)
+                Log.d(TAG, "WindDataHandler: $windData $alert")
+                if (isAlert(alert, result)) sendAlertBroadcast(alert.id!!, windData)
             }
         });
     }
@@ -63,8 +66,8 @@ class WindDataHandler @Inject constructor(val context: Context) {
         val stringRequest = StringRequest(
             Request.Method.GET, url,
             { response ->
-                this.windData = windResource.extractData(response)
-                callback.onSuccess(this.windData);
+                val windData = windResource.extractData(response)
+                callback.onSuccess(windData);
             },
             { error ->
                 // Handle error

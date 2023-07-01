@@ -1,13 +1,16 @@
 package ch.stephgit.windescalator.alert
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.PowerManager
 import android.view.Window
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
@@ -43,6 +46,7 @@ class AlertNotificationActivity : AppCompatActivity() {
         Injector.appComponent.inject(this)
     }
 
+    @SuppressLint("StringFormatMatches")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,6 +59,7 @@ class AlertNotificationActivity : AppCompatActivity() {
         prefs = getSharedPreferences("windescalator", Context.MODE_PRIVATE)
 
         val alertId = intent.getLongExtra("ALERT_ID", -1)
+        val windData = intent.getStringExtra("WIND_DATA")
         if (alertId != -1L ) {
 
             findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener{
@@ -67,6 +72,9 @@ class AlertNotificationActivity : AppCompatActivity() {
 
             alert = alertRepo.getAlert(alertId)!!
             noiseHandler.makeNoise()
+
+            val res = Resources.getSystem();
+            findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
 
             wakeUp()
 

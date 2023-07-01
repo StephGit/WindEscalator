@@ -22,10 +22,12 @@ class AlertBroadcastReceiver: BroadcastReceiver() {
         Log.d(TAG, "Got Broadcast")
         val action = intent.action
         var alertId = intent.getLongExtra("ALERT_ID", -1)
+        var windData = intent.getStringExtra("WIND_DATA")
 
         if (action.equals(WIND_ALERT_ACTION)) {
             val activityIntent = Intent(context, AlertNotificationActivity::class.java)
             activityIntent.putExtra("ALERT_ID",  alertId)
+            activityIntent.putExtra("WIND_DATA", windData)
             context.startActivity(activityIntent)
         }
     }

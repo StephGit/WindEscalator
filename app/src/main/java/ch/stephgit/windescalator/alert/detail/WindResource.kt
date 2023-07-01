@@ -5,13 +5,9 @@ import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.alert.detail.TimePickerFragment.Companion.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import org.joda.time.LocalDateTime
-import org.joda.time.LocalTime
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import kotlin.math.roundToInt
-
 
 enum class WindResource(
     val id: Int,
@@ -28,14 +24,10 @@ enum class WindResource(
 fun extractNeucData(data: String): WindData {
     Log.d(TAG, data)
     val json = JSONObject(data);
-    val windData = WindData()
-    val fmt: DateTimeFormatter = DateTimeFormat.forPattern("HH:mm")
-    val localTime: LocalTime = fmt.parseLocalTime(json.getString("recordTimeIchtus"))
-
     return WindData(
         json.getDouble("windSpeedKnotsIchtus").roundToInt(),
         Direction.getByDegree(json.getInt("windDirectionDegreesIchtus")).toString(),
-        localTime.toString()
+        LocalDateTime.parse(json.getString("recordTimeIchtus")).toLocalTime().toString()
     )
 }
 
