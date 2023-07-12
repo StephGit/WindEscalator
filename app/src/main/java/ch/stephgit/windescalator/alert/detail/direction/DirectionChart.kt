@@ -18,8 +18,9 @@ import kotlin.math.sin
 class DirectionChart @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    // Data
+        // Data
     private lateinit var chartData: DirectionChartData
+    private var touchEnabled: Boolean = false
 
     // Graphics
     private val colorWhite = ResourcesCompat.getColor(resources, R.color.windEscalator_colorWhite, null)
@@ -30,6 +31,7 @@ class DirectionChart @JvmOverloads constructor(
     private val borderPaint = Paint()
     private val labelPaint = Paint()
     private val oval = RectF()
+
 
     //calc stuff
     private var initialAngle = -22.5f
@@ -72,8 +74,9 @@ class DirectionChart @JvmOverloads constructor(
         }
     }
 
-    fun setInitialData(dataDirection: DirectionChartData) {
+    fun setInitialData(dataDirection: DirectionChartData, touchEnabled: Boolean) {
         this.chartData = dataDirection
+        this.touchEnabled = touchEnabled;
         setSliceDimensions()
         invalidate()
     }
@@ -155,6 +158,7 @@ class DirectionChart @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (!touchEnabled) return false;
         val currX = event?.x
         val currY = event?.y
         if (event?.action == MotionEvent.ACTION_DOWN) return true

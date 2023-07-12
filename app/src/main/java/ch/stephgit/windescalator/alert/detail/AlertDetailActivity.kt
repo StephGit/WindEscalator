@@ -131,7 +131,7 @@ class AlertDetailActivity : AppCompatActivity() {
         directions.forEach {
             windDirectionData.add(it.name, initColorSlice)
         }
-        directionChart.setInitialData(windDirectionData)
+        directionChart.setInitialData(windDirectionData, true)
     }
 
     private fun setViewElementsData() {

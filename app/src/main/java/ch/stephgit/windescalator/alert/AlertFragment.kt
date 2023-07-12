@@ -69,6 +69,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
         }
 
         linearLayoutManager = LinearLayoutManager(context)
+
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = linearLayoutManager

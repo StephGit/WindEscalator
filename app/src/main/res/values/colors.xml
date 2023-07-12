@@ -12,6 +12,9 @@
     <color name="windEscalator_colorBackground">#F1F3F5</color>
     <color name="windEscalator_colorDelete">#E26860</color>
     <color name="windEscalator_colorSnackAction">#FFEB3B</color>
+    <color name="windEscalator_colorDisabled">#8D8D8D</color>
+    <color name="windEscalator_colorOnline">#4CAF50</color>
+    <color name="windEscalator_colorOffline">#ee3030</color>
 </resources>
 
 

@@ -31,11 +31,11 @@
     <dimen name="windEscalator_width_color_tag_list_elements">60dp</dimen>
     <dimen name="windEscalator_width_time_list_elements">100dp</dimen>
 
-    <dimen name="windEscalator_text_size_alert_name_list_item">20sp</dimen>
+    <dimen name="windEscalator_text_size_alert_name_list_item">18sp</dimen>
     <dimen name="windEscalator_text_size_alert_detail_list_item">14sp</dimen>
     <dimen name="windEscalator_margin_top_alert_list_item">8dp</dimen>
-    <dimen name="windEscalator_margin_start_alert_list_item">8dp</dimen>
-    <dimen name="windEscalator_margin_end_alert_list_item">8dp</dimen>
+    <dimen name="windEscalator_margin_start_alert_list_item">5dp</dimen>
+    <dimen name="windEscalator_margin_end_alert_list_item">5dp</dimen>
 
     <dimen name="windEscalator_floating_action_button_margin">20dp</dimen>
 
