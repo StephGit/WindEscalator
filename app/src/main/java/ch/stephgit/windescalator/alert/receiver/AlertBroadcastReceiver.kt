@@ -28,6 +28,7 @@ class AlertBroadcastReceiver: BroadcastReceiver() {
             val activityIntent = Intent(context, AlertNotificationActivity::class.java)
             activityIntent.putExtra("ALERT_ID",  alertId)
             activityIntent.putExtra("WIND_DATA", windData)
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(activityIntent)
         }
     }

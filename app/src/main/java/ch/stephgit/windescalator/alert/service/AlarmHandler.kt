@@ -73,12 +73,14 @@ class AlarmHandler @Inject constructor(
 
         alarmIntent = getPendingIntent(alert.id!!.toInt())
         //FIXME repeating alarms not wakeing up device in idle and `setAndAllowWhileIdle` not repeating
-        alarmManager?.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                alarmTimeInMillis,
-                600000,
-                alarmIntent
-        )
+//        alarmManager?.setRepeating(
+//                AlarmManager.RTC_WAKEUP,
+//                alarmTimeInMillis,
+//                600000,
+//                alarmIntent
+//        )
+        alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeInMillis, alarmIntent)
+
     }
 
     private fun calculateNextAlarm(alert: Alert, pendingAlert: Boolean): Long {
