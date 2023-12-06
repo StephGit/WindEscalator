@@ -113,6 +113,10 @@ private class AlertDiffCallback : DiffUtil.ItemCallback<Alert>() {
         return oldItem.active == newItem.active &&
                 oldItem.resource == newItem.resource &&
                 oldItem.name == newItem.name &&
-                oldItem.id == newItem.id
+                oldItem.id == newItem.id &&
+                oldItem.startTime == newItem.startTime &&
+                oldItem.endTime == newItem.endTime &&
+                oldItem.windForceKts == newItem.windForceKts &&
+                oldItem.directions == newItem.directions
     }
 }
