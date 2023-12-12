@@ -86,7 +86,7 @@ class AlertNotificationActivity : AppCompatActivity() {
         this.setShowWhenLocked(true)
         this.setTurnScreenOn(true)
         val power = this.getSystemService(POWER_SERVICE) as PowerManager
-        wakeLock = power.newWakeLock(PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!")
+        wakeLock = power.newWakeLock(PowerManager.FULL_WAKE_LOCK or PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!")
         wakeLock.acquire(10000)
     }
 

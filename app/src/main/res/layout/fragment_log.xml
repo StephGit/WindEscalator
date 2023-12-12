@@ -61,6 +61,19 @@ android:background="@color/windEscalator_colorBackground">
             app:layout_constraintVertical_bias="0.3"
             android:textColor="@color/windEscalator_colorBackgroundText"/>
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+            android:id="@+id/tv_logs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.3"
+            android:textColor="@color/windEscalator_colorBlack"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

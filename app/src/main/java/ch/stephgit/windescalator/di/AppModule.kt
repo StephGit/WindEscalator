@@ -72,7 +72,4 @@ class AppModule {
     @Singleton
     fun provideAlertBroadcastReceiver(): AlertBroadcastReceiver = AlertBroadcastReceiver()
 
-    @Provides
-    @Singleton
-    fun provideAlarmBroadcastReceiver(): AlarmBroadcastReceiver = AlarmBroadcastReceiver()
 }
