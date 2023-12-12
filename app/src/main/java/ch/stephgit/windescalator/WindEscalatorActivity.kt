@@ -8,6 +8,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import ch.stephgit.windescalator.alert.AlertFragment
 import ch.stephgit.windescalator.di.Injector
+import ch.stephgit.windescalator.log.LogFragment
+import ch.stephgit.windescalator.wind.WindFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -36,6 +38,7 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
             R.id.bottom_navigation_alert -> replaceFragment(AlertFragment())
             R.id.bottom_navigation_messure -> replaceFragment(WindFragment())
             R.id.bottom_navigation_webcam -> replaceFragment(WebcamFragment())
+            R.id.bottom_navigation_log -> replaceFragment(LogFragment())
             else -> throw IllegalArgumentException("Unknown clickedMenuItem.itemId: ${clickedMenuItem.itemId}")
         }
         return true

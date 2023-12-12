@@ -1,4 +1,4 @@
-package ch.stephgit.windescalator
+package ch.stephgit.windescalator.wind
 
 import android.os.Bundle
 import android.view.LayoutInflater

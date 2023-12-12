@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.os.PowerManager
 import android.view.Window
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
 import android.widget.TextView
@@ -51,9 +52,8 @@ class AlertNotificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
-//        window.insetsController?.hide(WindowInsets.Type.statusBars());
-        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_alert_notification)
+        this.window.insetsController?.hide(WindowInsets.Type.statusBars());
 
         // get settings for alerts from prefs
         prefs = getSharedPreferences("windescalator", Context.MODE_PRIVATE)
@@ -73,7 +73,6 @@ class AlertNotificationActivity : AppCompatActivity() {
             alert = alertRepo.getAlert(alertId)!!
             noiseHandler.makeNoise()
 
-            val res = Resources.getSystem();
             findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
 
             wakeUp()
@@ -84,11 +83,10 @@ class AlertNotificationActivity : AppCompatActivity() {
     }
 
     private fun wakeUp() {
-        this.window.addFlags(FLAG_SHOW_WHEN_LOCKED)
+        this.setShowWhenLocked(true)
+        this.setTurnScreenOn(true)
         val power = this.getSystemService(POWER_SERVICE) as PowerManager
-        wakeLock = power.newWakeLock(PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP
-                or PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!"
-        )
+        wakeLock = power.newWakeLock(PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!")
         wakeLock.acquire(10000)
     }
 
@@ -103,7 +101,7 @@ class AlertNotificationActivity : AppCompatActivity() {
 
     private fun stopAlert() {
         noiseHandler.stopNoise()
-        alarmHandler.removeAlarm(alert)
+        alarmHandler.removeAlarm(alert, true)
         finish()
     }
 

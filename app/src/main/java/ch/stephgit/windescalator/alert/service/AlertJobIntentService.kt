@@ -2,13 +2,14 @@ package ch.stephgit.windescalator.alert.service
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.JobIntentService
 import ch.stephgit.windescalator.R
+import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
 import ch.stephgit.windescalator.di.Injector
-import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -42,20 +43,15 @@ class AlertJobIntentService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
         val alertId = intent.getLongExtra("ALERT_ID", -1)
-        val currentTimeString = LocalDateTime.now().toString(fmt)
-        if (alertId == -1L) {
-            val alerts = alertRepo.getActiveAndInTimeAlerts(currentTimeString)
-            if (alerts.isNotEmpty()) { // maybe some ghost alarm?!
-                alerts.forEach { alert ->
-                    handleAlert(alert)
-                }
-            }
-        } else alertRepo.getAlert(alertId)?.let { handleAlert(it) }
+        if (alertId > -1L) {
+            alertRepo.getAlert(alertId)?.let { handleAlert(it) }
+        } else { Log.e(TAG, "UNEXPECTED ALARM WITHOUT ID") }
     }
 
     private fun handleAlert(alert: Alert) {
+        // check if there is wind
         windDataHandler.isFiring(alert, ::sendAlertBroadcast)
-        alarmHandler.addOrUpdate(alert)
+        alarmHandler.setNextInterval(alert)
     }
 
     private fun sendAlertBroadcast(alertId: Long, windData: String) {

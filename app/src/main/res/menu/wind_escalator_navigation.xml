@@ -12,4 +12,9 @@
             android:id="@+id/bottom_navigation_webcam"
             android:title="@string/bottom_navigation_webcam"
             android:icon="@drawable/ic_baseline_videocam_24"/>
+    <item
+            android:visible="@bool/DEBUG"
+            android:id="@+id/bottom_navigation_log"
+            android:title="@string/bottom_navigation_webcam"
+            android:icon="@drawable/ic_baseline_log_24"/>
 </menu>

@@ -5,7 +5,7 @@ import dagger.BindsInstance
 import dagger.Component
 import ch.stephgit.windescalator.WebcamFragment
 import ch.stephgit.windescalator.WindEscalatorActivity
-import ch.stephgit.windescalator.WindFragment
+import ch.stephgit.windescalator.wind.WindFragment
 import ch.stephgit.windescalator.alert.AlertFragment
 import ch.stephgit.windescalator.alert.AlertNotificationActivity
 import ch.stephgit.windescalator.alert.detail.AlertDetailActivity
@@ -16,6 +16,7 @@ import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.alert.service.AlertJobIntentService
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.alert.service.WindDataHandler
+import ch.stephgit.windescalator.log.LogFragment
 import javax.inject.Singleton
 
 @Singleton
@@ -41,6 +42,7 @@ interface AppComponent {
 
     fun inject(windFragment: WindFragment)
     fun inject(webcamFragment: WebcamFragment)
+    fun inject(logFragment: LogFragment)
 
     fun inject(bootBroadcastReceiverTask: BootBroadcastReceiver.BootReceiverTask)
     fun inject(alertBroadcastReceiver: AlertBroadcastReceiver)

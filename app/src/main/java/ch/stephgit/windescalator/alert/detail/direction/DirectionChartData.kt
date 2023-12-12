@@ -12,9 +12,7 @@ class DirectionChartData {
     val slices = LinkedHashMap<String, Slice>()
 
     fun add(name: String, color: String? = null) {
-        if (slices.containsKey(name)) {
-            Log.i(TAG,"Slice is allready in Chart")
-        } else {
+        if (!slices.containsKey(name)) {
             color?.let {
                 slices[name] = Slice(name, 0f, 0f,
                         PointF(), createPaint(it), SliceState.SELECTED)
@@ -22,6 +20,8 @@ class DirectionChartData {
                 slices[name] = Slice(name, 0f, 0f,
                         PointF(), createPaint(null), SliceState.SELECTED)
             }
+        } else {
+            Log.v(TAG,"Slice is allready in Chart")
         }
     }
 

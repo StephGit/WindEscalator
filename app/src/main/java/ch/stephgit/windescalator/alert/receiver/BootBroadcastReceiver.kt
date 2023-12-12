@@ -44,7 +44,6 @@ class BootBroadcastReceiver : BroadcastReceiver() {
 
 
         override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
             // Must call finish() so the BroadcastReceiver can be recycled.
             pendingResult.finish()
         }

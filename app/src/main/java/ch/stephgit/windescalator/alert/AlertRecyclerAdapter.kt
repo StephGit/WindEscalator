@@ -44,17 +44,17 @@ class AlertRecyclerAdapter @Inject constructor(
     @SuppressLint("ResourceType")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Log.d(TAG, "ALERT_RECYCLER_ADAPTER: add new binding.")
-        val currentAlert = getItem(position)
+        val alert = getItem(position)
 
         holder.apply {
-            bind(currentAlert)
+            bind(alert)
             initChartData(itemView.context.getString(R.color.windEscalator_colorSelectedLight))
-            itemText.text = currentAlert.name
-            itemTime.text = currentAlert.startTime + "\n" + currentAlert.endTime
-            itemForce.text = currentAlert.windForceKts.toString()
-            currentAlert.directions?.let { itemDirs.setData(it) }
-            switch.isChecked = currentAlert.active
-            alarmHandler.addOrUpdate(currentAlert)
+            itemText.text = alert.name
+            itemTime.text = alert.startTime + "\n" + alert.endTime
+            itemForce.text = alert.windForceKts.toString()
+            alert.directions?.let { itemDirs.setData(it) }
+            switch.isChecked = alert.active
+            if (alert.active) alarmHandler.addOrUpdate(alert)
         }
     }
 
@@ -64,13 +64,13 @@ class AlertRecyclerAdapter @Inject constructor(
         if (alert.active) {
             alarmHandler.addOrUpdate(alert)
         } else {
-            alarmHandler.removeAlarm(alert)
+            alarmHandler.removeAlarm(alert, false)
         }
     }
 
     fun removeItem(viewHolder: RecyclerView.ViewHolder): Alert {
-        val alert = getItem(viewHolder.adapterPosition)
-        alarmHandler.removeAlarm(alert)
+        val alert = getItem(viewHolder.absoluteAdapterPosition)
+        alarmHandler.removeAlarm(alert, false)
         return alert;
     }
 

@@ -90,11 +90,11 @@ class AlertDetailActivity : AppCompatActivity() {
         endTime.inputType = InputType.TYPE_NULL
         startTime.setOnClickListener {
             subscribeViewModel(startTime)
-            showTimePickerDialog(it)
+            showTimePickerDialog()
         }
         endTime.setOnClickListener {
             subscribeViewModel(endTime)
-            showTimePickerDialog(it)
+            showTimePickerDialog()
         }
     }
 
@@ -240,7 +240,7 @@ class AlertDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun showTimePickerDialog(v: View) {
+    private fun showTimePickerDialog() {
         TimePickerFragment().show(supportFragmentManager, TimePickerFragment.TAG)
     }
 }

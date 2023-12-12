@@ -5,6 +5,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.receiver.AlarmBroadcastReceiver
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
@@ -29,8 +31,9 @@ class AlarmHandler @Inject constructor(
             context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
     private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     private lateinit var alarmIntent: PendingIntent
-    private val alarms: MutableMap<Long, Alert> = HashMap()
+    private val alarms: MutableMap<Long, Alert> = HashMap() // Contains Map of active alarms
     private val interval = 10L // TODO make interval customizable
+    private val alarmRequestCode = 42;
 
 
     init {
@@ -41,7 +44,7 @@ class AlarmHandler @Inject constructor(
     fun addOrUpdate(alert: Alert) {
         if (isExisting(alert)) {
             if (alarms[alert.id] != alert) {
-                removeAlarm(alert)
+                removeAlarm(alert, false)
                 addAlarm(alert)
             }
         } else {
@@ -54,31 +57,35 @@ class AlarmHandler @Inject constructor(
     }
 
     private fun addAlarm(alert: Alert) {
-        alarms[alert.id!!] = alert
-        createAlarm(alert)
+        if (alert.active) {
+            alarms[alert.id!!] = alert
+            setAlarm(alert, false)
+        }
     }
 
-    fun removeAlarm(alert: Alert) {
-        if (!isExisting(alert)) return
-        this.alarms.remove(alert.id)
-        cancelAlarm(alert)
+    fun removeAlarm(alert: Alert, forToday: Boolean) {
+        if (forToday) {
+            setAlarm(alert, true)
+        } else {
+            if (!isExisting(alert)) return
+            this.alarms.remove(alert.id)
+            cancelAlarm(alert)
+        }
     }
 
-    private fun createAlarm(alert: Alert) {
-
+    /**
+     * Sets alarm in AlarmManager
+     * With `nextDay`=true the calculation for the next possible alarm is skipped and the alarm is
+     * set to it's start time on the next day.
+     */
+    private fun setAlarm(alert: Alert, nextDay: Boolean) {
         val alarmTimeInMillis: Long =
                 // is endtime arrived
-                calculateNextAlarm(alert, alert.pending)
+                if (nextDay) setNextDayAlarm(alert) else calculateNextAlarm(alert, alert.pending)
 
 
-        alarmIntent = getPendingIntent(alert.id!!.toInt())
-        //FIXME repeating alarms not wakeing up device in idle and `setAndAllowWhileIdle` not repeating
-//        alarmManager?.setRepeating(
-//                AlarmManager.RTC_WAKEUP,
-//                alarmTimeInMillis,
-//                600000,
-//                alarmIntent
-//        )
+        alarmIntent = getPendingIntent(alert)
+        Log.i(TAG, "Set Alarm for alert: $alert.name" )
         alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeInMillis, alarmIntent)
 
     }
@@ -86,8 +93,7 @@ class AlarmHandler @Inject constructor(
     private fun calculateNextAlarm(alert: Alert, pendingAlert: Boolean): Long {
         return when {
             alert.endTime!! <= LocalDateTime.now().format(fmt).toString() -> {
-                // set the alarm to next day starttime
-                getMillis(LocalDateTime.of(LocalDate.now(), LocalTime.parse(alert.startTime, fmt)).plusDays(1));
+                setNextDayAlarm(alert)
             }
             pendingAlert -> {
                 // set to interval
@@ -95,18 +101,30 @@ class AlarmHandler @Inject constructor(
             }
             else -> {
                 // set to starttime
+                alert.pending = true
+                alertRepo.update(alert)
                 getMillis(LocalDateTime.of(LocalDate.now(), LocalTime.parse(alert.startTime, fmt)));
             }
         }
     }
 
+    private fun setNextDayAlarm(alert: Alert) =
+        // set the alarm to next day starttime
+        getMillis(
+            LocalDateTime.of(LocalDate.now(), LocalTime.parse(alert.startTime, fmt)).plusDays(1)
+        )
+
     private fun cancelAlarm(alert: Alert) {
-        alarmManager?.cancel(getPendingIntent(alert.id!!.toInt()))
+        Log.i(TAG, "Cancel alarm: $alert")
+        alarmManager?.cancel(getPendingIntent(alert))
+        alert.pending = false;
+        alertRepo.update(alert)
     }
 
-    private fun getPendingIntent(alertId: Int): PendingIntent {
+    private fun getPendingIntent(alert: Alert): PendingIntent {
         return Intent(context, AlarmBroadcastReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(context, alertId, intent, PendingIntent.FLAG_IMMUTABLE)
+            intent.putExtra("ALERT_ID", alert.id)
+            PendingIntent.getBroadcast(context, this.alarmRequestCode + alert.id!!.toInt(), intent, PendingIntent.FLAG_IMMUTABLE)
         }
     }
 
@@ -121,5 +139,9 @@ class AlarmHandler @Inject constructor(
         tmpList.forEach {
             this.addAlarm(it)
         }
+    }
+
+    fun setNextInterval(alert: Alert) {
+        setAlarm(alert, false);
     }
 }

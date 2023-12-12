@@ -112,13 +112,13 @@ class DirectionChart @JvmOverloads constructor(
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         chartData.slices.let { slices ->
             slices.forEach {
-                canvas?.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, it.value.paint)
-                canvas?.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, borderPaint)
+                canvas.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, it.value.paint)
+                canvas.drawArc(oval, it.value.startAngle, it.value.sweepAngle, true, borderPaint)
                 drawLabels(canvas, it.value)
             }
         }
