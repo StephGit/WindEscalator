@@ -101,7 +101,7 @@ class AlertNotificationActivity : AppCompatActivity() {
 
     private fun stopAlert() {
         noiseHandler.stopNoise()
-        alarmHandler.removeAlarm(alert, true)
+        alarmHandler.removeAlarm(alert.id!!, true)
         finish()
     }
 

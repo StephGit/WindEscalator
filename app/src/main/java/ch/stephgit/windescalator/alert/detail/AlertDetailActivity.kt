@@ -149,7 +149,7 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun initAlert() {
-        this.alert = Alert(null, false, null, null, null, null, listOf())
+        this.alert = Alert(null, false, null, 0L, null, null, null, listOf())
     }
 
     private fun getAlertName(): String {

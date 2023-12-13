@@ -17,6 +17,10 @@ import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
 import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.data.entity.Alert
 import com.google.android.material.switchmaterial.SwitchMaterial
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 /*
@@ -33,6 +37,7 @@ class AlertRecyclerAdapter @Inject constructor(
     var onSwitch: ((Alert) -> Unit)? = null
     private lateinit var itemView: View
     private lateinit var parentView: ViewGroup
+    private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.YY HH:mm")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         parentView = parent
@@ -50,6 +55,8 @@ class AlertRecyclerAdapter @Inject constructor(
             bind(alert)
             initChartData(itemView.context.getString(R.color.windEscalator_colorSelectedLight))
             itemText.text = alert.name
+            alert.nextRun?.let {
+                itemNext.text = "Next: " + Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime().format(fmt) };
             itemTime.text = alert.startTime + "\n" + alert.endTime
             itemForce.text = alert.windForceKts.toString()
             alert.directions?.let { itemDirs.setData(it) }
@@ -64,18 +71,19 @@ class AlertRecyclerAdapter @Inject constructor(
         if (alert.active) {
             alarmHandler.addOrUpdate(alert)
         } else {
-            alarmHandler.removeAlarm(alert, false)
+            alarmHandler.removeAlarm(alert.id!!, false)
         }
     }
 
     fun removeItem(viewHolder: RecyclerView.ViewHolder): Alert {
         val alert = getItem(viewHolder.absoluteAdapterPosition)
-        alarmHandler.removeAlarm(alert, false)
+        alarmHandler.removeAlarm(alert.id!!, false)
         return alert;
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemText: TextView = itemView.findViewById(R.id.tv_alertItemText)
+        val itemNext: TextView = itemView.findViewById(R.id.tv_alertNextRun)
         val itemTime: TextView = itemView.findViewById(R.id.tv_alertTimeWindow)
         val itemForce: TextView = itemView.findViewById(R.id.tv_alertForce)
         val itemDirs: DirectionChart = itemView.findViewById(R.id.alert_wind_direction)
@@ -112,6 +120,7 @@ private class AlertDiffCallback : DiffUtil.ItemCallback<Alert>() {
     override fun areContentsTheSame(oldItem: Alert, newItem: Alert): Boolean {
         return oldItem.active == newItem.active &&
                 oldItem.resource == newItem.resource &&
+                oldItem.nextRun == newItem.nextRun &&
                 oldItem.name == newItem.name &&
                 oldItem.id == newItem.id &&
                 oldItem.startTime == newItem.startTime &&

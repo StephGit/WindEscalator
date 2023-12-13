@@ -3,7 +3,6 @@ package ch.stephgit.windescalator.data.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import ch.stephgit.windescalator.data.entity.Alert
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AlertDao {

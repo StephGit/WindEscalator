@@ -6,16 +6,24 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
 import ch.stephgit.windescalator.di.Injector
+import ch.stephgit.windescalator.log.LogCatViewModel
 import ch.stephgit.windescalator.log.LogFragment
 import ch.stephgit.windescalator.wind.WindFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import javax.inject.Inject
 
 
 class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
     private lateinit var navigation: BottomNavigationView
+
+    private lateinit var viewModel: LogCatViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, WindEscalatorActivity::class.java)
@@ -27,6 +35,8 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         navigation = findViewById(R.id.wind_escalator_navigation)
         navigation.setOnItemSelectedListener { clickedMenuItem -> selectMenuItem(clickedMenuItem) }
         Injector.appComponent.inject(this)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[LogCatViewModel::class.java]
 
         replaceFragment(AlertFragment())
     }

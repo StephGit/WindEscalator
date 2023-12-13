@@ -18,6 +18,8 @@ import dagger.Provides
 import javax.inject.Singleton
 
 
+private const val DB_NAME = "WindEscalatorDB"
+
 @Module(includes = [ViewModelModule::class])
 class AppModule {
 
@@ -27,8 +29,11 @@ class AppModule {
 
 
     @Provides
+    @Singleton
     fun provideAppDatabase(context: Context): AppDatabase =
-            Room.databaseBuilder(context, AppDatabase::class.java, "WindEscalatorDB").build()
+            Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
+                .addMigrations(AppDatabase.MIGRATION_1_2)
+                .build()
 
 
     @Provides

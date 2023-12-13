@@ -8,6 +8,7 @@ data class Alert(
     var name: String?,
     var active: Boolean = false,
     var resource: String?,
+    var nextRun: Long?,
     var startTime: String?,
     var endTime: String?,
     var windForceKts: Int?,
