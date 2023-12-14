@@ -43,7 +43,7 @@ class AlarmHandler @Inject constructor(
 
     fun addOrUpdate(alert: Alert) {
         if (isExisting(alert.id!!)) {
-            if (alarms[alert.id] != alert) {
+            if (alert.nextRun!! > alarms[alert.id]?.nextRun!!) {
                 removeAlarm(alert.id!!, false)
                 addAlarm(alert)
             }
