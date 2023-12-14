@@ -50,8 +50,11 @@ class AlertJobIntentService : JobIntentService() {
 
     private fun handleAlert(alert: Alert) {
         // check if there is wind
-        windDataHandler.isFiring(alert, ::sendAlertBroadcast)
-        alarmHandler.setNextInterval(alert)
+        windDataHandler.isFiring(alert, ::sendAlertBroadcast, ::setNextInterval)
+    }
+
+    private fun setNextInterval(alert: Alert) {
+        alarmHandler.setNextInterval(alert.id!!)
     }
 
     private fun sendAlertBroadcast(alertId: Long, windData: String) {

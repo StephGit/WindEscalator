@@ -38,22 +38,38 @@ class WindDataHandler @Inject constructor(val context: Context) {
         }
     }
 
-    fun isFiring(alert: Alert, sendAlertBroadcast: (Long, String) -> Unit) {
+    fun isFiring(
+        alert: Alert,
+        sendAlertBroadcast: (Long, String) -> Unit,
+        setNextInterval: (Alert) -> Unit
+    ) {
         getWindData(alert, object : VolleyCallback {
             @SuppressLint("StringFormatMatches")
             override fun onSuccess(result: WindData) {
-                val windData = context.getString(R.string.winddata, result.force.toString(), result.direction, result.time)
+                val windData = context.getString(
+                    R.string.winddata,
+                    result.force.toString(),
+                    result.direction,
+                    result.time
+                )
                 Log.d(TAG, "WindDataHandler: $windData $alert")
-                if (isAlert(alert, result)) sendAlertBroadcast(alert.id!!, windData)
+                if (isAlert(alert, result)) {
+                    sendAlertBroadcast(
+                        alert.id!!,
+                        windData
+                    )
+                } else {
+                    setNextInterval(alert)
+                }
             }
         });
     }
 
     private fun isAlert(alert: Alert, windData: WindData): Boolean {
         return ((alert.windForceKts!! <= windData.force) &&
-            (alert.startTime!! <= windData.time) &&
-            (alert.endTime!! > windData.time) &&
-            (alert.directions!!.contains(windData.direction)))
+                (alert.startTime!! <= windData.time) &&
+                (alert.endTime!! > windData.time) &&
+                (alert.directions!!.contains(windData.direction)))
     }
 
     private fun getWindData(alert: Alert, callback: VolleyCallback) {
@@ -74,7 +90,7 @@ class WindDataHandler @Inject constructor(val context: Context) {
                 Log.e(TAG, "ERROR: %s".format(error.toString()))
             })
         // Add the request to the RequestQueue.
-                requestQueue.add(stringRequest)
+        requestQueue.add(stringRequest)
     }
 
     public interface VolleyCallback {

@@ -42,9 +42,9 @@ class AlarmHandler @Inject constructor(
 
 
     fun addOrUpdate(alert: Alert) {
-        if (isExisting(alert)) {
-            if (alarms[alert.id] != alert) {
-                removeAlarm(alert, false)
+        if (isExisting(alert.id!!)) {
+            if (alert.nextRun!! > alarms[alert.id]?.nextRun!!) {
+                removeAlarm(alert.id!!, false)
                 addAlarm(alert)
             }
         } else {
@@ -52,24 +52,23 @@ class AlarmHandler @Inject constructor(
         }
     }
 
-    private fun isExisting(alert: Alert): Boolean {
-        return (this.alarms.containsKey(alert.id))
+    private fun isExisting(alertId: Long): Boolean {
+        return (this.alarms.containsKey(alertId))
     }
 
     private fun addAlarm(alert: Alert) {
         if (alert.active) {
             alarms[alert.id!!] = alert
-            setAlarm(alert, false)
+            setAlarm(alert.id!!, false)
         }
     }
 
-    fun removeAlarm(alert: Alert, forToday: Boolean) {
+    fun removeAlarm(alertId: Long, forToday: Boolean) {
         if (forToday) {
-            setAlarm(alert, true)
+            setAlarm(alertId, true)
         } else {
-            if (!isExisting(alert)) return
-            this.alarms.remove(alert.id)
-            cancelAlarm(alert)
+            if (!isExisting(alertId)) return
+            cancelAlarm(alertId)
         }
     }
 
@@ -78,21 +77,29 @@ class AlarmHandler @Inject constructor(
      * With `nextDay`=true the calculation for the next possible alarm is skipped and the alarm is
      * set to it's start time on the next day.
      */
-    private fun setAlarm(alert: Alert, nextDay: Boolean) {
-        val alarmTimeInMillis: Long =
-                // is endtime arrived
-                if (nextDay) setNextDayAlarm(alert) else calculateNextAlarm(alert, alert.pending)
+    private fun setAlarm(alertId: Long, nextDay: Boolean) {
+        alertRepo.getAlert(alertId)?.let {
+            val alarmTimeInMillis: Long =
+                if (nextDay) setNextDayAlarm(it) else calculateNextAlarm(it, it.pending)
 
+            it.nextRun = alarmTimeInMillis
+            alertRepo.update(it)
 
-        alarmIntent = getPendingIntent(alert)
-        Log.i(TAG, "Set Alarm for alert: $alert.name" )
-        alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeInMillis, alarmIntent)
+            alarmIntent = getPendingIntent(it)
+            Log.i(TAG, "Set Alarm for alert: $it.name")
+            alarmManager?.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                alarmTimeInMillis,
+                alarmIntent
+            )
+        }
 
     }
 
     private fun calculateNextAlarm(alert: Alert, pendingAlert: Boolean): Long {
         return when {
             alert.endTime!! <= LocalDateTime.now().format(fmt).toString() -> {
+                alert.pending = false
                 setNextDayAlarm(alert)
             }
             pendingAlert -> {
@@ -102,7 +109,6 @@ class AlarmHandler @Inject constructor(
             else -> {
                 // set to starttime
                 alert.pending = true
-                alertRepo.update(alert)
                 getMillis(LocalDateTime.of(LocalDate.now(), LocalTime.parse(alert.startTime, fmt)));
             }
         }
@@ -110,15 +116,21 @@ class AlarmHandler @Inject constructor(
 
     private fun setNextDayAlarm(alert: Alert) =
         // set the alarm to next day starttime
+        // pending = false??
         getMillis(
             LocalDateTime.of(LocalDate.now(), LocalTime.parse(alert.startTime, fmt)).plusDays(1)
         )
 
-    private fun cancelAlarm(alert: Alert) {
-        Log.i(TAG, "Cancel alarm: $alert")
-        alarmManager?.cancel(getPendingIntent(alert))
-        alert.pending = false;
-        alertRepo.update(alert)
+    private fun cancelAlarm(alertId: Long) {
+        Log.i(TAG, "Cancel alarm: $alertId")
+        this.alarms.remove(alertId)
+        val alert = alertRepo.getAlert(alertId)
+        if (alert != null) {
+            alarmManager?.cancel(getPendingIntent(alert))
+            alert.nextRun = null
+            alert.pending = false;
+            alertRepo.update(alert)
+        }
     }
 
     private fun getPendingIntent(alert: Alert): PendingIntent {
@@ -141,7 +153,7 @@ class AlarmHandler @Inject constructor(
         }
     }
 
-    fun setNextInterval(alert: Alert) {
-        setAlarm(alert, false);
+    fun setNextInterval(alertId: Long) {
+        setAlarm(alertId, false);
     }
 }

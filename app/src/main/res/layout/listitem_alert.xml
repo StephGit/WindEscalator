@@ -21,17 +21,30 @@
         <TextView
             android:id="@+id/tv_alertItemText"
             android:layout_width="100dp"
-            android:layout_height="@dimen/windEscalator_height_half_content_list_elements"
-            android:layout_marginTop="@dimen/windEscalator_margin_top_alert_list_item"
+            android:layout_height="30dp"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="@dimen/windEscalator_margin_end_alert_list_item"
-            android:drawablePadding="15dp"
+            android:drawablePadding="10dp"
             android:padding="@dimen/windEscalator_padding_text_views_list_elements"
-            android:textSize="@dimen/windEscalator_text_size_alert_name_list_item"
+            android:textSize="16sp"
             app:drawableLeftCompat="@drawable/bullet_online"
-            app:layout_constraintBottom_toBottomOf="@id/alert_list_item_content"
+            app:layout_constraintBottom_toTopOf="@id/tv_alertNextRun"
             app:layout_constraintEnd_toStartOf="@id/tv_alertTimeWindow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/alert_list_item_content" />
+
+        <TextView
+                android:id="@+id/tv_alertNextRun"
+                android:layout_width="140dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="@dimen/windEscalator_margin_end_alert_list_item"
+                android:padding="2dp"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/alert_list_item_content"
+                app:layout_constraintEnd_toStartOf="@id/tv_alertTimeWindow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_alertItemText" />
 
         <TextView
             android:id="@+id/tv_alertTimeWindow"
