@@ -1,10 +1,15 @@
 package ch.stephgit.windescalator
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
@@ -22,6 +27,8 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
     private lateinit var viewModel: LogCatViewModel
 
+    private lateinit var menu: Menu
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -29,27 +36,70 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         fun newIntent(ctx: Context) = Intent(ctx, WindEscalatorActivity::class.java)
     }
 
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wind_escalator)
-        navigation = findViewById(R.id.wind_escalator_navigation)
-        navigation.setOnItemSelectedListener { clickedMenuItem -> selectMenuItem(clickedMenuItem) }
-        Injector.appComponent.inject(this)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        navigation = findViewById(R.id.navigation)
+        navigation.setOnItemSelectedListener { selectedNavItem -> selectNavItem(selectedNavItem) }
 
+        Injector.appComponent.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory)[LogCatViewModel::class.java]
 
         replaceFragment(AlertFragment())
     }
 
-    private fun selectMenuItem(clickedMenuItem: MenuItem): Boolean {
-        Log.i(TAG, "selectMenuItem: ${clickedMenuItem.title}")
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        this.menu = menu
+        inflater.inflate(R.menu.menu_settings, menu)
+        return true
+    }
 
-        when (clickedMenuItem.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection.
+        return when (item.itemId) {
+            R.id.menu_settings -> {
+                replaceFragment(SettingsFragment())
+                hideMainNavAndMenu(item)
+                true
+            }
+            R.id.menu_back -> {
+                replaceFragment(AlertFragment())
+                showMainNavAndMenu(item)
+                true
+            }
+
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun hideMainNavAndMenu(item: MenuItem) {
+        navigation.visibility = INVISIBLE
+        item.isVisible = false
+        menu.getItem(1).isVisible = true
+    }
+
+    private fun showMainNavAndMenu(item: MenuItem) {
+        navigation.visibility = VISIBLE
+        item.isVisible = false
+        menu.getItem(0).isVisible = true
+    }
+
+
+    private fun selectNavItem(selectedNavItem: MenuItem): Boolean {
+        Log.i(TAG, "selectMenuItem: ${selectedNavItem.title}")
+
+        when (selectedNavItem.itemId) {
             R.id.bottom_navigation_alert -> replaceFragment(AlertFragment())
             R.id.bottom_navigation_messure -> replaceFragment(WindFragment())
             R.id.bottom_navigation_webcam -> replaceFragment(WebcamFragment())
             R.id.bottom_navigation_log -> replaceFragment(LogFragment())
-            else -> throw IllegalArgumentException("Unknown clickedMenuItem.itemId: ${clickedMenuItem.itemId}")
+            else -> throw IllegalArgumentException("Unknown clickedMenuItem.itemId: ${selectedNavItem.itemId}")
         }
         return true
     }

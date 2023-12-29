@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/windEscalator_colorBrand</item>
         <item name="colorPrimaryDark">@color/windEscalator_colorBlack</item>
         <item name="colorAccent">@color/windEscalator_colorBrand</item>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+            android:title="Alerts">
+
+        <EditTextPreference
+                android:key="alert_interval"
+                android:title="Alert interval"
+                android:defaultValue="10"
+                android:persistent="true"
+                app:useSimpleSummaryProvider="true"
+                android:dialogTitle="Update alert interval"
+                android:icon="@drawable/baseline_timer_24"
+                android:summary="Interval for pending alerts. (Time between each wind check) "/>
+
+        <SwitchPreferenceCompat
+                android:key="cancel_firing_alert_behavior"
+                android:icon="@drawable/baseline_next_plan_24"
+                android:title="Reschedule alert on next interval"
+                android:summary="Behavior when a firing alert is cancelled. Default behavior is next day."/>
+
+        <SwitchPreferenceCompat
+                android:key="activate_alert_sound"
+                android:icon="@drawable/baseline_volume_up_24"
+                android:title="Activate alert sound"
+                android:summary="Enables extremely anoing wake up noise. Default is vibration only. "/>
+
+        <SeekBarPreference
+                android:key="alert_sound_level"
+                android:title="Alert sound level"
+                android:max="10"
+                android:defaultValue="5"/>
+
+    </PreferenceCategory>
+
+
+
+</PreferenceScreen>

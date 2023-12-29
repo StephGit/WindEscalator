@@ -43,8 +43,10 @@ android {
 }
 
 dependencies {
+
     def lifecycleVersion = '2.6.2'
     def daggerVersion = '2.48'
+    def navVersion = '2.7.6'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0'
@@ -52,11 +54,15 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0-beta01'
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'org.jsoup:jsoup:1.13.1'
+
+    implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
 
 
     //testing
