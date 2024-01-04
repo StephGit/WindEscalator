@@ -6,6 +6,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.preference.PreferenceManager
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.di.Injector
@@ -13,8 +14,13 @@ import javax.inject.Inject
 
 
 class NoiseHandler @Inject constructor(
-        val context: Context) {
+    val context: Context
+) {
 
+    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
+    private val playAlertSound = sharedPreferences.getBoolean("activate_alert_sound", false)
+    private val vibrateOnAlert = sharedPreferences.getBoolean("activate_vibration", false)
+    private val soundVolume = sharedPreferences.getInt("alert_sound_level", 5)
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var vibrator: Vibrator
 
@@ -22,20 +28,23 @@ class NoiseHandler @Inject constructor(
         Injector.appComponent.inject(this)
     }
 
-    // TODO
-    // Ask for permission to start media on silent modes!
-    // Add preferences for alarm settings
     fun makeNoise() {
         mediaPlayer = MediaPlayer.create(context, R.raw.alarm_sound)
         vibrator = getSystemService(context, Vibrator::class.java) as Vibrator
 
-        val vibe = VibrationEffect.createWaveform(longArrayOf(500, 1000, 500, 1000, 500, 1000, 500), 4)
+        val vibe =
+            VibrationEffect.createWaveform(longArrayOf(500, 1000, 500, 1000, 500, 1000, 500), 4)
 
-        vibrator.vibrate(vibe)
+        if (vibrateOnAlert) {
+            vibrator.vibrate(vibe)
+        }
 
-        mediaPlayer.setOnPreparedListener {
-            mediaPlayer.isLooping = true
-//            mediaPlayer.start()
+        if (playAlertSound) {
+            mediaPlayer.setOnPreparedListener {
+                mediaPlayer.setVolume(soundVolume.toFloat(), soundVolume.toFloat())
+                mediaPlayer.isLooping = true
+                mediaPlayer.start()
+            }
         }
 
     }

@@ -9,8 +9,9 @@
         <EditTextPreference
                 android:key="alert_interval"
                 android:title="Alert interval"
+                android:digits="0123456789"
+                android:inputType="numberDecimal"
                 android:defaultValue="10"
-                android:persistent="true"
                 app:useSimpleSummaryProvider="true"
                 android:dialogTitle="Update alert interval"
                 android:icon="@drawable/baseline_timer_24"
@@ -23,10 +24,17 @@
                 android:summary="Behavior when a firing alert is cancelled. Default behavior is next day."/>
 
         <SwitchPreferenceCompat
+                android:key="activate_vibration"
+                android:icon="@drawable/baseline_vibration_24"
+                android:title="Activate vibration on alert"
+                android:summary="Enables vibration on a firing alert."/>
+
+
+        <SwitchPreferenceCompat
                 android:key="activate_alert_sound"
                 android:icon="@drawable/baseline_volume_up_24"
                 android:title="Activate alert sound"
-                android:summary="Enables extremely anoing wake up noise. Default is vibration only. "/>
+                android:summary="Enables extremely anoing wake up noise."/>
 
         <SeekBarPreference
                 android:key="alert_sound_level"

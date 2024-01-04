@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.preference.PreferenceManager
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.receiver.AlarmBroadcastReceiver
 import ch.stephgit.windescalator.data.entity.Alert
@@ -32,7 +33,8 @@ class AlarmHandler @Inject constructor(
     private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     private lateinit var alarmIntent: PendingIntent
     private val alarms: MutableMap<Long, Alert> = HashMap() // Contains Map of active alarms
-    private val interval = 10L // TODO make interval customizable
+    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
+    private val interval = sharedPreferences.getString("alert_interval", "10")!!.toLong()
     private val alarmRequestCode = 42;
 
 
