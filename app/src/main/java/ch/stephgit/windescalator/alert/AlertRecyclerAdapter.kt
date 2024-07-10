@@ -37,7 +37,7 @@ class AlertRecyclerAdapter @Inject constructor(
     var onSwitch: ((Alert) -> Unit)? = null
     private lateinit var itemView: View
     private lateinit var parentView: ViewGroup
-    private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.YY HH:mm")
+    private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         parentView = parent
@@ -61,7 +61,7 @@ class AlertRecyclerAdapter @Inject constructor(
             itemForce.text = alert.windForceKts.toString()
             alert.directions?.let { itemDirs.setData(it) }
             switch.isChecked = alert.active
-            if (alert.active) alarmHandler.addOrUpdate(alert)
+//            if (alert.active) alarmHandler.addOrUpdate(alert) //TODO due to db-updates on nextRun RecyclerView always creates a new view binding this leads to a never ending cycle
         }
     }
 
@@ -98,6 +98,10 @@ class AlertRecyclerAdapter @Inject constructor(
                 alert.active = isChecked
                 onSwitchChange(alert)
                 onSwitch?.invoke(alert)
+            }
+
+            switch.setOnClickListener { click ->
+                Log.d(TAG, "AlertRecyclerAdapter: switch clicked")
             }
         }
 

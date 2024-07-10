@@ -11,3 +11,4 @@
 .externalNativeBuild
 .idea
 google_api.xml
+app/google-services.json

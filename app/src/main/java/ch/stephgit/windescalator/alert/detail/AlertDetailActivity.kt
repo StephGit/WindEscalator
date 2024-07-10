@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
-import android.view.View
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
@@ -110,8 +109,9 @@ class AlertDetailActivity : AppCompatActivity() {
         labelSeekBar = findViewById(R.id.sb_label)
         labelSeekBar.x = 15F
         seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            @SuppressLint("StringFormatMatches")
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                labelSeekBar.text = "$progress kts"
+                labelSeekBar.text = getString(R.string.progress_kts, progress)
                 //Get the thumb bound and get its right value
                 val x = seekBar.thumb.bounds.right.toFloat()
                 //set the value to textview x value

@@ -11,7 +11,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_windbag_black_24"
-         />
+            android:contentDescription="enable alert" />
 
     <TextView
         android:id="@+id/tvAlertResource"

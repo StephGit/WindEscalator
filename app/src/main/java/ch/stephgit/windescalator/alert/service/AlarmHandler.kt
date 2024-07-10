@@ -44,7 +44,10 @@ class AlarmHandler @Inject constructor(
 
 
     fun addOrUpdate(alert: Alert) {
-        if (isExisting(alert.id!!)) {
+        if (isExisting(alert.id!!) ) {
+            Log.d(TAG, "nullcheck: " + alert)
+            Log.d(TAG, "nullcheck: " + alert.nextRun!!)
+            Log.d(TAG, "nullcheck2: " + alarms[alert.id]?.nextRun!!)
             if (alert.nextRun!! > alarms[alert.id]?.nextRun!!) {
                 removeAlarm(alert.id!!, false)
                 addAlarm(alert)
@@ -88,7 +91,7 @@ class AlarmHandler @Inject constructor(
             alertRepo.update(it)
 
             alarmIntent = getPendingIntent(it)
-            Log.i(TAG, "Set Alarm for alert: $it.name")
+            Log.i(TAG, "AlarmHandler: Set Alarm for alert: $it.name")
             alarmManager?.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 alarmTimeInMillis,

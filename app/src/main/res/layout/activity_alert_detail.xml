@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/windescalator_alert_detail_margin_top"
         android:layout_marginBottom="30dp"
-        android:text="-"
+        android:text="@string/delimiter"
         app:layout_constraintBottom_toTopOf="@id/sb_alert_threshold"
         app:layout_constraintLeft_toRightOf="@id/et_alert_start_time"
         app:layout_constraintRight_toLeftOf="@id/et_alert_end_time"
@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/sb_label"
         android:layout_marginTop="30dp"
-        android:text="1kts"
+        android:text="@string/one_knot"
         app:layout_constraintTop_toBottomOf="@id/tv_time_delimiter"
         app:layout_constraintBottom_toTopOf="@+id/sb_alert_threshold"
         app:layout_constraintLeft_toLeftOf="parent"/>

@@ -55,5 +55,12 @@
     <string name="log_emtpy_fragment_info">Logs are shown here</string>
     <string name="log_fragment_title">Log</string>
     <string name="bottom_navigation_logs">Debug</string>
+    <string name="delimiter">-</string>
+    <string name="one_knot">1kts</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="settings">Settings</string>
+    <string name="back">Back</string>
+    <string name="progress_kts">%1$s kts</string>
 
 </resources>

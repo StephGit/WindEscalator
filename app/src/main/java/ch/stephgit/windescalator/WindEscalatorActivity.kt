@@ -10,6 +10,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
@@ -17,7 +18,10 @@ import ch.stephgit.windescalator.di.Injector
 import ch.stephgit.windescalator.log.LogCatViewModel
 import ch.stephgit.windescalator.log.LogFragment
 import ch.stephgit.windescalator.wind.WindFragment
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import javax.inject.Inject
 
 
@@ -36,7 +40,6 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         fun newIntent(ctx: Context) = Intent(ctx, WindEscalatorActivity::class.java)
     }
 
-
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +51,22 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         Injector.appComponent.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory)[LogCatViewModel::class.java]
 
+        Firebase.messaging.token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new FCM registration token
+                val token = task.result
+
+                // Log and toast
+
+                Log.d(TAG, token)
+                Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+            },
+        )
         replaceFragment(AlertFragment())
     }
 

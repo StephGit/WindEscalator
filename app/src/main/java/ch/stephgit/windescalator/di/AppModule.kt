@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.room.Room
 import ch.stephgit.windescalator.alert.AlertRecyclerAdapter
 import ch.stephgit.windescalator.alert.detail.WindResourceAdapter
-import ch.stephgit.windescalator.alert.receiver.AlarmBroadcastReceiver
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.alert.service.NoiseHandler

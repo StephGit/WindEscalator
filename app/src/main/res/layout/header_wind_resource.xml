@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
     android:layout_height="32dp"
     android:paddingStart="5dp"
     android:paddingEnd="5dp">
@@ -12,7 +13,8 @@
         android:layout_marginTop="@dimen/windEscalator_left_margin_list_elements"
         android:layout_marginEnd="@dimen/windEscalator_left_margin_list_elements"
         android:text="@string/header_wind_resource"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+            tools:ignore="RelativeOverlap" />
 
     <ImageView
         android:id="@+id/ivArrowDown"
@@ -20,5 +22,6 @@
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_baseline_keyboard_arrow_down_24" />
+        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:contentDescription="Select wind resource" />
 </RelativeLayout>

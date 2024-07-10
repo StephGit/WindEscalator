@@ -14,6 +14,7 @@ import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.receiver.BootBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.alert.service.AlertJobIntentService
+import ch.stephgit.windescalator.alert.service.FirebaseForgroundMessagingService
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.alert.service.WindDataHandler
 import ch.stephgit.windescalator.log.LogFragment
@@ -36,6 +37,7 @@ interface AppComponent {
     fun inject(alertDetailActivity: AlertDetailActivity)
     fun inject(alertNotificationActivity: AlertNotificationActivity)
     fun inject(alertJobIntentService: AlertJobIntentService)
+    fun inject(firebaseForgroundMessagingService: FirebaseForgroundMessagingService)
     fun inject(noiseHandler: NoiseHandler)
     fun inject(windDataAdapter: WindDataHandler)
     fun inject(alarmHandler: AlarmHandler)

@@ -62,3 +62,37 @@ flowchart TD
     BootBroadcastReciever -- inits alarms on boot --> AlarmHandler
     
 ```
+
+
+#### Alert states
+
+```mermaid
+stateDiagram
+    state if_endtime_today <<choice>>
+    state if_pending <<choice>>
+    state if_firing <<choice>>
+    state if_nextIntervalPref <<choice>>
+    pendNextDay: not pending / startTime nextday
+    pend: pending / set to starttime
+    pendInt: pending / set to interval
+
+    [*] --> active : new alert is added to list  
+    
+    state active {
+        [*] --> if_endtime_today : check endtime
+        if_endtime_today --> if_pending : endtime <= now
+        if_pending --> pend : not pending
+        if_pending --> pendInt : pending
+        if_endtime_today --> pendNextDay : endtime > now
+
+        pendInt --> if_firing : isFiring
+        pend --> if_firing : isFiring
+
+        if_firing --> if_endtime_today : set nextInterval
+        if_firing --> firing
+        firing --> if_nextIntervalPref
+        if_nextIntervalPref --> if_endtime_today : set nextInterval
+        if_nextIntervalPref --> pendNextDay : nextDay
+        pendNextDay --> [*] 
+    }
+```
