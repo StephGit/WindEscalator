@@ -12,6 +12,9 @@ import ch.stephgit.windescalator.alert.service.WindDataHandler
 import ch.stephgit.windescalator.data.AppDatabase
 import ch.stephgit.windescalator.data.dao.AlertDao
 import ch.stephgit.windescalator.data.repo.AlertRepo
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -52,7 +55,7 @@ class AppModule {
     @Provides
     @Singleton
     fun provideWindResourceAdapter(context: Context):
-            WindResourceAdapter = WindResourceAdapter(context)
+            WindResourceAdapter = WindResourceAdapter(context, provideFirebaseDb().collection("windResource") )
 
     @Provides
     @Singleton
@@ -75,5 +78,9 @@ class AppModule {
     @Provides
     @Singleton
     fun provideAlertBroadcastReceiver(): AlertBroadcastReceiver = AlertBroadcastReceiver()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseDb(): FirebaseFirestore = Firebase.firestore
 
 }

@@ -1,6 +1,7 @@
 package ch.stephgit.windescalator.alert.detail
 
 import android.content.Context
+import android.database.Cursor
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +10,24 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import ch.stephgit.windescalator.R
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class WindResourceAdapter @Inject constructor(
-        context: Context) :
-        ArrayAdapter<WindResource>(context, 0, WindResource.values()) {
+    context: Context, query: CollectionReference) :
+        ArrayAdapter<WindResource>(context, 0) {
 
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
+    private val results = query.orderBy("position").get().addOnSuccessListener { result ->
+        for (document in result) {
+            add(WindResource(document.id, document.data["displayName"].toString(), document.data["name"].toString()))
+        }
+
+    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+
         val view: View
         if (convertView == null && position == 0) {
             view = layoutInflater.inflate(R.layout.header_wind_resource, parent, false)
@@ -49,6 +59,7 @@ class WindResourceAdapter @Inject constructor(
     }
 
 
+
     override fun getItem(position: Int): WindResource? {
         if (position == 0) {
             return null
@@ -61,7 +72,7 @@ class WindResourceAdapter @Inject constructor(
     private fun setItemForResource(view: View, resource: WindResource) {
         val tvResource = view.findViewById<TextView>(R.id.tvAlertResource)
         val ivResource = view.findViewById<ImageView>(R.id.ivAlertResource)
-        tvResource.text = resource.fullName
+        tvResource.text = resource.displayName
         resource.icon.let { icon -> ivResource.setBackgroundResource(icon) }
     }
 }

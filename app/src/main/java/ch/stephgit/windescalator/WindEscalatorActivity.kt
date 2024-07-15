@@ -18,14 +18,22 @@ import ch.stephgit.windescalator.di.Injector
 import ch.stephgit.windescalator.log.LogCatViewModel
 import ch.stephgit.windescalator.log.LogFragment
 import ch.stephgit.windescalator.wind.WindFragment
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.Firebase
+import com.google.firebase.appcheck.appCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.initialize
+import com.google.firebase.messaging.messaging
 import javax.inject.Inject
 
 
 class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
+
 
     private lateinit var navigation: BottomNavigationView
 
@@ -40,6 +48,48 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         fun newIntent(ctx: Context) = Intent(ctx, WindEscalatorActivity::class.java)
     }
 
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract(),
+    ) { res ->
+        this.onSignInResult(res)
+    }
+
+    private fun createSignInIntent() {
+
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.GoogleBuilder().build()
+        )
+
+        // Create and launch sign-in intent
+        val signInIntent = AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .build()
+        signInLauncher.launch(signInIntent)
+    }
+
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+        val response = result.idpResponse
+        if (result.resultCode == RESULT_OK) {
+            // Successfully signed in
+            val user = FirebaseAuth.getInstance().currentUser
+            Log.d(TAG, user.toString())
+        } else {
+            Log.d(TAG, response?.error.toString())
+            Toast.makeText(baseContext, getString(R.string.signInError), Toast.LENGTH_LONG).show()
+            createSignInIntent()
+        }
+    }
+     private fun signOut() {
+        AuthUI.getInstance()
+            .signOut(this)
+            .addOnCompleteListener {
+                // ...
+            }
+    }
+
+
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +100,20 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
         Injector.appComponent.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory)[LogCatViewModel::class.java]
+
+        //Firebase Stuff
+        initFirebase()
+        replaceFragment(AlertFragment())
+    }
+
+    private fun initFirebase() {
+        Firebase.initialize(context = this)
+        Firebase.appCheck.installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance()
+        )
+
+        createSignInIntent()
+        signOut()
 
         Firebase.messaging.token.addOnCompleteListener(
             OnCompleteListener { task ->
@@ -67,7 +131,6 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
                 Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
             },
         )
-        replaceFragment(AlertFragment())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -129,4 +192,5 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
                 .replace(R.id.frame_content, fragment)
                 .commit()
     }
+
 }

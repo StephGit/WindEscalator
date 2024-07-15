@@ -19,6 +19,10 @@ import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
 import ch.stephgit.windescalator.di.Injector
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.tasks.await
+import java.util.concurrent.Flow
 import javax.inject.Inject
 
 
@@ -44,6 +48,9 @@ class AlertDetailActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var db: FirebaseFirestore
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, AlertDetailActivity::class.java)
@@ -136,12 +143,22 @@ class AlertDetailActivity : AppCompatActivity() {
 
     private fun setViewElementsData() {
         alertName.setText(getAlertName())
-        windResourceSpinner.setSelection(WindResource.valueOf(alert.resource!!).id)
+
+        getWindResourceById { windResource:WindResource -> windResourceSpinner.setSelection(windResource.position) }
+
         startTime.setText(alert.startTime.toString())
         endTime.setText(alert.endTime.toString())
         seekBar.progress = getWindForce()
         if (!alert.directions.isNullOrEmpty()) alert.directions?.let { directionChart.setData(it) }
     }
+
+    private fun getWindResourceById(callback: (windResource: WindResource) -> Unit) {
+        db.collection("windResource").document(alert.resource!!).get().addOnSuccessListener {
+            Log.d(TAG, it.data.toString())
+            it.toObject<WindResource>()?.let { it1 -> callback(it1) }
+        }
+    }
+
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -173,50 +190,58 @@ class AlertDetailActivity : AppCompatActivity() {
                 alertName.error = getString(R.string.alert_detail_activity_error_no_name)
                 false
             }
+
             (windResourceSpinner.selectedItemId == 0L) -> {
-                showErrorToast( getString(R.string.alert_detail_activity_toast_error_missing_resource))
+                showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_resource))
                 false
             }
+
             startTime.text.isNullOrBlank() -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_missing_starttime))
                 false
             }
+
             endTime.text.isNullOrBlank() -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_missing_endtime))
                 false
             }
+
             startTime.text.equals(endTime.text) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_same_start_and_endtime))
                 false
             }
+
             (startTime.text.toString() > endTime.text.toString()) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_endtime_before_starttime))
                 false
             }
+
             (seekBar.progress == 0) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_threshold))
                 false
             }
+
             (directionChart.getSelectedData().isNullOrEmpty()) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_directions))
                 false
             }
+
             else -> true
         }
     }
 
     private fun showErrorToast(error: String) {
         Toast.makeText(
-                this,
-                error,
-                Toast.LENGTH_LONG
+            this,
+            error,
+            Toast.LENGTH_LONG
         ).show()
     }
 
     private fun saveOrUpdate() {
         if (isValid()) {
             alert.name = alertName.text.toString().trim()
-            alert.resource = windResourceSpinner.selectedItem.toString()
+            alert.resource = (windResourceSpinner.selectedItem as WindResource).id
             alert.startTime = startTime.text.toString()
             alert.endTime = endTime.text.toString()
             alert.windForceKts = seekBar.progress

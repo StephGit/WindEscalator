@@ -63,6 +63,23 @@ flowchart TD
     
 ```
 
+Initial registration
+```mermaid
+sequenceDiagram
+    participant APP
+    participant FB
+    APP->>FB: register with APP-token
+    FB->>APP: return Wind-Resources
+```
+
+Add alert
+```mermaid
+sequenceDiagram
+    participant APP
+    participant FB
+    APP->>FB: save alert to db
+```
+
 
 #### Alert states
 

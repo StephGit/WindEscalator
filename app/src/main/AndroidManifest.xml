@@ -71,7 +71,9 @@
         <service
                 android:name=".alert.service.FirebaseForgroundMessagingService"
                 android:directBootAware="true"
-                android:exported="false">
+                android:exported="false"
+                android:permission="@string/broadcast_permission">
+                >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

@@ -73,24 +73,24 @@ class WindDataHandler @Inject constructor(val context: Context) {
     }
 
     private fun getWindData(alert: Alert, callback: VolleyCallback) {
-        val windResource = WindResource.valueOf(alert.resource!!)
-        val url = context.getString(windResource.url)
-        Log.d(TAG, "WindDataHandler: getWinddata $url")
-        // Formulate the request and handle the response.
-
-
-        val stringRequest = StringRequest(
-            Request.Method.GET, url,
-            { response ->
-                val windData = windResource.extractData(response)
-                callback.onSuccess(windData);
-            },
-            { error ->
-                // Handle error
-                Log.e(TAG, "ERROR: %s".format(error.toString()))
-            })
-        // Add the request to the RequestQueue.
-        requestQueue.add(stringRequest)
+//        val windResource = WindResource.valueOf(alert.resource!!)
+//        val url = context.getString(windResource.url)
+//        Log.d(TAG, "WindDataHandler: getWinddata $url")
+//        // Formulate the request and handle the response.
+//
+//
+//        val stringRequest = StringRequest(
+//            Request.Method.GET, url,
+//            { response ->
+//                val windData = windResource.extractData(response)
+//                callback.onSuccess(windData);
+//            },
+//            { error ->
+//                // Handle error
+//                Log.e(TAG, "ERROR: %s".format(error.toString()))
+//            })
+//        // Add the request to the RequestQueue.
+//        requestQueue.add(stringRequest)
     }
 
     public interface VolleyCallback {

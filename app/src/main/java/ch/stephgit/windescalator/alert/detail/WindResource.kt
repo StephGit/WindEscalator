@@ -9,17 +9,21 @@ import org.json.JSONObject
 import org.jsoup.Jsoup
 import kotlin.math.roundToInt
 
-enum class WindResource(
-    val id: Int,
-    val fullName: String,
-    val icon: Int,
-    val url: Int,
-    val extractData: (data: String) -> WindData
-) {
-    WSCT(1, "WSCT Thun", R.drawable.ic_windbag_black_24, R.string.thun, ::extractWsctData),
-    SCNI(2, "SCNI Interlaken", R.drawable.ic_windbag_black_24, R.string.scni, ::extractScniData),
-    NEUC(3, "St. Blaise", R.drawable.ic_windbag_black_24, R.string.neuc, ::extractNeucData)
-}
+//enum class WindResource(
+//    val id: Int,
+//    val fullName: String,
+//    val icon: Int,
+//    val url: Int,
+//    val extractData: (data: String) -> WindData
+//) {
+//
+//
+//    WSCT(1, "WSCT Thun", R.drawable.ic_windbag_black_24, R.string.thun, ::extractWsctData),
+//    SCNI(2, "SCNI Interlaken", R.drawable.ic_windbag_black_24, R.string.scni, ::extractScniData),
+//    NEUC(3, "St. Blaise", R.drawable.ic_windbag_black_24, R.string.neuc, ::extractNeucData)
+//}
+
+data class WindResource (var id: String = "", var displayName: String = "", var name: String = "", var icon: Int = R.drawable.ic_windbag_black_24, var position: Int = 1)
 
 fun extractNeucData(data: String): WindData {
     Log.d(TAG, data)
