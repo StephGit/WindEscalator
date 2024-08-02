@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.alert.detail.AlertDetailActivity
-import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -199,7 +198,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun onSwitch(alert: Alert) {
+    private fun onSwitch(alert: ch.stephgit.windescalator.data.FbAlert) {
         viewModel.update(alert)
     }
 
@@ -207,7 +206,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
         startActivity(AlertDetailActivity.newIntent(requireContext()))
     }
 
-    private fun showAlertDetail(item: Alert) {
+    private fun showAlertDetail(item: ch.stephgit.windescalator.data.FbAlert) {
         val intent = Intent(activity?.baseContext, AlertDetailActivity::class.java)
         intent.putExtra("ALERT_ID", item.id)
         startActivity(intent)

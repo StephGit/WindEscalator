@@ -16,4 +16,5 @@ data class Alert(
     var pending: Boolean = false,
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null
+
 )

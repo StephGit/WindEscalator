@@ -18,6 +18,7 @@ import ch.stephgit.windescalator.alert.service.FirebaseForgroundMessagingService
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.alert.service.WindDataHandler
 import ch.stephgit.windescalator.log.LogFragment
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import javax.inject.Singleton
@@ -53,5 +54,4 @@ interface AppComponent {
     fun inject(alarmBroadcastReceiver: AlarmBroadcastReceiver)
 
     fun inject(firebaseDb: FirebaseFirestore)
-
 }

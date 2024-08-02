@@ -16,19 +16,20 @@ import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChart
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
-import ch.stephgit.windescalator.data.entity.Alert
-import ch.stephgit.windescalator.data.repo.AlertRepo
+import ch.stephgit.windescalator.data.FbAlert
+import ch.stephgit.windescalator.data.repo.AlertRepository
 import ch.stephgit.windescalator.di.Injector
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.tasks.await
-import java.util.concurrent.Flow
 import javax.inject.Inject
 
 
 class AlertDetailActivity : AppCompatActivity() {
 
-    private lateinit var alert: Alert
+    private lateinit var alert: FbAlert
     private lateinit var alertName: EditText
     private lateinit var windResourceSpinner: Spinner
     private lateinit var startTime: EditText
@@ -39,9 +40,10 @@ class AlertDetailActivity : AppCompatActivity() {
     private lateinit var directionChart: DirectionChart
     private lateinit var saveButton: Button
     private lateinit var timeViewModel: TimeViewModel
+    private lateinit var user: FirebaseUser
 
     @Inject
-    lateinit var alertRepo: AlertRepo
+    lateinit var alertRepo: AlertRepository
 
     @Inject
     lateinit var windResourceAdapter: WindResourceAdapter
@@ -51,6 +53,7 @@ class AlertDetailActivity : AppCompatActivity() {
 
     @Inject
     lateinit var db: FirebaseFirestore
+
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, AlertDetailActivity::class.java)
@@ -64,13 +67,16 @@ class AlertDetailActivity : AppCompatActivity() {
         Injector.appComponent.inject(this)
         initViewElements()
 
+        this.user = Firebase.auth.currentUser!!
+        Log.d(TAG, "user id ${user.uid}")
+
         timeViewModel = ViewModelProvider(this).get(TimeViewModel::class.java)
 
         val extras = intent.extras
         val alertId = extras?.getLong("ALERT_ID")
-        alertId?.let {
-            getAlertFromRepo(alertId)
-        }
+//        alertId?.let {
+            getAlertFromRepo("testalert1")
+//        }
         if (!::alert.isInitialized) initAlert() else setViewElementsData()
     }
 
@@ -144,7 +150,11 @@ class AlertDetailActivity : AppCompatActivity() {
     private fun setViewElementsData() {
         alertName.setText(getAlertName())
 
-        getWindResourceById { windResource:WindResource -> windResourceSpinner.setSelection(windResource.position) }
+        getWindResourceById { windResource: WindResource ->
+            windResourceSpinner.setSelection(
+                windResource.position
+            )
+        }
 
         startTime.setText(alert.startTime.toString())
         endTime.setText(alert.endTime.toString())
@@ -153,7 +163,7 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun getWindResourceById(callback: (windResource: WindResource) -> Unit) {
-        db.collection("windResource").document(alert.resource!!).get().addOnSuccessListener {
+        db.collection("windResource").document(alert.resource).get().addOnSuccessListener {
             Log.d(TAG, it.data.toString())
             it.toObject<WindResource>()?.let { it1 -> callback(it1) }
         }
@@ -166,7 +176,7 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun initAlert() {
-        this.alert = Alert(null, false, null, 0L, null, null, null, listOf())
+        this.alert = FbAlert()
     }
 
     private fun getAlertName(): String {
@@ -178,9 +188,12 @@ class AlertDetailActivity : AppCompatActivity() {
         return if (alert.windForceKts != null) alert.windForceKts!! else 1
     }
 
-    private fun getAlertFromRepo(alertId: Long) {
-        alertRepo.getAlert(alertId)?.let {
+    private fun getAlertFromRepo(alertId: String) {
+        alertRepo.get(alertId) { it: FbAlert ->
             this.alert = it
+        }
+        if (this.alert.name == "") {
+            showErrorToast("Couldn't load alert from db")
         }
     }
 
@@ -247,13 +260,15 @@ class AlertDetailActivity : AppCompatActivity() {
             alert.windForceKts = seekBar.progress
             alert.directions = directionChart.getSelectedData()
 
-            alert.id?.let {
-                alertRepo.update(alert)
-                Log.d(TAG, "AlertDetailActivity: update alert -> $alert")
+            (alert.id != "")?.let {
+                    alertRepo.update(alert)
+                    Log.d(TAG, "AlertDetailActivity: update alert -> $alert")
+
             } ?: run {
-                Log.d(TAG, "AlertDetailActivity: add alert -> $alert")
-                alert.active = true
-                alertRepo.insert(alert)
+                    Log.d(TAG, "AlertDetailActivity: add alert -> $alert")
+                    alert.active = true
+                    alertRepo.create(alert)
+
             }
             finish()
             Toast.makeText(

@@ -12,9 +12,10 @@ import ch.stephgit.windescalator.alert.service.WindDataHandler
 import ch.stephgit.windescalator.data.AppDatabase
 import ch.stephgit.windescalator.data.dao.AlertDao
 import ch.stephgit.windescalator.data.repo.AlertRepo
+import ch.stephgit.windescalator.data.repo.AlertRepository
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -46,6 +47,11 @@ class AppModule {
     @Singleton
     fun provideAlertRepository(alertDao: AlertDao): AlertRepo =
             AlertRepo(alertDao)
+
+    @Provides
+    @Singleton
+    fun provideFbAlertRepository(firestore: FirebaseFirestore): AlertRepository =
+        AlertRepository(firestore)
 
     @Provides
     @Singleton
@@ -82,5 +88,4 @@ class AppModule {
     @Provides
     @Singleton
     fun provideFirebaseDb(): FirebaseFirestore = Firebase.firestore
-
 }

@@ -15,10 +15,8 @@ import ch.stephgit.windescalator.alert.detail.direction.Direction
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChart
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
 import ch.stephgit.windescalator.alert.service.AlarmHandler
-import ch.stephgit.windescalator.data.entity.Alert
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -30,11 +28,11 @@ class AlertRecyclerAdapter @Inject constructor(
 
     private val alarmHandler: AlarmHandler
 ) :
-    ListAdapter<Alert, AlertRecyclerAdapter.ViewHolder>(AlertDiffCallback()) {
+    ListAdapter<ch.stephgit.windescalator.data.FbAlert, AlertRecyclerAdapter.ViewHolder>(AlertDiffCallback()) {
 
 
-    var onItemClick: ((Alert) -> Unit)? = null
-    var onSwitch: ((Alert) -> Unit)? = null
+    var onItemClick: ((ch.stephgit.windescalator.data.FbAlert) -> Unit)? = null
+    var onSwitch: ((ch.stephgit.windescalator.data.FbAlert) -> Unit)? = null
     private lateinit var itemView: View
     private lateinit var parentView: ViewGroup
     private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")
@@ -65,19 +63,22 @@ class AlertRecyclerAdapter @Inject constructor(
         }
     }
 
-    private fun onSwitchChange(alert: Alert) {
+    private fun onSwitchChange(alert: ch.stephgit.windescalator.data.FbAlert) {
         Log.d(TAG, "AlertRecyclerAdapter: switch change $alert")
 
         if (alert.active) {
-            alarmHandler.addOrUpdate(alert)
+            //TODO Firebase Alert
+//            alarmHandler.addOrUpdate(alert)
         } else {
-            alarmHandler.removeAlarm(alert.id!!, false)
+            //TODO Firebase Alert
+//            alarmHandler.removeAlarm(alert.id!!, false)
         }
     }
 
-    fun removeItem(viewHolder: RecyclerView.ViewHolder): Alert {
+    fun removeItem(viewHolder: RecyclerView.ViewHolder): ch.stephgit.windescalator.data.FbAlert {
         val alert = getItem(viewHolder.absoluteAdapterPosition)
-        alarmHandler.removeAlarm(alert.id!!, false)
+        //TODO Firebase Alert
+//        alarmHandler.removeAlarm(alert.id!!, false)
         return alert;
     }
 
@@ -90,7 +91,7 @@ class AlertRecyclerAdapter @Inject constructor(
         val switch: SwitchMaterial = itemView.findViewById(R.id.sw_alertActive)
         private val windDirectionData = DirectionChartData()
 
-        fun bind(alert: Alert) {
+        fun bind(alert: ch.stephgit.windescalator.data.FbAlert) {
             itemView.setOnClickListener {
                 onItemClick?.invoke(alert)
             }
@@ -116,12 +117,12 @@ class AlertRecyclerAdapter @Inject constructor(
     }
 }
 
-private class AlertDiffCallback : DiffUtil.ItemCallback<Alert>() {
-    override fun areItemsTheSame(oldItem: Alert, newItem: Alert): Boolean {
+private class AlertDiffCallback : DiffUtil.ItemCallback<ch.stephgit.windescalator.data.FbAlert>() {
+    override fun areItemsTheSame(oldItem: ch.stephgit.windescalator.data.FbAlert, newItem: ch.stephgit.windescalator.data.FbAlert): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Alert, newItem: Alert): Boolean {
+    override fun areContentsTheSame(oldItem: ch.stephgit.windescalator.data.FbAlert, newItem: ch.stephgit.windescalator.data.FbAlert): Boolean {
         return oldItem.active == newItem.active &&
                 oldItem.resource == newItem.resource &&
                 oldItem.nextRun == newItem.nextRun &&

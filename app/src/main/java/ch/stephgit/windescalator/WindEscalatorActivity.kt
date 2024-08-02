@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
+import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.di.Injector
 import ch.stephgit.windescalator.log.LogCatViewModel
 import ch.stephgit.windescalator.log.LogFragment
@@ -24,12 +25,16 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.initialize
 import com.google.firebase.messaging.messaging
 import javax.inject.Inject
+import kotlin.math.log
 
 
 class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
@@ -40,6 +45,9 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
     private lateinit var viewModel: LogCatViewModel
 
     private lateinit var menu: Menu
+
+    @Inject
+    lateinit var db: FirebaseFirestore
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -108,12 +116,13 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
     private fun initFirebase() {
         Firebase.initialize(context = this)
+        // TODO link app after release with firebase
+        // https://firebase.google.com/docs/app-check/android/play-integrity-provider#project-setup
         Firebase.appCheck.installAppCheckProviderFactory(
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
 
         createSignInIntent()
-        signOut()
 
         Firebase.messaging.token.addOnCompleteListener(
             OnCompleteListener { task ->
