@@ -1,9 +1,11 @@
 package ch.stephgit.windescalator.data
 
+import java.io.Serializable
+
 data class FbAlert(
     var name: String = "",
     var active: Boolean = false,
-    var resource: String = "",
+    var resource: Int = -1,
     var nextRun: Long = 0L,
     var startTime: String = "",
     var endTime: String = "",
@@ -12,4 +14,4 @@ data class FbAlert(
     var pending: Boolean = false,
     var userId: String = "",
     var id: String = ""
-)
+) : Serializable

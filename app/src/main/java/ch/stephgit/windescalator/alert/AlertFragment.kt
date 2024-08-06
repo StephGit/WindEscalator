@@ -208,7 +208,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
 
     private fun showAlertDetail(item: ch.stephgit.windescalator.data.FbAlert) {
         val intent = Intent(activity?.baseContext, AlertDetailActivity::class.java)
-        intent.putExtra("ALERT_ID", item.id)
+        intent.putExtra("ALERT", item)
         startActivity(intent)
     }
 }

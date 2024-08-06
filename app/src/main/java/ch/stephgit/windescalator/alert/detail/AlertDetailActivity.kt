@@ -3,12 +3,15 @@ package ch.stephgit.windescalator.alert.detail
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.R
@@ -45,6 +48,7 @@ class AlertDetailActivity : AppCompatActivity() {
     @Inject
     lateinit var alertRepo: AlertRepository
 
+    // FIXME lateinit is problematic with existing resource
     @Inject
     lateinit var windResourceAdapter: WindResourceAdapter
 
@@ -59,6 +63,7 @@ class AlertDetailActivity : AppCompatActivity() {
         fun newIntent(ctx: Context) = Intent(ctx, AlertDetailActivity::class.java)
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alert_detail)
@@ -68,16 +73,15 @@ class AlertDetailActivity : AppCompatActivity() {
         initViewElements()
 
         this.user = Firebase.auth.currentUser!!
-        Log.d(TAG, "user id ${user.uid}")
 
         timeViewModel = ViewModelProvider(this).get(TimeViewModel::class.java)
 
         val extras = intent.extras
-        val alertId = extras?.getLong("ALERT_ID")
-//        alertId?.let {
-            getAlertFromRepo("testalert1")
-//        }
-        if (!::alert.isInitialized) initAlert() else setViewElementsData()
+        val existingAlert = extras?.getSerializable("ALERT", FbAlert::class.java)
+        existingAlert?.let {
+            this.alert = existingAlert
+            setViewElementsData()
+        } ?: run {  initAlert() }
     }
 
     private fun initViewElements() {
@@ -150,23 +154,12 @@ class AlertDetailActivity : AppCompatActivity() {
     private fun setViewElementsData() {
         alertName.setText(getAlertName())
 
-        getWindResourceById { windResource: WindResource ->
-            windResourceSpinner.setSelection(
-                windResource.position
-            )
-        }
+        windResourceSpinner.setSelection(alert.resource)
 
-        startTime.setText(alert.startTime.toString())
-        endTime.setText(alert.endTime.toString())
+        startTime.setText(alert.startTime)
+        endTime.setText(alert.endTime)
         seekBar.progress = getWindForce()
         if (!alert.directions.isNullOrEmpty()) alert.directions?.let { directionChart.setData(it) }
-    }
-
-    private fun getWindResourceById(callback: (windResource: WindResource) -> Unit) {
-        db.collection("windResource").document(alert.resource).get().addOnSuccessListener {
-            Log.d(TAG, it.data.toString())
-            it.toObject<WindResource>()?.let { it1 -> callback(it1) }
-        }
     }
 
 
@@ -186,15 +179,6 @@ class AlertDetailActivity : AppCompatActivity() {
 
     private fun getWindForce(): Int {
         return if (alert.windForceKts != null) alert.windForceKts!! else 1
-    }
-
-    private fun getAlertFromRepo(alertId: String) {
-        alertRepo.get(alertId) { it: FbAlert ->
-            this.alert = it
-        }
-        if (this.alert.name == "") {
-            showErrorToast("Couldn't load alert from db")
-        }
     }
 
     private fun isValid(): Boolean {
@@ -254,17 +238,19 @@ class AlertDetailActivity : AppCompatActivity() {
     private fun saveOrUpdate() {
         if (isValid()) {
             alert.name = alertName.text.toString().trim()
-            alert.resource = (windResourceSpinner.selectedItem as WindResource).id
+            alert.resource = (windResourceSpinner.selectedItem as WindResource).localId
             alert.startTime = startTime.text.toString()
             alert.endTime = endTime.text.toString()
             alert.windForceKts = seekBar.progress
             alert.directions = directionChart.getSelectedData()
+            alert.userId = user.uid
 
-            (alert.id != "")?.let {
+            if (alert.id != "") {
+
                     alertRepo.update(alert)
                     Log.d(TAG, "AlertDetailActivity: update alert -> $alert")
 
-            } ?: run {
+            } else {
                     Log.d(TAG, "AlertDetailActivity: add alert -> $alert")
                     alert.active = true
                     alertRepo.create(alert)

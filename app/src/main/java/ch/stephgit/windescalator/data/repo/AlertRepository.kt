@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.data.FbAlert
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
@@ -25,10 +26,14 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
     fun getFbAlerts(): LiveData<List<FbAlert>> {
         if (alerts.value == null) {
             collectionReference.whereEqualTo("userId", user.uid).get().addOnSuccessListener { documents ->
+                var tmpList = ArrayList<FbAlert>();
                 for (document in documents) {
                     Log.d(TAG, "${document.id} => ${document.data}")
-                    alerts.postValue(listOf(document.toObject(FbAlert::class.java)))
+                    var alert = document.toObject(FbAlert::class.java)
+                    alert.id = document.id
+                    tmpList.add(alert)
                 }
+                alerts.postValue(tmpList)
             }
         }
         return alerts
@@ -57,19 +62,19 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
             }
     }
 
-    fun create(alert: FbAlert) {
-//        val documentName: String = entity.getEntityKey()
-//        val documentReference = collectionReference.document(documentName)
-//        Log.i(
-//            TAG,
-//            "Creating '$documentName' in '$collectionName'."
-//        )
-//        return documentReference.set(entity).addOnFailureListener { e ->
-//            Log.d(
-//                TAG,
-//                "There was an error creating '$documentName' in '$collectionName'!", e
-//            )
-//        }
+    fun create(alert: FbAlert): Task<Void> {
+        val documentName: String = alert.name
+        val documentReference = collectionReference.document(documentName)
+        Log.i(
+            TAG,
+            "Creating '$documentName' in '$collectionName'."
+        )
+        return documentReference.set(alert).addOnFailureListener { e ->
+            Log.d(
+                TAG,
+                "There was an error creating '$documentName' in '$collectionName'!", e
+            )
+        }
     }
 
     fun update(alert: FbAlert) {

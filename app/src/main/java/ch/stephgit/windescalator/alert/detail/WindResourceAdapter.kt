@@ -12,6 +12,7 @@ import android.widget.TextView
 import ch.stephgit.windescalator.R
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import javax.inject.Inject
 
 class WindResourceAdapter @Inject constructor(
@@ -19,20 +20,20 @@ class WindResourceAdapter @Inject constructor(
         ArrayAdapter<WindResource>(context, 0) {
 
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
-    private val results = query.orderBy("position").get().addOnSuccessListener { result ->
+    private val results = query.orderBy("localId").get().addOnSuccessListener { result ->
         for (document in result) {
-            add(WindResource(document.id, document.data["displayName"].toString(), document.data["name"].toString()))
+            var resource = document.toObject(WindResource::class.java)
+            resource.id = document.id
+            add(resource)
         }
-
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
-        val view: View
-        if (convertView == null && position == 0) {
-            view = layoutInflater.inflate(R.layout.header_wind_resource, parent, false)
+        val view: View = if (convertView == null && position == 0) {
+            layoutInflater.inflate(R.layout.header_wind_resource, parent, false)
         } else {
-            view = layoutInflater.inflate(R.layout.item_wind_resource, parent, false)
+            layoutInflater.inflate(R.layout.item_wind_resource, parent, false)
         }
         getItem(position)?.let { resource ->
             setItemForResource(view, resource)
@@ -59,11 +60,11 @@ class WindResourceAdapter @Inject constructor(
     }
 
 
-
     override fun getItem(position: Int): WindResource? {
         if (position == 0) {
             return null
         }
+
         return super.getItem(position - 1)
     }
 
