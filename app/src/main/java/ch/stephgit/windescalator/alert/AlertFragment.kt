@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +23,7 @@ import ch.stephgit.windescalator.alert.detail.AlertDetailActivity
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /*
@@ -90,12 +92,16 @@ class AlertFragment : androidx.fragment.app.Fragment() {
 
 
     private fun subscribeViewModel(recyclerAdapter: AlertRecyclerAdapter) {
-        viewModel.alertItems.observe(viewLifecycleOwner, Observer { alerts ->
-            recyclerAdapter.submitList(alerts)
-            if (alerts.isNotEmpty()) {
-                noAlertInfo.visibility = View.GONE
+
+        lifecycleScope.launch {
+            viewModel.alerts.collect { alerts ->
+
+                if (alerts != null) {
+                    recyclerAdapter.submitList(alerts)
+                    noAlertInfo.visibility = View.GONE
+                }
             }
-        })
+        }
     }
 
     private fun initSwipe() {
