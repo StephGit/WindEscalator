@@ -9,17 +9,24 @@
 
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+import admin from "firebase-admin";
+import  {cronDataFetch} from "./daily-cron";
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+export default cronDataFetch;
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const helloWorld = onRequest((request, response) => {
+export const helloWorld = onRequest((request: any, response: any) => {
   logger.info("Hello logs!", {structuredData: true});
+  const message = {
+    notification: {
+      title: 'My FCM Message',
+      body: 'This is a test message.',
+    },
+    token: 'YOUR_DEVICE_REGISTRATION_TOKEN',
+  };
 
-    admin.messaging().sendToDevice(snapshot.val(), payload)
+    admin.messaging().sendToDevice("val", message)
+    response.send("Hello from Firebase!");
 });
-
-
