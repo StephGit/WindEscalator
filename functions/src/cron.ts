@@ -28,6 +28,10 @@ export const cronDataFetch = functions.pubsub
         .where('nextRun', '<', getMaxTimestampToday())
         .orderBy('resource', 'asc')
         .get();
+      // no alerts active so no continuation...
+      if (snapshot.docs.length === 0) {
+        return null;
+      }
 
       // filter resources to fetch
       const resources: number[] = [
