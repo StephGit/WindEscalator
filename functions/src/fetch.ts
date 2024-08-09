@@ -1,13 +1,14 @@
-import * as functions from "firebase-functions";
-import fetch from "node-fetch";
+const fetch = require('node-fetch');
 
-export const myFunction = functions.https.onRequest(async (req, res) => {
+import {extractScniData} from "./winddata";
+
+export const testCurl = async () => {
   try {
-    const response = await fetch("https://www.google.com");
-    const html = await response.text();
-    res.send(html);
+    const response = await fetch("https://pmcjoder.ch/webcam/neuhaus/wetterstation/daily.txt");
+    const data = await response.text();
+    console.log(extractScniData(data))
   } catch (error) {
     console.error("Fehler beim Abrufen der Website:", error);
-    res.status(500).send("Fehler beim Abrufen der Website.");
+
   }
-});
+};

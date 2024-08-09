@@ -10,14 +10,18 @@
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import admin from "firebase-admin";
-import  {cronDataFetch} from "./daily-cron";
+import  {cronDataFetch} from "./cron";
+// import  {testCurl} from "./fetch";
 
 export default cronDataFetch;
+// export default testCurl;
+
+// admin.initializeApp();
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const helloWorld = onRequest((request: any, response: any) => {
+export const helloWorld = onRequest(async (request: any, response: any) => {
   logger.info("Hello logs!", {structuredData: true});
   const message = {
     notification: {
@@ -26,7 +30,7 @@ export const helloWorld = onRequest((request: any, response: any) => {
     },
     token: 'YOUR_DEVICE_REGISTRATION_TOKEN',
   };
-
+//     await testCurl()
     admin.messaging().sendToDevice("val", message)
     response.send("Hello from Firebase!");
 });
