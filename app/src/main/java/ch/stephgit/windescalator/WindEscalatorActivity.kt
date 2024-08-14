@@ -14,7 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
-import ch.stephgit.windescalator.data.entity.Alert
+import ch.stephgit.windescalator.alert.service.FirebaseForgroundMessagingService
 import ch.stephgit.windescalator.di.Injector
 import ch.stephgit.windescalator.log.LogCatViewModel
 import ch.stephgit.windescalator.log.LogFragment
@@ -25,16 +25,13 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.initialize
 import com.google.firebase.messaging.messaging
 import javax.inject.Inject
-import kotlin.math.log
 
 
 class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
@@ -51,6 +48,9 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var firebaseForgroundMessagingService: FirebaseForgroundMessagingService
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, WindEscalatorActivity::class.java)
@@ -131,13 +131,8 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
                     return@OnCompleteListener
                 }
 
-                // Get new FCM registration token
-                val token = task.result
-
-                // Log and toast
-
-                Log.d(TAG, token)
-                Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+                // Store new FCM registration token
+               firebaseForgroundMessagingService.onNewToken(task.result)
             },
         )
     }

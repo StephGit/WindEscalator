@@ -60,4 +60,3 @@ private fun extractWsctData(data: String): WindData {
 }
 
 private fun calcKnotsByKmh(windText: String) = (windText.toDouble() / 1.852).roundToInt()
-

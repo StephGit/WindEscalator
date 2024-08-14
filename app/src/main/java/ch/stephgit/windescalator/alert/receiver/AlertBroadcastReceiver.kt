@@ -21,7 +21,7 @@ class AlertBroadcastReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "Got Broadcast")
         val action = intent.action
-        var alertId = intent.getLongExtra("ALERT_ID", -1)
+        var alertId = intent.getStringExtra("ALERT_ID")
         var windData = intent.getStringExtra("WIND_DATA")
 
         if (action.equals(WIND_ALERT_ACTION)) {

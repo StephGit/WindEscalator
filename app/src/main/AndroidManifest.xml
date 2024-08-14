@@ -23,6 +23,10 @@
             android:usesCleartextTraffic="true"
             android:enableOnBackInvokedCallback="true"
             tools:ignore="GoogleAppIndexingWarning">
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_channel_id"
+                android:value="WindEscalatorApp" />
+
         <activity android:name=".SplashScreenActivity" android:theme="@style/SplashScreenTheme"
             android:exported="true">
             <intent-filter>
@@ -73,7 +77,6 @@
                 android:directBootAware="true"
                 android:exported="false"
                 android:permission="@string/broadcast_permission">
-                >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

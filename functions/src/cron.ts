@@ -8,6 +8,8 @@ import {
   WindData,
 } from './winddata';
 
+
+
 admin.initializeApp();
 
 const TIME_ZONE = 'Europe/Zurich';
@@ -46,6 +48,16 @@ export const cronDataFetch = functions.pubsub
         console.log('Daten:', data);
         console.log(windDataResults.get(data.resource));
         // Abfrage der Winddaten und notify User, Update Alert mit nextRun
+        const uid = data.userId
+        const messageData = { title: doc.id, body: JSON.stringify(windDataResults.get(data.resource))};
+        sendFCMMessage(uid, messageData)
+          .then((result) => {
+            console.log('Message sent:', result);
+          })
+          .catch((error) => {
+            console.error('Error sending message:', error);
+          });
+
       }
 
       console.log('Daten erfolgreich abgerufen!');
@@ -85,6 +97,43 @@ async function getWindData(
 
   return windDataResults;
 }
+
+export const sendFCMMessage = async (uid: string, message: { title: string; body: string }) => {
+  try {
+    // Get the FCM token from Firestore
+    const docRef = firestore.collection('users').doc(uid);
+    const doc = await docRef.get();
+
+    if (doc.exists) {
+      const userToken = doc.data()?.fcmToken; // Assuming the token is stored under 'fcmToken' field
+
+      if (userToken) {
+        // Construct the message payload
+        const messagePayload = {
+          notification: {
+            title: message.title,
+            body: message.body,
+          },
+          token: userToken,
+        };
+
+        // Send the message using the Admin SDK
+        const response = await admin.messaging().send(messagePayload);
+        console.log('Successfully sent message:', response);
+        return { success: true };
+      } else {
+        console.error('FCM token not found for user:', uid);
+        return { success: false, error: 'FCM token not found' };
+      }
+    } else {
+      console.error('User not found:', uid);
+      return { success: false, error: 'User not found' };
+    }
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return { success: false, error: 'Error sending message' };
+  }
+};
 
 const getCurrentTime = () => {
   const now = new Date();

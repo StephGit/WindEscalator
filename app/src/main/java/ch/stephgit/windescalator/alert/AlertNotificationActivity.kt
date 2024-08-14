@@ -18,10 +18,16 @@ import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.WindEscalatorActivity
 import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.alert.service.NoiseHandler
+import ch.stephgit.windescalator.data.FbAlert
 import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.data.repo.AlertRepo
+import ch.stephgit.windescalator.data.repo.AlertRepository
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /*
@@ -37,10 +43,10 @@ class AlertNotificationActivity : AppCompatActivity() {
     lateinit var alarmHandler: AlarmHandler
 
     @Inject
-    lateinit var alertRepo: AlertRepo
+    lateinit var alertRepo: AlertRepository
 
     private lateinit var wakeLock: PowerManager.WakeLock
-    private lateinit var alert: Alert
+    private lateinit var alert: FbAlert
     private var nextInterval: Boolean = false
 
     init {
@@ -60,9 +66,9 @@ class AlertNotificationActivity : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
         nextInterval =  sharedPreferences.getBoolean("cancel_firing_alert_behavior", false)
 
-        val alertId = intent.getLongExtra("ALERT_ID", -1)
+        val alertId = intent.getStringExtra("ALERT_ID")
         val windData = intent.getStringExtra("WIND_DATA")
-        if (alertId != -1L ) {
+        if (!alertId.isNullOrBlank()) {
 
             findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener{
                 showWindData()
@@ -72,7 +78,10 @@ class AlertNotificationActivity : AppCompatActivity() {
                 stopAlert()
             }
 
-            alert = alertRepo.getAlert(alertId)!!
+            CoroutineScope(Dispatchers.IO).launch {
+                alertRepo.get(alertId).collect { alert = it}
+            }
+
             noiseHandler.makeNoise()
 
             findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
@@ -103,11 +112,12 @@ class AlertNotificationActivity : AppCompatActivity() {
 
     private fun stopAlert() {
         noiseHandler.stopNoise()
-        if (nextInterval) {
-            alarmHandler.setNextInterval(alert.id!!)
-        } else {
-            alarmHandler.removeAlarm(alert.id!!, true)
-        }
+        //FIXME
+//        if (nextInterval) {
+//            alarmHandler.setNextInterval(alert.id!!)
+//        } else {
+//            alarmHandler.removeAlarm(alert.id!!, true)
+//        }
         finish()
     }
 

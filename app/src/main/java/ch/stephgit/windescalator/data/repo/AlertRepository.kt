@@ -57,27 +57,31 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
         awaitClose { registration.remove() }
     }
 
-    fun get(id: String, callback: (fbAlert: FbAlert) -> Unit) {
-        val documentReference = collectionReference.document(id)
-        Log.i(
-            TAG,
-            "Getting '$id' in '$COLLECTION_NAME'."
-        )
-        documentReference.get()
-            .addOnSuccessListener { snapshot ->
-                Log.d(TAG, snapshot.toString())
-                snapshot.toObject<FbAlert>()?.let { it: FbAlert ->
-                    it.id = id
-                    callback(it)
+    fun get(id: String): Flow<FbAlert> = callbackFlow {
+        val listener = object : EventListener<DocumentSnapshot> {
+            override fun onEvent(document: DocumentSnapshot?, exception: FirebaseFirestoreException?) {
+                if (exception != null) {
+                    // An error occurred
+                    cancel()
+                    return
+                }
+
+                if (document != null) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    document.toObject<FbAlert>()?.let { it: FbAlert ->
+                        it.id = id
+                        trySend(it)
+                    }
+                } else {
+                    Log.d(
+                        TAG,
+                        "Reading alert `$id` from db failed")
                 }
             }
-            .addOnFailureListener { failure ->
-                Log.d(TAG, failure.stackTrace.toString())
-                Log.d(
-                    TAG,
-                    "Reading alert `$id` from db failed: $failure.toString()"
-                )
-            }
+        }
+        // TODO create interface for boilerplate
+        val registration = collectionReference.document(id).addSnapshotListener(listener)
+        awaitClose { registration.remove() }
     }
 
     fun create(alert: FbAlert) {
