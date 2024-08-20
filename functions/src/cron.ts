@@ -22,12 +22,16 @@ export const cronDataFetch = functions.pubsub
   .onRun(async (context) => {
     try {
       const collectionRef = firestore.collection('alert');
+      const time = getCurrentTime()
+      const maxTimestamp = getMaxTimestampToday()
 
-      // get alerts which are, enabled, startime in future, nextRun still today
+      console.info(`Current query time: ${time}`)
+      // get alerts which are, enabled, startime in future, nextRun still today, endtime not yet
       const snapshot = await collectionRef
         .where('active', '==', true)
-        .where('startTime', '<=', getCurrentTime())
-        .where('nextRun', '<', getMaxTimestampToday())
+        .where('startTime', '<=', time)
+        .where('nextRun', '<', maxTimestamp)
+        .where('endTime', '>=', time)
         .orderBy('resource', 'asc')
         .get();
       // no alerts active so no continuation...
@@ -44,15 +48,16 @@ export const cronDataFetch = functions.pubsub
       // Daten verarbeiten
       for (const doc of snapshot.docs) {
         const data = doc.data();
-        console.log('Dokument ID:', doc.id);
-        console.log('Daten:', data);
-        console.log(windDataResults.get(data.resource));
+        console.info('Dokument ID:', doc.id);
+        console.info('Daten:', data);
+        console.info(windDataResults.get(data.resource));
         // Abfrage der Winddaten und notify User, Update Alert mit nextRun
+        // TODO compare result via alert threshold
         const uid = data.userId
         const messageData = { title: doc.id, body: JSON.stringify(windDataResults.get(data.resource))};
         sendFCMMessage(uid, messageData)
           .then((result) => {
-            console.log('Message sent:', result);
+            console.info('Message sent:', result);
           })
           .catch((error) => {
             console.error('Error sending message:', error);
@@ -60,7 +65,7 @@ export const cronDataFetch = functions.pubsub
 
       }
 
-      console.log('Daten erfolgreich abgerufen!');
+      console.info('Daten erfolgreich abgerufen!');
       return null; // Funktion erfolgreich abgeschlossen
     } catch (error) {
       console.error('Fehler beim Abrufen von Daten:', error);
@@ -72,24 +77,26 @@ async function getWindData(
   resources: number[]
 ): Promise<Map<number, WindData>> {
   const windDataResults = new Map<number, WindData>();
+  // read resources as batch
+  const results = await fetchResources(resources);
 
-  for (const res of resources) {
+  for (const data of results) {
     try {
-      const result = await fetchResource(res);
+      const result = await getData(data.url)
       let windData: WindData;
 
-      if (res === 1) {
+      if (data.localId === 1) {
         windData = extractScniData(result);
-      } else if (res === 2) {
+      } else if (data.localId === 2) {
         windData = extractNeucData(result);
       } else {
         windData = extractWsctData(result);
       }
 
-      windDataResults.set(res, windData);
+      windDataResults.set(data.localId, windData);
     } catch (error) {
       console.error(
-        `Error fetching or extracting data for resource ${res}:`,
+        `Error fetching or extracting data for resource ${data.displayName}:`,
         error
       );
     }
@@ -119,7 +126,7 @@ export const sendFCMMessage = async (uid: string, message: { title: string; body
 
         // Send the message using the Admin SDK
         const response = await admin.messaging().send(messagePayload);
-        console.log('Successfully sent message:', response);
+        console.info('Successfully sent message:', response);
         return { success: true };
       } else {
         console.error('FCM token not found for user:', uid);
@@ -140,7 +147,7 @@ const getCurrentTime = () => {
 
   const hours = (now.getHours() + 2).toString().padStart(2, '0'); // cheap timezone fix
   const minutes = now.getMinutes().toString().padStart(2, '0');
-  console.log(`currenttime:${hours}:${minutes}`);
+
   return `${hours}:${minutes}`;
 };
 
@@ -151,17 +158,16 @@ function getMaxTimestampToday() {
   return today.getTime();
 }
 
-async function fetchResource(resource: number): Promise<string | null> {
-  const snapshot = await firestore
-    .collection('windResource')
-    .where('localId', '==', resource)
-    .get();
+
+async function fetchResources(resources: number[]): Promise<admin.firestore.DocumentData[]> {
+  const windResourceCollection = firestore.collection('windResource');
+  const snapshot = await windResourceCollection.where('localId', 'in', resources).get();
+
   if (snapshot.empty) {
-    return null; // Resource not found
+    return []; // No resources found
   }
-  const doc = snapshot.docs[0]; // Get the first document
-  const data = doc.data();
-  return getData(data.url);
+
+  return snapshot.docs.map((doc) => doc.data());
 }
 
 async function getData(url: string): Promise<string> {

@@ -32,22 +32,34 @@ const directionMap = {
   [Direction.NE]: 45,
 };
 
-function getByDegree(value: number): Direction {
+function parseDirection(degrees: number): Direction {
   const closestDirection = directionValues.find(
     (direction) =>
-      directionMap[direction] - 23 < value &&
-      directionMap[direction] + 23 > value
+      directionMap[direction] - 23 < degrees &&
+      directionMap[direction] + 23 > degrees
   );
   return closestDirection || Direction.N;
+}
+
+function parseTime(timeString: string): string {
+  return DateTime.fromISO(timeString).toFormat('HH:mm:ss');
+}
+
+
+function parseWindSpeed(speedString: string, unit: string): number {
+  if (unit === 'km/h') {
+    return Math.round(parseFloat(speedString) / 1.852); // Convert km/h to knots
+  }
+  return Math.round(parseFloat(speedString)); // Assume knots
 }
 
 // Function to extract data from JSON
 export function extractNeucData(data: string): WindData {
   const json = JSON.parse(data);
   return {
-    force: Math.round(json.windSpeedKnotsIchtus),
-    direction: getByDegree(json.windDirectionDegreesIchtus),
-    time: DateTime.fromISO(json.recordTimeIchtus).toFormat('HH:mm:ss'),
+    force: parseWindSpeed(json.windSpeedKnotsIchtus.toString(), 'knots'),
+    direction: parseDirection(json.windDirectionDegreesIchtus),
+    time: parseTime(json.recordTimeIchtus),
   };
 }
 
@@ -55,14 +67,14 @@ export function extractNeucData(data: string): WindData {
 export function extractScniData(data: string): WindData {
   let windData: WindData = { force: 0, direction: '', time: '' };
   const lines = data.split('\r\n');
-  const cols = lines[lines.length - 2].split(' ').filter(n => n)
-  const pos = cols.length - 15;
+  const dataCols = lines[lines.length - 2].split(' ').filter(n => n)
+  const pos = dataCols.length - 15;
 
-  if (cols.length > 0) {
-    if (isActualData(cols[pos])) {
-      windData.time = cols[pos];
-      windData.direction = getByDegree(parseInt(cols[pos + 1]));
-      windData.force = calcKnotsByKmh(cols[pos + 2]);
+  if (dataCols.length > 0) {
+    if (isActualData(dataCols[pos])) {
+      windData.force = parseWindSpeed(dataCols[pos + 2], 'km/h');
+      windData.direction = parseDirection(parseInt(dataCols[pos + 1]));
+      windData.time = dataCols[pos];
     }
   }
 
@@ -84,13 +96,8 @@ export function extractWsctData(data: string): WindData {
   const time = doc.querySelector('time')?.textContent || '';
 
   return {
-    force: Math.round(parseFloat(knots)),
-    direction: getByDegree(parseInt(degrees)),
-    time,
+    force: parseWindSpeed(knots, 'knots'),
+    direction: parseDirection(parseInt(degrees)),
+    time: time,
   };
-}
-
-// Function to calculate knots from km/h
-function calcKnotsByKmh(windText: string): number {
-  return Math.round(parseFloat(windText) / 1.852);
 }
