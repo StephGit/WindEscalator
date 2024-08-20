@@ -1,5 +1,6 @@
 package ch.stephgit.windescalator.alert.receiver
 
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -26,10 +27,12 @@ class AlertBroadcastReceiver: BroadcastReceiver() {
 
         if (action.equals(WIND_ALERT_ACTION)) {
             val activityIntent = Intent(context, AlertNotificationActivity::class.java)
-            activityIntent.putExtra("ALERT_ID",  alertId)
+            activityIntent.putExtra("ALERT_ID", alertId)
             activityIntent.putExtra("WIND_DATA", windData)
             activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(activityIntent)
+
+            val pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_IMMUTABLE)
+            pendingIntent.send()
         }
     }
 

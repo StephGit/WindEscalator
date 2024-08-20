@@ -44,24 +44,7 @@ Follow these steps to connect your device:
 
 ### BrainDump
 
-Simplyfied AlertHandling
-
-```mermaid
-flowchart TD
-    AlertFragment --renders alertEntries--> AlertRecyclerAdapter
-    AlertRecyclerAdapter -- activate alert --> AlertRecyclerAdapter 
-    AlertRecyclerAdapter --adds active alert--> AlarmHandler 
-    AlarmHandler --creates --> AlarmBroadcastReceiver
-    AlarmBroadcastReceiver -- enqueues work --> AlertJobIntentService
-    AlertJobIntentService <-- checks if something is firing --> WindDataHandler
-    AlertJobIntentService -- on fire, creates --> AlertBroadcastReceiver
-    AlertBroadcastReceiver -- starts --> AlertNotificationActivity
-    AlertNotificationActivity -- triggers --> NoiseHandler
-    WindDataHandler <-- network calls --> WindResources 
-    AlarmHandler -- calculates next alarm --> AlarmHandler
-    BootBroadcastReciever -- inits alarms on boot --> AlarmHandler
-    
-```
+Simplyfied AlertHandling with Firebase
 
 Initial registration
 ```mermaid
@@ -80,6 +63,19 @@ sequenceDiagram
     APP->>FB: save alert to db
 ```
 
+
+```mermaid
+flowchart TB
+    CloudMessaging --> ForegroundMessagingService
+    subgraph Firebase
+    CronFunction --read active alerts--> Firestore
+    CronFunction --fetch data and trigger message-->CloudMessaging
+    subgraph APP
+    ForegroundMessagingService --> WakeUpWorker
+    WakeUpWorker --create intent--> AlertBroadcastReceiver
+    AlertBroadcastReceiver -- starts --> AlertNotificationActivity
+    AlertNotificationActivity -- triggers --> NoiseHandler
+```
 
 #### Alert states
 

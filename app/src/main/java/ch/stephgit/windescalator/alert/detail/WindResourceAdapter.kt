@@ -20,6 +20,7 @@ class WindResourceAdapter @Inject constructor(
         ArrayAdapter<WindResource>(context, 0) {
 
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
+    // FIXME use flow to ensure loaded resource after setViewElementsData in AlertDetailActivity
     private val results = query.orderBy("localId").get().addOnSuccessListener { result ->
         for (document in result) {
             var resource = document.toObject(WindResource::class.java)
