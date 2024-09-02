@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -204,7 +203,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun onSwitch(alert: ch.stephgit.windescalator.data.FbAlert) {
+    private fun onSwitch(alert: ch.stephgit.windescalator.data.Alert) {
         viewModel.update(alert)
     }
 
@@ -212,7 +211,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
         startActivity(AlertDetailActivity.newIntent(requireContext()))
     }
 
-    private fun showAlertDetail(item: ch.stephgit.windescalator.data.FbAlert) {
+    private fun showAlertDetail(item: ch.stephgit.windescalator.data.Alert) {
         val intent = Intent(activity?.baseContext, AlertDetailActivity::class.java)
         intent.putExtra("ALERT", item)
         startActivity(intent)

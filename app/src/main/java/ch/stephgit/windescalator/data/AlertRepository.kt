@@ -1,9 +1,7 @@
-package ch.stephgit.windescalator.data.repo
-
+package ch.stephgit.windescalator.data
 
 import android.util.Log
 import ch.stephgit.windescalator.TAG
-import ch.stephgit.windescalator.data.FbAlert
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -22,14 +20,13 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 private const val COLLECTION_NAME = "alert"
-
 class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
 
     private val collectionReference: CollectionReference = db.collection(COLLECTION_NAME)
 
     private val user = Firebase.auth.currentUser!!
 
-    fun getAlerts(): Flow<List<FbAlert>> = callbackFlow {
+    fun getAlerts(): Flow<List<Alert>> = callbackFlow {
         val listener = object : EventListener<QuerySnapshot> {
             override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
                 if (exception != null) {
@@ -39,10 +36,10 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
                 }
 
                 if (snapshot != null && !snapshot.isEmpty) {
-                    var tmpList = ArrayList<FbAlert>();
+                    var tmpList = ArrayList<Alert>();
                     for (document in snapshot) {
                         Log.d(TAG, "${document.id} => ${document.data}")
-                        var alert = document.toObject(FbAlert::class.java)
+                        var alert = document.toObject(Alert::class.java)
                         alert.id = document.id
                         tmpList.add(alert)
                     }
@@ -53,13 +50,17 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
             }
         }
 
-        val registration = collectionReference.whereEqualTo("userId", user.uid).addSnapshotListener(listener)
+        val registration =
+            collectionReference.whereEqualTo("userId", user.uid).addSnapshotListener(listener)
         awaitClose { registration.remove() }
     }
 
-    fun get(id: String): Flow<FbAlert> = callbackFlow {
+    fun get(id: String): Flow<Alert> = callbackFlow {
         val listener = object : EventListener<DocumentSnapshot> {
-            override fun onEvent(document: DocumentSnapshot?, exception: FirebaseFirestoreException?) {
+            override fun onEvent(
+                document: DocumentSnapshot?,
+                exception: FirebaseFirestoreException?
+            ) {
                 if (exception != null) {
                     // An error occurred
                     cancel()
@@ -68,14 +69,15 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
 
                 if (document != null) {
                     Log.d(TAG, "${document.id} => ${document.data}")
-                    document.toObject<FbAlert>()?.let { it: FbAlert ->
+                    document.toObject<Alert>()?.let { it: Alert ->
                         it.id = id
                         trySend(it)
                     }
                 } else {
                     Log.d(
                         TAG,
-                        "Reading alert `$id` from db failed")
+                        "Reading alert `$id` from db failed"
+                    )
                 }
             }
         }
@@ -84,20 +86,20 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
         awaitClose { registration.remove() }
     }
 
-    fun create(alert: FbAlert) {
+    fun create(alert: Alert) {
         val documentReference = collectionReference.add(alert)
             .addOnSuccessListener {
                 alert.id = it.id
             }
             .addOnFailureListener { e ->
-            Log.d(
-                TAG,
-                "There was an error creating '${alert.name}' in '$COLLECTION_NAME'!", e
-            )
+                Log.d(
+                    TAG,
+                    "There was an error creating '${alert.name}' in '$COLLECTION_NAME'!", e
+                )
         }
     }
 
-    fun update(alert: FbAlert): Task<Void> {
+    fun update(alert: Alert): Task<Void> {
         val documentName: String = alert.id
         val documentReference = collectionReference.document(documentName)
         Log.i(
@@ -130,7 +132,10 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
     // collectionReference.document(someId).addaddSnapshotListenerFlow(Some::class.java)
     fun <T> DocumentReference.addSnapshotListenerFlow(dataType: Class<T>): Flow<T?> = callbackFlow {
         val listener = object : EventListener<DocumentSnapshot> {
-            override fun onEvent(snapshot: DocumentSnapshot?, exception: FirebaseFirestoreException?) {
+            override fun onEvent(
+                snapshot: DocumentSnapshot?,
+                exception: FirebaseFirestoreException?
+            ) {
                 if (exception != null) {
                     // An error occurred
                     cancel()

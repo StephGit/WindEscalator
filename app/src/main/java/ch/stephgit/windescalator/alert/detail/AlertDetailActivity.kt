@@ -11,7 +11,6 @@ import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.R
@@ -19,20 +18,19 @@ import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChart
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
-import ch.stephgit.windescalator.data.FbAlert
-import ch.stephgit.windescalator.data.repo.AlertRepository
+import ch.stephgit.windescalator.data.Alert
+import ch.stephgit.windescalator.data.AlertRepository
 import ch.stephgit.windescalator.di.Injector
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import javax.inject.Inject
 
 
 class AlertDetailActivity : AppCompatActivity() {
 
-    private lateinit var alert: FbAlert
+    private lateinit var alert: Alert
     private lateinit var alertName: EditText
     private lateinit var windResourceSpinner: Spinner
     private lateinit var startTime: EditText
@@ -77,7 +75,7 @@ class AlertDetailActivity : AppCompatActivity() {
         timeViewModel = ViewModelProvider(this).get(TimeViewModel::class.java)
 
         val extras = intent.extras
-        val existingAlert = extras?.getSerializable("ALERT", FbAlert::class.java)
+        val existingAlert = extras?.getSerializable("ALERT", Alert::class.java)
         existingAlert?.let {
             this.alert = existingAlert
             setViewElementsData()
@@ -169,7 +167,7 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun initAlert() {
-        this.alert = FbAlert()
+        this.alert = Alert()
     }
 
     private fun getAlertName(): String {

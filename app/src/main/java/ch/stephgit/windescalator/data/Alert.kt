@@ -2,7 +2,7 @@ package ch.stephgit.windescalator.data
 
 import java.io.Serializable
 
-data class FbAlert(
+data class Alert(
     var name: String = "",
     var active: Boolean = false,
     var resource: Int = -1,

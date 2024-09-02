@@ -1,17 +1,12 @@
 package ch.stephgit.windescalator.alert.service
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.di.Injector
@@ -35,7 +30,6 @@ class AlertMessagingService : FirebaseMessagingService() {
 
     init {
         Injector.appComponent.inject(this)
-
     }
 
     override fun onNewToken(token: String) {

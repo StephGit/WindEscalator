@@ -17,8 +17,8 @@ import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.WindEscalatorActivity
 import ch.stephgit.windescalator.alert.service.NoiseHandler
-import ch.stephgit.windescalator.data.FbAlert
-import ch.stephgit.windescalator.data.repo.AlertRepository
+import ch.stephgit.windescalator.data.Alert
+import ch.stephgit.windescalator.data.AlertRepository
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +39,7 @@ class AlertNotificationActivity : AppCompatActivity() {
     lateinit var alertRepo: AlertRepository
 
     private lateinit var wakeLock: PowerManager.WakeLock
-    private lateinit var alert: FbAlert
+    private lateinit var alert: Alert
     private var alertId: String? = null
     private var windData: String? = null
     private var nextInterval: Boolean = false
@@ -52,8 +52,8 @@ class AlertNotificationActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         Log.d(TAG, "new intent log")
 
-        alertId = intent!!.getStringExtra("ALERT_ID")
-        windData = intent!!.getStringExtra("WIND_DATA")
+        alertId = intent?.getStringExtra("ALERT_ID")
+        windData = intent?.getStringExtra("WIND_DATA")
 
 
     }
