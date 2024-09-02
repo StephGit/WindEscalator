@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
@@ -13,22 +12,17 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ContentInfoCompat.Flags
 import androidx.preference.PreferenceManager
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.WindEscalatorActivity
-import ch.stephgit.windescalator.alert.service.AlarmHandler
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.data.FbAlert
-import ch.stephgit.windescalator.data.entity.Alert
-import ch.stephgit.windescalator.data.repo.AlertRepo
 import ch.stephgit.windescalator.data.repo.AlertRepository
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -67,7 +61,7 @@ class AlertNotificationActivity : AppCompatActivity() {
     @SuppressLint("StringFormatMatches")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        wakeUp()
 
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_alert_notification)
@@ -90,11 +84,14 @@ class AlertNotificationActivity : AppCompatActivity() {
             }
 
             CoroutineScope(Dispatchers.IO).launch {
-                alertRepo.get(alertId!!).collect { alert = it}
+                alertRepo.get(alertId!!).collect {
 
-                noiseHandler.makeNoise()
-                findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
-                wakeUp()
+                    alert = it
+                    runOnUiThread {
+                        findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
+                    }
+                }
+//                noiseHandler.makeNoise()
             }
 
         } else super.onDestroy()
@@ -106,14 +103,14 @@ class AlertNotificationActivity : AppCompatActivity() {
         this.setShowWhenLocked(true)
         this.setTurnScreenOn(true)
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!")
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "$TAG:wakeup!")
         WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         wakeLock.acquire(10000)
     }
 
     override fun onPause() {
         super.onPause()
-        if (wakeLock.isHeld) wakeLock.release()
+//        if (wakeLock.isHeld) wakeLock.release()
     }
 
     override fun onDestroy() {
@@ -122,7 +119,7 @@ class AlertNotificationActivity : AppCompatActivity() {
     }
 
     private fun stopAlert() {
-        noiseHandler.stopNoise()
+//        noiseHandler.stopNoise()
         //FIXME
 //        if (nextInterval) {
 //            alarmHandler.setNextInterval(alert.id!!)
