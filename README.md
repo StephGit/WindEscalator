@@ -66,12 +66,12 @@ sequenceDiagram
 
 ```mermaid
 flowchart TB
-    CloudMessaging --> ForegroundMessagingService
+    CloudMessaging --> AlertMessagingService
     subgraph Firebase
     CronFunction --read active alerts--> Firestore
     CronFunction --fetch data and trigger message-->CloudMessaging
     subgraph APP
-    ForegroundMessagingService --> WakeUpWorker
+    AlertMessagingService --> WakeUpWorker
     WakeUpWorker --create intent--> AlertBroadcastReceiver
     AlertBroadcastReceiver -- starts --> AlertNotificationActivity
     AlertNotificationActivity -- triggers --> NoiseHandler

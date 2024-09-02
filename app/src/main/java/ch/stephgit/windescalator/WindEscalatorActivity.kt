@@ -123,7 +123,7 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
     private fun requestAppPermissions() {
         if (ActivityCompat.checkSelfPermission(
-                this.baseContext,
+                this.applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -137,8 +137,12 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
                         REQUEST_CODE_POST_NOTIFICATION
                     )
                 }
-
+                else -> {
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        REQUEST_CODE_POST_NOTIFICATION)
+                }
             }
+
         }
     }
 

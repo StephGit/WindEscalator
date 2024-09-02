@@ -1,6 +1,8 @@
-import * as functions from 'firebase-functions';
+import {onSchedule} from 'firebase-functions/v2/scheduler';
 import * as admin from 'firebase-admin';
-const fetch = require('node-fetch');
+import {DateTime} from 'luxon';
+import fetch from 'node-fetch';
+
 import {
   extractNeucData,
   extractScniData,
@@ -13,48 +15,49 @@ admin.initializeApp();
 const TIME_ZONE = 'Europe/Zurich';
 const firestore = admin.firestore();
 
+const options = {schedule: '0,10,20,30,40,50 5-21 * * *', timeZone: TIME_ZONE};
+
 // runs 05:00 to 22:00 all 10mins
-export const cronDataFetch = functions.pubsub
-  .schedule('0,10,20,30,40,50 5-21 * * *')
-  .timeZone(TIME_ZONE)
-  .onRun(async (context) => {
-    try {
-      const collectionRef = firestore.collection('alert');
-      const time = getCurrentTime();
-      const maxTimestamp = getMaxTimestampToday();
+export const cronDataFetch = onSchedule(options, async (event) => {
+  try {
+    const collectionRef = firestore.collection('alert');
+    const time = getCurrentTime();
+    const maxTimestamp = getMaxTimestampToday();
 
-      console.info(`Current query time: ${time}`);
-      // get alerts which are, enabled, startime in future
-      // and nextRun still today, endtime not yet
-      const snapshot = await collectionRef
-        .where('active', '==', true)
-        .where('startTime', '<=', time)
-        .where('nextRun', '<', maxTimestamp)
-        .where('endTime', '>=', time)
-        .orderBy('resource', 'asc')
-        .get();
-      // no alerts active so no continuation...
-      if (snapshot.docs.length === 0) {
-        return null;
-      }
+    console.info(`Current query time: ${time}`);
+    // get alerts which are, enabled, startime in future
+    // and nextRun still today, endtime not yet
+    const snapshot = await collectionRef
+      .where('active', '==', true)
+      .where('startTime', '<=', time)
+      .where('nextRun', '<', maxTimestamp)
+      .where('endTime', '>=', time)
+      .orderBy('resource', 'asc')
+      .get();
+    // no alerts active so no continuation...
+    if (snapshot.docs.length === 0) {
+      return null;
+    }
 
-      // filter resources to fetch
-      const resources: number[] = [
-        ...new Set(snapshot.docs.map((doc) => doc.data().resource)),
-      ];
-      const windDataResults = await getWindData(resources);
+    // filter resources to fetch
+    const resources: number[] = [
+      ...new Set(snapshot.docs.map((doc) => doc.data().resource)),
+    ];
+    const windDataResults = await getWindData(resources);
 
-      // Daten verarbeiten
-      for (const doc of snapshot.docs) {
-        const data = doc.data();
-        // Abfrage der Winddaten und notify User, Update Alert mit nextRun
-        // TODO compare result via alert threshold
-        // filter duplicated alert origins - don't send messages twice
+    // Daten verarbeiten
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      const windData = windDataResults.get(data.resource);
+
+      // only send message on exceeding threshold
+      if (windData.force >= data.windForceKts) {
         const uid = data.userId;
         const messageData = {
           alertId: doc.id,
-          windData: JSON.stringify(windDataResults.get(data.resource)),
+          windData: JSON.stringify(windData),
         };
+
         sendFCMMessage(uid, messageData)
           .then((result) => {
             console.info('Message sent:', result);
@@ -63,14 +66,15 @@ export const cronDataFetch = functions.pubsub
             console.error('Error sending message:', error);
           });
       }
-
-      console.info('Daten erfolgreich abgerufen!');
-      return null; // Funktion erfolgreich abgeschlossen
-    } catch (error) {
-      console.error('Fehler beim Abrufen von Daten:', error);
-      return null; // Fehlerbehandlung
     }
-  });
+
+    console.info('Daten erfolgreich abgerufen!');
+    return null; // Funktion erfolgreich abgeschlossen
+  } catch (error) {
+    console.error('Fehler beim Abrufen von Daten:', error);
+    return null; // Fehlerbehandlung
+  }
+});
 
 async function getWindData(
   resources: number[]
@@ -143,12 +147,8 @@ export const sendFCMMessage = async (
 };
 
 const getCurrentTime = () => {
-  const now = new Date();
-  // cheap timezone fix
-  const hours = (now.getHours() + 2).toString().padStart(2, '0');
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-
-  return `${hours}:${minutes}`;
+  const now = DateTime.now().setZone('Europe/Zurich');
+  return now.toFormat('HH:mm');
 };
 
 // return max timestamp
