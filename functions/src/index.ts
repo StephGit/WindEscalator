@@ -1,3 +1,3 @@
-import  {cronDataFetch} from "./cron";
+import {cronDataFetch} from './cron';
 
 export default cronDataFetch;

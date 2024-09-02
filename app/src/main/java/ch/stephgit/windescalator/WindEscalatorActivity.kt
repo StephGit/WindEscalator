@@ -1,8 +1,11 @@
 package ch.stephgit.windescalator
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -12,9 +15,10 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
-import ch.stephgit.windescalator.alert.service.FirebaseForgroundMessagingService
+import ch.stephgit.windescalator.alert.service.AlertMessagingService
 import ch.stephgit.windescalator.di.Injector
 import ch.stephgit.windescalator.log.LogCatViewModel
 import ch.stephgit.windescalator.log.LogFragment
@@ -50,10 +54,11 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Inject
-    lateinit var firebaseForgroundMessagingService: FirebaseForgroundMessagingService
+    lateinit var firebaseForgroundMessagingService: AlertMessagingService
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, WindEscalatorActivity::class.java)
+        private const val REQUEST_CODE_POST_NOTIFICATION = 666
     }
 
     private val signInLauncher = registerForActivityResult(
@@ -109,10 +114,45 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         Injector.appComponent.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory)[LogCatViewModel::class.java]
 
+        requestAppPermissions()
+
         //Firebase Stuff
         initFirebase()
         replaceFragment(AlertFragment())
     }
+
+    private fun requestAppPermissions() {
+        if (ActivityCompat.checkSelfPermission(
+                this.baseContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            when {
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) -> {
+                    showPermissionDeniedDialog(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        REQUEST_CODE_POST_NOTIFICATION
+                    )
+                }
+
+            }
+        }
+    }
+
+    private fun showPermissionDeniedDialog(permissions: String, permissionRequestCode: Int) {
+        AlertDialog.Builder(this).apply {
+            setCancelable(true)
+            setMessage(getString(R.string.permission_post_notification_required))
+            setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                ActivityCompat.requestPermissions(this@WindEscalatorActivity, arrayOf(permissions), permissionRequestCode)
+            }
+        }.show()
+    }
+
 
     private fun initFirebase() {
         Firebase.initialize(context = this)

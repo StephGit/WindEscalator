@@ -51,7 +51,9 @@ class NoiseHandler @Inject constructor(
 
     fun stopNoise() {
         Log.d(TAG, "NoiseHandler: stopNoise called")
-        vibrator.cancel()
+        if (vibrateOnAlert) {
+            vibrator.cancel()
+        }
         if (mediaPlayer.isPlaying) {
             mediaPlayer.stop()
             vibrator.cancel()

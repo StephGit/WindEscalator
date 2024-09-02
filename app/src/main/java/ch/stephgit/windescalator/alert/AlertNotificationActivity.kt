@@ -7,8 +7,10 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.Window
 import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ContentInfoCompat.Flags
@@ -40,17 +42,26 @@ class AlertNotificationActivity : AppCompatActivity() {
     lateinit var noiseHandler: NoiseHandler
 
     @Inject
-    lateinit var alarmHandler: AlarmHandler
-
-    @Inject
     lateinit var alertRepo: AlertRepository
 
     private lateinit var wakeLock: PowerManager.WakeLock
     private lateinit var alert: FbAlert
+    private var alertId: String? = null
+    private var windData: String? = null
     private var nextInterval: Boolean = false
 
     init {
         Injector.appComponent.inject(this)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d(TAG, "new intent log")
+
+        alertId = intent!!.getStringExtra("ALERT_ID")
+        windData = intent!!.getStringExtra("WIND_DATA")
+
+
     }
 
     @SuppressLint("StringFormatMatches")
@@ -65,9 +76,9 @@ class AlertNotificationActivity : AppCompatActivity() {
         // get settings for alerts from prefs
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
         nextInterval =  sharedPreferences.getBoolean("cancel_firing_alert_behavior", false)
+        alertId = intent!!.getStringExtra("ALERT_ID")
+        windData = intent!!.getStringExtra("WIND_DATA")
 
-        val alertId = intent.getStringExtra("ALERT_ID")
-        val windData = intent.getStringExtra("WIND_DATA")
         if (!alertId.isNullOrBlank()) {
 
             findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener{
@@ -79,16 +90,14 @@ class AlertNotificationActivity : AppCompatActivity() {
             }
 
             CoroutineScope(Dispatchers.IO).launch {
-                alertRepo.get(alertId).collect { alert = it}
+                alertRepo.get(alertId!!).collect { alert = it}
+
+                noiseHandler.makeNoise()
+                findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
+                wakeUp()
             }
 
-            noiseHandler.makeNoise()
-
-            findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
-
-            wakeUp()
-
-        } else this.onDestroy()
+        } else super.onDestroy()
 
 
     }
@@ -96,8 +105,9 @@ class AlertNotificationActivity : AppCompatActivity() {
     private fun wakeUp() {
         this.setShowWhenLocked(true)
         this.setTurnScreenOn(true)
-        val power = this.getSystemService(POWER_SERVICE) as PowerManager
-        wakeLock = power.newWakeLock(PowerManager.FULL_WAKE_LOCK or PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!")
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(PowerManager.ON_AFTER_RELEASE, "$TAG:wakeup!")
+        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         wakeLock.acquire(10000)
     }
 

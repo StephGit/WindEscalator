@@ -1,5 +1,5 @@
-import { JSDOM } from 'jsdom';
-import { DateTime } from 'luxon';
+import {JSDOM} from 'jsdom';
+import {DateTime} from 'luxon';
 
 // Define the WindData interface
 export interface WindData {
@@ -9,14 +9,14 @@ export interface WindData {
 }
 
 enum Direction {
-  E = "E",
-  SE = "SE",
-  S = "S",
-  SW = "SW",
-  W = "W",
-  NW = "NW",
-  N = "N",
-  NE = "NE",
+  E = 'E',
+  SE = 'SE',
+  S = 'S',
+  SW = 'SW',
+  W = 'W',
+  NW = 'NW',
+  N = 'N',
+  NE = 'NE',
 }
 
 const directionValues = Object.values(Direction);
@@ -45,7 +45,6 @@ function parseTime(timeString: string): string {
   return DateTime.fromISO(timeString).toFormat('HH:mm:ss');
 }
 
-
 function parseWindSpeed(speedString: string, unit: string): number {
   if (unit === 'km/h') {
     return Math.round(parseFloat(speedString) / 1.852); // Convert km/h to knots
@@ -65,9 +64,9 @@ export function extractNeucData(data: string): WindData {
 
 // Function to extract data from TXT
 export function extractScniData(data: string): WindData {
-  let windData: WindData = { force: 0, direction: '', time: '' };
+  let windData: WindData = {force: 0, direction: '', time: ''};
   const lines = data.split('\r\n');
-  const dataCols = lines[lines.length - 2].split(' ').filter(n => n)
+  const dataCols = lines[lines.length - 2].split(' ').filter((n) => n);
   const pos = dataCols.length - 15;
 
   if (dataCols.length > 0) {
@@ -83,7 +82,7 @@ export function extractScniData(data: string): WindData {
 
 // Function to check if data is actual
 function isActualData(time: string): boolean {
-  const currentHour = DateTime.local({zone: "Europe/Zurich"}).hour;
+  const currentHour = DateTime.local({zone: 'Europe/Zurich'}).hour;
   return currentHour.toString() === time.split(':')[0];
 }
 

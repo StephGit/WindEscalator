@@ -63,5 +63,8 @@
     <string name="back">Back</string>
     <string name="progress_kts">%1$s kts</string>
     <string name="signInError">To use the app you need to sign in with your google account</string>
+    <string name="default_notification_channel_id">WindEscalatorApp</string>
+    <string name="channel_description">Notification channel to inform about windalerts</string>
+    <string name="permission_post_notification_required">Notifaction access is required for sending you alerts about winddata.</string>
 
 </resources>

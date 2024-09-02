@@ -1,12 +1,17 @@
 package ch.stephgit.windescalator.alert.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.di.Injector
@@ -19,7 +24,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
-class FirebaseForgroundMessagingService : FirebaseMessagingService() {
+class AlertMessagingService : FirebaseMessagingService() {
 
     @Inject
     lateinit var alertReceiver: AlertBroadcastReceiver
@@ -30,6 +35,7 @@ class FirebaseForgroundMessagingService : FirebaseMessagingService() {
 
     init {
         Injector.appComponent.inject(this)
+
     }
 
     override fun onNewToken(token: String) {
@@ -107,12 +113,12 @@ class FirebaseForgroundMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification ID: ${it.title} - Winddata: ${it.body}")
+        remoteMessage.data?.let {
+            Log.d(TAG, "Message Notification ID: ${it["alertId"]} - Winddata: ${it["windData"]}")
 
             val data = Data.Builder()
-                .putString("ALERT_ID", it.title)
-                .putString("WIND_DATA", it.body)
+                .putString("ALERT_ID", it["alertId"])
+                .putString("WIND_DATA", it["windData"])
                 .build()
 
             val workRequest =

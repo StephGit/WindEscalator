@@ -8,8 +8,6 @@ import {
   WindData,
 } from './winddata';
 
-
-
 admin.initializeApp();
 
 const TIME_ZONE = 'Europe/Zurich';
@@ -22,11 +20,12 @@ export const cronDataFetch = functions.pubsub
   .onRun(async (context) => {
     try {
       const collectionRef = firestore.collection('alert');
-      const time = getCurrentTime()
-      const maxTimestamp = getMaxTimestampToday()
+      const time = getCurrentTime();
+      const maxTimestamp = getMaxTimestampToday();
 
-      console.info(`Current query time: ${time}`)
-      // get alerts which are, enabled, startime in future, nextRun still today, endtime not yet
+      console.info(`Current query time: ${time}`);
+      // get alerts which are, enabled, startime in future
+      // and nextRun still today, endtime not yet
       const snapshot = await collectionRef
         .where('active', '==', true)
         .where('startTime', '<=', time)
@@ -48,13 +47,14 @@ export const cronDataFetch = functions.pubsub
       // Daten verarbeiten
       for (const doc of snapshot.docs) {
         const data = doc.data();
-        console.info('Dokument ID:', doc.id);
-        console.info('Daten:', data);
-        console.info(windDataResults.get(data.resource));
         // Abfrage der Winddaten und notify User, Update Alert mit nextRun
         // TODO compare result via alert threshold
-        const uid = data.userId
-        const messageData = { title: doc.id, body: JSON.stringify(windDataResults.get(data.resource))};
+        // filter duplicated alert origins - don't send messages twice
+        const uid = data.userId;
+        const messageData = {
+          alertId: doc.id,
+          windData: JSON.stringify(windDataResults.get(data.resource)),
+        };
         sendFCMMessage(uid, messageData)
           .then((result) => {
             console.info('Message sent:', result);
@@ -62,7 +62,6 @@ export const cronDataFetch = functions.pubsub
           .catch((error) => {
             console.error('Error sending message:', error);
           });
-
       }
 
       console.info('Daten erfolgreich abgerufen!');
@@ -82,7 +81,7 @@ async function getWindData(
 
   for (const data of results) {
     try {
-      const result = await getData(data.url)
+      const result = await getData(data.url);
       let windData: WindData;
 
       if (data.localId === 1) {
@@ -105,47 +104,48 @@ async function getWindData(
   return windDataResults;
 }
 
-export const sendFCMMessage = async (uid: string, message: { title: string; body: string }) => {
+export const sendFCMMessage = async (
+  uid: string,
+  message: {alertId: string; windData: string}
+) => {
   try {
     // Get the FCM token from Firestore
     const docRef = firestore.collection('users').doc(uid);
     const doc = await docRef.get();
 
     if (doc.exists) {
-      const userToken = doc.data()?.fcmToken; // Assuming the token is stored under 'fcmToken' field
+      // Assuming the token is stored under 'fcmToken' field
+      const userToken = doc.data()?.fcmToken;
 
       if (userToken) {
         // Construct the message payload
         const messagePayload = {
-          notification: {
-            title: message.title,
-            body: message.body,
-          },
+          data: message,
           token: userToken,
         };
 
         // Send the message using the Admin SDK
         const response = await admin.messaging().send(messagePayload);
         console.info('Successfully sent message:', response);
-        return { success: true };
+        return {success: true};
       } else {
         console.error('FCM token not found for user:', uid);
-        return { success: false, error: 'FCM token not found' };
+        return {success: false, error: 'FCM token not found'};
       }
     } else {
       console.error('User not found:', uid);
-      return { success: false, error: 'User not found' };
+      return {success: false, error: 'User not found'};
     }
   } catch (error) {
     console.error('Error sending message:', error);
-    return { success: false, error: 'Error sending message' };
+    return {success: false, error: 'Error sending message'};
   }
 };
 
 const getCurrentTime = () => {
   const now = new Date();
-
-  const hours = (now.getHours() + 2).toString().padStart(2, '0'); // cheap timezone fix
+  // cheap timezone fix
+  const hours = (now.getHours() + 2).toString().padStart(2, '0');
   const minutes = now.getMinutes().toString().padStart(2, '0');
 
   return `${hours}:${minutes}`;
@@ -158,10 +158,13 @@ function getMaxTimestampToday() {
   return today.getTime();
 }
 
-
-async function fetchResources(resources: number[]): Promise<admin.firestore.DocumentData[]> {
+async function fetchResources(
+  resources: number[]
+): Promise<admin.firestore.DocumentData[]> {
   const windResourceCollection = firestore.collection('windResource');
-  const snapshot = await windResourceCollection.where('localId', 'in', resources).get();
+  const snapshot = await windResourceCollection
+    .where('localId', 'in', resources)
+    .get();
 
   if (snapshot.empty) {
     return []; // No resources found

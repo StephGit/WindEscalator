@@ -7,7 +7,7 @@ import ch.stephgit.windescalator.alert.AlertRecyclerAdapter
 import ch.stephgit.windescalator.alert.detail.WindResourceAdapter
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlarmHandler
-import ch.stephgit.windescalator.alert.service.FirebaseForgroundMessagingService
+import ch.stephgit.windescalator.alert.service.AlertMessagingService
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.alert.service.WindDataHandler
 import ch.stephgit.windescalator.data.AppDatabase
@@ -92,5 +92,5 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseForgoundMessagingService(): FirebaseForgroundMessagingService = FirebaseForgroundMessagingService()
+    fun provideFirebaseForgoundMessagingService(): AlertMessagingService = AlertMessagingService()
 }
