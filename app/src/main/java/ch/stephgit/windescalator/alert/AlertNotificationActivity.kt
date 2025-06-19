@@ -16,6 +16,7 @@ import androidx.preference.PreferenceManager
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.WindEscalatorActivity
+import ch.stephgit.windescalator.alert.detail.WindData
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.data.Alert
 import ch.stephgit.windescalator.data.AlertRepository
@@ -24,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 /*
@@ -68,30 +70,40 @@ class AlertNotificationActivity : AppCompatActivity() {
         this.window.insetsController?.hide(WindowInsets.Type.statusBars());
 
         // get settings for alerts from prefs
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
-        nextInterval =  sharedPreferences.getBoolean("cancel_firing_alert_behavior", false)
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
+        nextInterval = sharedPreferences.getBoolean("cancel_firing_alert_behavior", false)
         alertId = intent!!.getStringExtra("ALERT_ID")
         windData = intent!!.getStringExtra("WIND_DATA")
 
         if (!alertId.isNullOrBlank()) {
 
-            findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener{
+            findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener {
                 showWindData()
             }
 
-            findViewById<FloatingActionButton>(R.id.btn_stopAlert).setOnClickListener{
+            findViewById<FloatingActionButton>(R.id.btn_stopAlert).setOnClickListener {
                 stopAlert()
             }
 
             CoroutineScope(Dispatchers.IO).launch {
                 alertRepo.get(alertId!!).collect {
+                    val json = Json { ignoreUnknownKeys = true }
+                    val windDataObject = json.decodeFromString<WindData>(windData!!)
 
                     alert = it
                     runOnUiThread {
-                        findViewById<TextView>(R.id.tv_alertDetailText).text = applicationContext.getString(R.string.winddata_alertnotification, alert.resource, windData);
+                        findViewById<TextView>(R.id.tv_alertDetailText).text =
+                            applicationContext.getString(
+                                R.string.winddata_alertnotification,
+                                alert.name,
+                                windDataObject.force,
+                                windDataObject.direction,
+                                windDataObject.time
+                            );
                     }
                 }
-//                noiseHandler.makeNoise()
+                noiseHandler.makeNoise()
             }
 
         } else super.onDestroy()
@@ -119,7 +131,7 @@ class AlertNotificationActivity : AppCompatActivity() {
     }
 
     private fun stopAlert() {
-//        noiseHandler.stopNoise()
+        noiseHandler.stopNoise()
         //FIXME
 //        if (nextInterval) {
 //            alarmHandler.setNextInterval(alert.id!!)
@@ -130,10 +142,10 @@ class AlertNotificationActivity : AppCompatActivity() {
     }
 
     private fun showWindData() {
-        stopAlert()
+        noiseHandler.stopNoise()
 
         val activityIntent = Intent(applicationContext, WindEscalatorActivity::class.java)
-        activityIntent.putExtra("ALERT_ID",  alert.id)
+        activityIntent.putExtra("ALERT_ID", alert.id)
         activityIntent.flags = FLAG_ACTIVITY_NEW_TASK
         applicationContext.startActivity(activityIntent)
     }

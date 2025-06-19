@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.devtools.ksp'
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 
 android {
     compileSdk 34
@@ -31,6 +31,10 @@ android {
         sourceCompatibility 17
         targetCompatibility 17
     }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
     testOptions {
         unitTests.returnDefaultValues = true
     }
@@ -53,6 +57,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10'
     testImplementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
+
     //noinspection GradleCompatible
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

@@ -42,7 +42,7 @@ class NoiseHandler @Inject constructor(
         if (playAlertSound) {
             mediaPlayer.setOnPreparedListener {
                 mediaPlayer.setVolume(soundVolume.toFloat(), soundVolume.toFloat())
-                mediaPlayer.isLooping = true
+                mediaPlayer.isLooping = false
                 mediaPlayer.start()
             }
         }
