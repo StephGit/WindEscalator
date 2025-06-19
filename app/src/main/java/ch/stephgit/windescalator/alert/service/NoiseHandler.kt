@@ -42,7 +42,7 @@ class NoiseHandler @Inject constructor(
         if (playAlertSound) {
             mediaPlayer.setOnPreparedListener {
                 mediaPlayer.setVolume(soundVolume.toFloat(), soundVolume.toFloat())
-                mediaPlayer.isLooping = true
+                mediaPlayer.isLooping = false
                 mediaPlayer.start()
             }
         }
@@ -51,7 +51,9 @@ class NoiseHandler @Inject constructor(
 
     fun stopNoise() {
         Log.d(TAG, "NoiseHandler: stopNoise called")
-        vibrator.cancel()
+        if (vibrateOnAlert) {
+            vibrator.cancel()
+        }
         if (mediaPlayer.isPlaying) {
             mediaPlayer.stop()
             vibrator.cancel()

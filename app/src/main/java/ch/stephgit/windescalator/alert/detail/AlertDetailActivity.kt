@@ -3,11 +3,13 @@ package ch.stephgit.windescalator.alert.detail
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +18,13 @@ import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChart
 import ch.stephgit.windescalator.alert.detail.direction.DirectionChartData
-import ch.stephgit.windescalator.data.entity.Alert
-import ch.stephgit.windescalator.data.repo.AlertRepo
+import ch.stephgit.windescalator.data.Alert
+import ch.stephgit.windescalator.data.AlertRepository
 import ch.stephgit.windescalator.di.Injector
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 
@@ -35,20 +41,27 @@ class AlertDetailActivity : AppCompatActivity() {
     private lateinit var directionChart: DirectionChart
     private lateinit var saveButton: Button
     private lateinit var timeViewModel: TimeViewModel
+    private lateinit var user: FirebaseUser
 
     @Inject
-    lateinit var alertRepo: AlertRepo
+    lateinit var alertRepo: AlertRepository
 
+    // FIXME lateinit is problematic with existing resource
     @Inject
     lateinit var windResourceAdapter: WindResourceAdapter
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var db: FirebaseFirestore
+
+
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, AlertDetailActivity::class.java)
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alert_detail)
@@ -57,14 +70,16 @@ class AlertDetailActivity : AppCompatActivity() {
         Injector.appComponent.inject(this)
         initViewElements()
 
+        this.user = Firebase.auth.currentUser!!
+
         timeViewModel = ViewModelProvider(this).get(TimeViewModel::class.java)
 
         val extras = intent.extras
-        val alertId = extras?.getLong("ALERT_ID")
-        alertId?.let {
-            getAlertFromRepo(alertId)
-        }
-        if (!::alert.isInitialized) initAlert() else setViewElementsData()
+        val existingAlert = extras?.getSerializable("ALERT", Alert::class.java)
+        existingAlert?.let {
+            this.alert = existingAlert
+            setViewElementsData()
+        } ?: run {  initAlert() }
     }
 
     private fun initViewElements() {
@@ -136,12 +151,15 @@ class AlertDetailActivity : AppCompatActivity() {
 
     private fun setViewElementsData() {
         alertName.setText(getAlertName())
-        windResourceSpinner.setSelection(WindResource.valueOf(alert.resource!!).id)
-        startTime.setText(alert.startTime.toString())
-        endTime.setText(alert.endTime.toString())
+
+        windResourceSpinner.setSelection(alert.resource)
+
+        startTime.setText(alert.startTime)
+        endTime.setText(alert.endTime)
         seekBar.progress = getWindForce()
         if (!alert.directions.isNullOrEmpty()) alert.directions?.let { directionChart.setData(it) }
     }
+
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -149,7 +167,7 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun initAlert() {
-        this.alert = Alert(null, false, null, 0L, null, null, null, listOf())
+        this.alert = Alert()
     }
 
     private fun getAlertName(): String {
@@ -161,74 +179,80 @@ class AlertDetailActivity : AppCompatActivity() {
         return if (alert.windForceKts != null) alert.windForceKts!! else 1
     }
 
-    private fun getAlertFromRepo(alertId: Long) {
-        alertRepo.getAlert(alertId)?.let {
-            this.alert = it
-        }
-    }
-
     private fun isValid(): Boolean {
         return when {
             alertName.text.trim().isBlank() -> {
                 alertName.error = getString(R.string.alert_detail_activity_error_no_name)
                 false
             }
+
             (windResourceSpinner.selectedItemId == 0L) -> {
-                showErrorToast( getString(R.string.alert_detail_activity_toast_error_missing_resource))
+                showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_resource))
                 false
             }
+
             startTime.text.isNullOrBlank() -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_missing_starttime))
                 false
             }
+
             endTime.text.isNullOrBlank() -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_missing_endtime))
                 false
             }
+
             startTime.text.equals(endTime.text) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_same_start_and_endtime))
                 false
             }
+
             (startTime.text.toString() > endTime.text.toString()) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_error_endtime_before_starttime))
                 false
             }
+
             (seekBar.progress == 0) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_threshold))
                 false
             }
+
             (directionChart.getSelectedData().isNullOrEmpty()) -> {
                 showErrorToast(getString(R.string.alert_detail_activity_toast_error_missing_directions))
                 false
             }
+
             else -> true
         }
     }
 
     private fun showErrorToast(error: String) {
         Toast.makeText(
-                this,
-                error,
-                Toast.LENGTH_LONG
+            this,
+            error,
+            Toast.LENGTH_LONG
         ).show()
     }
 
     private fun saveOrUpdate() {
         if (isValid()) {
             alert.name = alertName.text.toString().trim()
-            alert.resource = windResourceSpinner.selectedItem.toString()
+            alert.resource = (windResourceSpinner.selectedItem as WindResource).localId
             alert.startTime = startTime.text.toString()
             alert.endTime = endTime.text.toString()
             alert.windForceKts = seekBar.progress
             alert.directions = directionChart.getSelectedData()
+            alert.userId = user.uid
 
-            alert.id?.let {
-                alertRepo.update(alert)
-                Log.d(TAG, "AlertDetailActivity: update alert -> $alert")
-            } ?: run {
-                Log.d(TAG, "AlertDetailActivity: add alert -> $alert")
-                alert.active = true
-                alertRepo.insert(alert)
+            if (alert.id != "") {
+
+                    alertRepo.update(alert)
+                    Log.d(TAG, "AlertDetailActivity: update alert -> $alert")
+
+            } else {
+                    Log.d(TAG, "AlertDetailActivity: add alert -> $alert")
+                    alert.active = true
+                    alertRepo.create(alert)
+
             }
             finish()
             Toast.makeText(

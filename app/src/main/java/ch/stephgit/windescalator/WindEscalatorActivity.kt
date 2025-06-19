@@ -1,8 +1,11 @@
 package ch.stephgit.windescalator
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -12,20 +15,31 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
+import ch.stephgit.windescalator.alert.service.AlertMessagingService
 import ch.stephgit.windescalator.di.Injector
 import ch.stephgit.windescalator.log.LogCatViewModel
 import ch.stephgit.windescalator.log.LogFragment
 import ch.stephgit.windescalator.wind.WindFragment
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.Firebase
+import com.google.firebase.appcheck.appCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.initialize
+import com.google.firebase.messaging.messaging
 import javax.inject.Inject
 
 
 class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
+
 
     private lateinit var navigation: BottomNavigationView
 
@@ -34,11 +48,60 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
     private lateinit var menu: Menu
 
     @Inject
+    lateinit var db: FirebaseFirestore
+
+    @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var firebaseForgroundMessagingService: AlertMessagingService
 
     companion object {
         fun newIntent(ctx: Context) = Intent(ctx, WindEscalatorActivity::class.java)
+        private const val REQUEST_CODE_POST_NOTIFICATION = 666
     }
+
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract(),
+    ) { res ->
+        this.onSignInResult(res)
+    }
+
+    private fun createSignInIntent() {
+
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.GoogleBuilder().build()
+        )
+
+        // Create and launch sign-in intent
+        val signInIntent = AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .build()
+        signInLauncher.launch(signInIntent)
+    }
+
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+        val response = result.idpResponse
+        if (result.resultCode == RESULT_OK) {
+            // Successfully signed in
+            val user = FirebaseAuth.getInstance().currentUser
+            Log.d(TAG, user.toString())
+        } else {
+            Log.d(TAG, response?.error.toString())
+            Toast.makeText(baseContext, getString(R.string.signInError), Toast.LENGTH_LONG).show()
+            createSignInIntent()
+        }
+    }
+     private fun signOut() {
+        AuthUI.getInstance()
+            .signOut(this)
+            .addOnCompleteListener {
+                // ...
+            }
+    }
+
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +114,60 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         Injector.appComponent.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory)[LogCatViewModel::class.java]
 
+        requestAppPermissions()
+
+        //Firebase Stuff
+        initFirebase()
+        replaceFragment(AlertFragment())
+    }
+
+    private fun requestAppPermissions() {
+        if (ActivityCompat.checkSelfPermission(
+                this.applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            when {
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) -> {
+                    showPermissionDeniedDialog(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        REQUEST_CODE_POST_NOTIFICATION
+                    )
+                }
+                else -> {
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        REQUEST_CODE_POST_NOTIFICATION)
+                }
+            }
+
+        }
+    }
+
+    private fun showPermissionDeniedDialog(permissions: String, permissionRequestCode: Int) {
+        AlertDialog.Builder(this).apply {
+            setCancelable(true)
+            setMessage(getString(R.string.permission_post_notification_required))
+            setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                ActivityCompat.requestPermissions(this@WindEscalatorActivity, arrayOf(permissions), permissionRequestCode)
+            }
+        }.show()
+    }
+
+
+    private fun initFirebase() {
+        Firebase.initialize(context = this)
+        // TODO link app after release with firebase
+        // https://firebase.google.com/docs/app-check/android/play-integrity-provider#project-setup
+        Firebase.appCheck.installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance()
+        )
+
+        createSignInIntent()
+
         Firebase.messaging.token.addOnCompleteListener(
             OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -58,16 +175,10 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
                     return@OnCompleteListener
                 }
 
-                // Get new FCM registration token
-                val token = task.result
-
-                // Log and toast
-
-                Log.d(TAG, token)
-                Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+                // Store new FCM registration token
+               firebaseForgroundMessagingService.onNewToken(task.result)
             },
         )
-        replaceFragment(AlertFragment())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -129,4 +240,5 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
                 .replace(R.id.frame_content, fragment)
                 .commit()
     }
+
 }

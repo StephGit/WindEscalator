@@ -12,17 +12,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.alert.detail.AlertDetailActivity
-import ch.stephgit.windescalator.data.entity.Alert
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /*
@@ -91,12 +91,16 @@ class AlertFragment : androidx.fragment.app.Fragment() {
 
 
     private fun subscribeViewModel(recyclerAdapter: AlertRecyclerAdapter) {
-        viewModel.alertItems.observe(viewLifecycleOwner, Observer { alerts ->
-            recyclerAdapter.submitList(alerts)
-            if (alerts.isNotEmpty()) {
-                noAlertInfo.visibility = View.GONE
+
+        lifecycleScope.launch {
+            viewModel.alerts.collect { alerts ->
+
+                if (alerts != null) {
+                    recyclerAdapter.submitList(alerts)
+                    noAlertInfo.visibility = View.GONE
+                }
             }
-        })
+        }
     }
 
     private fun initSwipe() {
@@ -199,7 +203,7 @@ class AlertFragment : androidx.fragment.app.Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun onSwitch(alert: Alert) {
+    private fun onSwitch(alert: ch.stephgit.windescalator.data.Alert) {
         viewModel.update(alert)
     }
 
@@ -207,9 +211,9 @@ class AlertFragment : androidx.fragment.app.Fragment() {
         startActivity(AlertDetailActivity.newIntent(requireContext()))
     }
 
-    private fun showAlertDetail(item: Alert) {
+    private fun showAlertDetail(item: ch.stephgit.windescalator.data.Alert) {
         val intent = Intent(activity?.baseContext, AlertDetailActivity::class.java)
-        intent.putExtra("ALERT_ID", item.id)
+        intent.putExtra("ALERT", item)
         startActivity(intent)
     }
 }

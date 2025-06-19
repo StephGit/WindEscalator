@@ -1,6 +1,7 @@
 package ch.stephgit.windescalator.alert.detail
 
 import android.content.Context
+import android.database.Cursor
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -9,20 +10,31 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import ch.stephgit.windescalator.R
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import javax.inject.Inject
 
 class WindResourceAdapter @Inject constructor(
-        context: Context) :
-        ArrayAdapter<WindResource>(context, 0, WindResource.values()) {
+    context: Context, query: CollectionReference) :
+        ArrayAdapter<WindResource>(context, 0) {
 
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
+    // FIXME use flow to ensure loaded resource after setViewElementsData in AlertDetailActivity
+    private val results = query.orderBy("localId").get().addOnSuccessListener { result ->
+        for (document in result) {
+            var resource = document.toObject(WindResource::class.java)
+            resource.id = document.id
+            add(resource)
+        }
+    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view: View
-        if (convertView == null && position == 0) {
-            view = layoutInflater.inflate(R.layout.header_wind_resource, parent, false)
+
+        val view: View = if (convertView == null && position == 0) {
+            layoutInflater.inflate(R.layout.header_wind_resource, parent, false)
         } else {
-            view = layoutInflater.inflate(R.layout.item_wind_resource, parent, false)
+            layoutInflater.inflate(R.layout.item_wind_resource, parent, false)
         }
         getItem(position)?.let { resource ->
             setItemForResource(view, resource)
@@ -53,6 +65,7 @@ class WindResourceAdapter @Inject constructor(
         if (position == 0) {
             return null
         }
+
         return super.getItem(position - 1)
     }
 
@@ -61,7 +74,7 @@ class WindResourceAdapter @Inject constructor(
     private fun setItemForResource(view: View, resource: WindResource) {
         val tvResource = view.findViewById<TextView>(R.id.tvAlertResource)
         val ivResource = view.findViewById<ImageView>(R.id.ivAlertResource)
-        tvResource.text = resource.fullName
+        tvResource.text = resource.displayName
         resource.icon.let { icon -> ivResource.setBackgroundResource(icon) }
     }
 }
