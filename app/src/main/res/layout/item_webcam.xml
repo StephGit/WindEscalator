@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/windEscalator_colorWhite">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header: resource name -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/iv_webcam_resource_icon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="@string/wind_resource_icon" />
+
+            <TextView
+                android:id="@+id/tv_webcam_resource_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/windEscalator_colorBrand" />
+
+            <ImageView
+                android:id="@+id/iv_webcam_open_browser"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@android:drawable/ic_menu_share"
+                android:contentDescription="@string/webcam_open_in_browser"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+        <!-- Webcam image -->
+        <ImageView
+            android:id="@+id/iv_webcam_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/webcam_image_description"
+            android:background="@color/windEscalator_colorBackground" />
+
+        <!-- No webcam URL message -->
+        <TextView
+            android:id="@+id/tv_webcam_no_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/webcam_no_url"
+            android:textColor="@color/windEscalator_colorDisabled"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

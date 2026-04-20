@@ -5,14 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.di.Injector
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class WindFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var noWindMessureInfo: ConstraintLayout
-    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewModel: WindViewModel
+    private val windDataAdapter = WindDataAdapter()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     companion object {
         fun newFragment(): androidx.fragment.app.Fragment = WindFragment()
@@ -23,8 +33,31 @@ class WindFragment : androidx.fragment.app.Fragment() {
         Injector.appComponent.inject(this)
         requireActivity().title = getString(R.string.wind_fragment_title)
         noWindMessureInfo = view.findViewById(R.id.wind_no_messures_exists)
-        linearLayoutManager = LinearLayoutManager(context)
+        recyclerView = view.findViewById(R.id.rv_wind_data)
+
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = windDataAdapter
+        }
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[WindViewModel::class.java]
+        subscribeViewModel()
 
         return view
+    }
+
+    private fun subscribeViewModel() {
+        lifecycleScope.launch {
+            viewModel.windResources.collect { resources ->
+                if (resources.isNotEmpty()) {
+                    windDataAdapter.submitList(resources)
+                    recyclerView.visibility = View.VISIBLE
+                    noWindMessureInfo.visibility = View.GONE
+                } else {
+                    recyclerView.visibility = View.GONE
+                    noWindMessureInfo.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }
