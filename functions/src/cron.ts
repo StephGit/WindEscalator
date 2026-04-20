@@ -83,7 +83,8 @@ async function getWindData(
   // read resources as batch
   const results = await fetchResources(resources);
 
-  for (const data of results) {
+  for (const {docId, data} of results) {
+    let dataAvailable = false;
     try {
       const result = await getData(data.url);
       let windData: WindData;
@@ -96,15 +97,21 @@ async function getWindData(
         windData = extractWsctData(result);
       }
 
+      dataAvailable = windData.force > 0 && windData.direction !== '';
       windDataResults.set(data.localId, windData);
     } catch (error) {
       console.error(
         `Error fetching or extracting data for resource ${data.displayName}:`,
         error
       );
+    } finally {
+      // Update windResource document with data availability status
+      await firestore.collection('windResource').doc(docId).update({
+        online: dataAvailable,
+        lastChecked: Date.now(),
+      });
     }
   }
-
   return windDataResults;
 }
 
@@ -160,7 +167,7 @@ function getMaxTimestampToday() {
 
 async function fetchResources(
   resources: number[]
-): Promise<admin.firestore.DocumentData[]> {
+): Promise<{docId: string; data: admin.firestore.DocumentData}[]> {
   const windResourceCollection = firestore.collection('windResource');
   const snapshot = await windResourceCollection
     .where('localId', 'in', resources)
@@ -170,7 +177,7 @@ async function fetchResources(
     return []; // No resources found
   }
 
-  return snapshot.docs.map((doc) => doc.data());
+  return snapshot.docs.map((doc) =>  ({docId: doc.id, data: doc.data()}));
 }
 
 async function getData(url: string): Promise<string> {

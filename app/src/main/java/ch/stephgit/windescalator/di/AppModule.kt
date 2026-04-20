@@ -8,6 +8,7 @@ import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlertMessagingService
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.data.AlertRepository
+import ch.stephgit.windescalator.data.WindResourceRepository
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -29,6 +30,11 @@ class AppModule {
     @Singleton
     fun provideFbAlertRepository(firestore: FirebaseFirestore): AlertRepository =
         AlertRepository(firestore)
+
+    @Provides
+    @Singleton
+    fun provideWindResourceRepository(firestore: FirebaseFirestore): WindResourceRepository =
+        WindResourceRepository(firestore)        
 
     @Provides
     @Singleton

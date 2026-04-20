@@ -10,7 +10,7 @@ import org.jsoup.Jsoup
 import kotlin.math.roundToInt
 
 
-data class WindResource (var id: String = "", var displayName: String = "", var name: String = "", var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1)
+data class WindResource (var id: String = "", var displayName: String = "", var name: String = "", var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1, var online: Boolean = false, var lastChecked: Long = 0)
 
 fun extractNeucData(data: String): WindData {
     Log.d(TAG, data)

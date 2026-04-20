@@ -29,9 +29,15 @@ class AlertRecyclerAdapter @Inject constructor() :
 
     var onItemClick: ((ch.stephgit.windescalator.data.Alert) -> Unit)? = null
     var onSwitch: ((ch.stephgit.windescalator.data.Alert) -> Unit)? = null
+    private var resourceAvailability: Map<Int, Boolean> = emptyMap()
     private lateinit var itemView: View
     private lateinit var parentView: ViewGroup
     private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")
+
+    fun updateResourceAvailability(availability: Map<Int, Boolean>) {
+        this.resourceAvailability = availability
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         parentView = parent
@@ -54,6 +60,10 @@ class AlertRecyclerAdapter @Inject constructor() :
             itemTime.text = alert.startTime + "\n" + alert.endTime
             itemForce.text = alert.windForceKts.toString()
             alert.directions?.let { itemDirs.setData(it) }
+            val dataAvailable = resourceAvailability[alert.resource] ?: false
+            statusIndicator.setImageResource(
+                if (dataAvailable) R.drawable.bullet_online else R.drawable.bullet_offline
+            )
             switch.isChecked = alert.active
 //            if (alert.active) alarmHandler.addOrUpdate(alert) //TODO due to db-updates on nextRun RecyclerView always creates a new view binding this leads to a never ending cycle
         }
@@ -80,6 +90,7 @@ class AlertRecyclerAdapter @Inject constructor() :
         val itemForce: TextView = itemView.findViewById(R.id.tv_alertForce)
         val itemDirs: DirectionChart = itemView.findViewById(R.id.alert_wind_direction)
         val switch: SwitchMaterial = itemView.findViewById(R.id.sw_alertActive)
+        val statusIndicator: ImageView = itemView.findViewById(R.id.iv_alertDataStatus)
         private val windDirectionData = DirectionChartData()
 
         fun bind(alert: ch.stephgit.windescalator.data.Alert) {

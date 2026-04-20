@@ -101,6 +101,12 @@ class AlertFragment : androidx.fragment.app.Fragment() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.resourceAvailability.collect { availability ->
+                recyclerAdapter.updateResourceAvailability(availability)
+            }
+        }
     }
 
     private fun initSwipe() {
