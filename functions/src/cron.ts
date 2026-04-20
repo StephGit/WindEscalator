@@ -1,7 +1,8 @@
 import {onSchedule} from 'firebase-functions/v2/scheduler';
-import * as admin from 'firebase-admin';
+import {initializeApp} from 'firebase-admin/app';
+import {DocumentData, getFirestore} from 'firebase-admin/firestore';
+import {getMessaging} from 'firebase-admin/messaging';
 import {DateTime} from 'luxon';
-import fetch from 'node-fetch';
 
 import {
   extractNeucData,
@@ -10,10 +11,10 @@ import {
   WindData,
 } from './winddata';
 
-admin.initializeApp();
+initializeApp();
 
 const TIME_ZONE = 'Europe/Zurich';
-const firestore = admin.firestore();
+const firestore = getFirestore();
 
 const options = {schedule: '0,10,20,30,40,50 5-21 * * *', timeZone: TIME_ZONE};
 
@@ -136,7 +137,7 @@ export const sendFCMMessage = async (
         };
 
         // Send the message using the Admin SDK
-        const response = await admin.messaging().send(messagePayload);
+        const response = await getMessaging().send(messagePayload);
         console.info('Successfully sent message:', response);
         return {success: true};
       } else {
@@ -167,7 +168,7 @@ function getMaxTimestampToday() {
 
 async function fetchResources(
   resources: number[]
-): Promise<{docId: string; data: admin.firestore.DocumentData}[]> {
+): Promise<{docId: string; data: DocumentData}[]> {
   const windResourceCollection = firestore.collection('windResource');
   const snapshot = await windResourceCollection
     .where('localId', 'in', resources)
@@ -177,7 +178,7 @@ async function fetchResources(
     return []; // No resources found
   }
 
-  return snapshot.docs.map((doc) =>  ({docId: doc.id, data: doc.data()}));
+  return snapshot.docs.map((doc) => ({docId: doc.id, data: doc.data()}));
 }
 
 async function getData(url: string): Promise<string> {
