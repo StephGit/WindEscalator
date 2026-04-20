@@ -106,11 +106,18 @@ async function getWindData(
         error
       );
     } finally {
-      // Update windResource document with data availability status
-      await firestore.collection('windResource').doc(docId).update({
+      // Update windResource document with data availability status and latest reading
+      const updateData: Record<string, unknown> = {
         online: dataAvailable,
         lastChecked: Date.now(),
-      });
+      };
+      if (dataAvailable && windDataResults.has(data.localId)) {
+        const wd = windDataResults.get(data.localId)!;
+        updateData.latestForce = wd.force;
+        updateData.latestDirection = wd.direction;
+        updateData.latestTime = wd.time;
+      }
+      await firestore.collection('windResource').doc(docId).update(updateData);
     }
   }
   return windDataResults;
