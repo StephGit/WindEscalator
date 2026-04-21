@@ -12,7 +12,6 @@ import ch.stephgit.windescalator.alert.detail.AlertDetailActivity
 import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlertMessagingService
 import ch.stephgit.windescalator.alert.service.NoiseHandler
-import ch.stephgit.windescalator.log.LogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Singleton
 
@@ -37,7 +36,6 @@ interface AppComponent {
 
     fun inject(windFragment: WindFragment)
     fun inject(webcamFragment: WebcamFragment)
-    fun inject(logFragment: LogFragment)
 
     fun inject(alertBroadcastReceiver: AlertBroadcastReceiver)
 
