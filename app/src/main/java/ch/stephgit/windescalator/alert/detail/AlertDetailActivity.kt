@@ -75,7 +75,7 @@ class AlertDetailActivity : AppCompatActivity() {
         timeViewModel = ViewModelProvider(this).get(TimeViewModel::class.java)
 
         val extras = intent.extras
-        val existingAlert = extras?.getSerializable("ALERT", Alert::class.java)
+        val existingAlert = extras?.getParcelable("ALERT", Alert::class.java)
         existingAlert?.let {
             this.alert = existingAlert
             setViewElementsData()

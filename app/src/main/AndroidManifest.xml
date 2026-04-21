@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-<!--    // TODO remove-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
@@ -32,18 +30,15 @@
                 android:value="@string/default_notification_channel_id" />
 
         <activity
-                android:name=".SplashScreenActivity"
-                android:theme="@style/SplashScreenTheme"
+                android:name=".WindEscalatorActivity"
+                android:configChanges="orientation"
+                android:screenOrientation="fullSensor"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-                android:name=".WindEscalatorActivity"
-                android:configChanges="orientation"
-                android:screenOrientation="fullSensor" />
         <activity
                 android:name=".alert.detail.AlertDetailActivity"
                 android:showOnLockScreen="true"

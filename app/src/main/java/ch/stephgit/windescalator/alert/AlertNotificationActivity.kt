@@ -22,9 +22,10 @@ import ch.stephgit.windescalator.data.Alert
 import ch.stephgit.windescalator.data.AlertRepository
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -86,21 +87,23 @@ class AlertNotificationActivity : AppCompatActivity() {
                 stopAlert()
             }
 
-            CoroutineScope(Dispatchers.IO).launch {
-                alertRepo.get(alertId!!).collect {
-                    val json = Json { ignoreUnknownKeys = true }
-                    val windDataObject = json.decodeFromString<WindData>(windData!!)
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    alertRepo.get(alertId!!).collect {
+                        val json = Json { ignoreUnknownKeys = true }
+                        val windDataObject = json.decodeFromString<WindData>(windData!!)
 
-                    alert = it
-                    runOnUiThread {
-                        findViewById<TextView>(R.id.tv_alertDetailText).text =
-                            applicationContext.getString(
-                                R.string.winddata_alertnotification,
-                                alert.name,
-                                windDataObject.force,
-                                windDataObject.direction,
-                                windDataObject.time
-                            );
+                        alert = it
+                        runOnUiThread {
+                            findViewById<TextView>(R.id.tv_alertDetailText).text =
+                                applicationContext.getString(
+                                    R.string.winddata_alertnotification,
+                                    alert.name,
+                                    windDataObject.force,
+                                    windDataObject.direction,
+                                    windDataObject.time
+                                )
+                        }
                     }
                 }
                 noiseHandler.makeNoise()

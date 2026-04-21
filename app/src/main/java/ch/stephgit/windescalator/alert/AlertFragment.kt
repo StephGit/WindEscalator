@@ -13,7 +13,9 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -92,19 +94,22 @@ class AlertFragment : androidx.fragment.app.Fragment() {
 
     private fun subscribeViewModel(recyclerAdapter: AlertRecyclerAdapter) {
 
-        lifecycleScope.launch {
-            viewModel.alerts.collect { alerts ->
-
-                if (alerts != null) {
-                    recyclerAdapter.submitList(alerts)
-                    noAlertInfo.visibility = View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.alerts.collect { alerts ->
+                    if (alerts != null) {
+                        recyclerAdapter.submitList(alerts)
+                        noAlertInfo.visibility = View.GONE
+                    }
                 }
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.resourceAvailability.collect { availability ->
-                recyclerAdapter.updateResourceAvailability(availability)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.resourceAvailability.collect { availability ->
+                    recyclerAdapter.updateResourceAvailability(availability)
+                }
             }
         }
     }
@@ -137,10 +142,10 @@ class AlertFragment : androidx.fragment.app.Fragment() {
                 viewModel.delete(removedAlert)
                 Snackbar.make(
                     viewHolder.itemView,
-                    "${removedAlert.name} " + context!!.getString(R.string.alert_removed),
+                    "${removedAlert.name} " + requireContext().getString(R.string.alert_removed),
                     Snackbar.LENGTH_LONG
                 )
-                    .setAction(context!!.getString(R.string.rollback)) {
+                    .setAction(requireContext().getString(R.string.rollback)) {
                         noAlertInfo.visibility = View.GONE
                         viewModel.insert(removedAlert)
                     }

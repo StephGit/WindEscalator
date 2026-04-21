@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
@@ -47,15 +49,17 @@ class WindFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun subscribeViewModel() {
-        lifecycleScope.launch {
-            viewModel.windResources.collect { resources ->
-                if (resources.isNotEmpty()) {
-                    windDataAdapter.submitList(resources)
-                    recyclerView.visibility = View.VISIBLE
-                    noWindMessureInfo.visibility = View.GONE
-                } else {
-                    recyclerView.visibility = View.GONE
-                    noWindMessureInfo.visibility = View.VISIBLE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.windResources.collect { resources ->
+                    if (resources.isNotEmpty()) {
+                        windDataAdapter.submitList(resources)
+                        recyclerView.visibility = View.VISIBLE
+                        noWindMessureInfo.visibility = View.GONE
+                    } else {
+                        recyclerView.visibility = View.GONE
+                        noWindMessureInfo.visibility = View.VISIBLE
+                    }
                 }
             }
         }

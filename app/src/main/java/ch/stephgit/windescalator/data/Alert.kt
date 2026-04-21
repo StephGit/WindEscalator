@@ -1,7 +1,10 @@
 package ch.stephgit.windescalator.data
 
-import java.io.Serializable
+import android.os.Parcelable
+import com.google.firebase.firestore.Exclude
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Alert(
     var name: String = "",
     var active: Boolean = false,
@@ -13,5 +16,5 @@ data class Alert(
     var directions: List<String> = emptyList(),
     var pending: Boolean = false,
     var userId: String = "",
-    var id: String = ""
-) : Serializable
+    @get:Exclude var id: String = ""
+) : Parcelable

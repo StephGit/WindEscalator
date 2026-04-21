@@ -52,7 +52,7 @@ export const cronDataFetch = onSchedule(options, async (event) => {
       const windData = windDataResults.get(data.resource);
 
       // only send message on exceeding threshold
-      if (windData.force >= data.windForceKts) {
+      if (windData && windData.force >= data.windForceKts) {
         const uid = data.userId;
         const messageData = {
           alertId: doc.id,
@@ -123,7 +123,7 @@ async function getWindData(
   return windDataResults;
 }
 
-export const sendFCMMessage = async (
+const sendFCMMessage = async (
   uid: string,
   message: {alertId: string; windData: string}
 ) => {
