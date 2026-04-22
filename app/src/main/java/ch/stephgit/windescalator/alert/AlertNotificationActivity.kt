@@ -106,8 +106,8 @@ class AlertNotificationActivity : AppCompatActivity() {
                         }
                     }
                 }
-                noiseHandler.makeNoise()
             }
+            noiseHandler.makeNoise()
 
         } else super.onDestroy()
 
@@ -125,7 +125,6 @@ class AlertNotificationActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-//        if (wakeLock.isHeld) wakeLock.release()
     }
 
     override fun onDestroy() {
@@ -135,12 +134,19 @@ class AlertNotificationActivity : AppCompatActivity() {
 
     private fun stopAlert() {
         noiseHandler.stopNoise()
-        //FIXME
-//        if (nextInterval) {
-//            alarmHandler.setNextInterval(alert.id!!)
-//        } else {
-//            alarmHandler.removeAlarm(alert.id!!, true)
-//        }
+        if (::alert.isInitialized) {
+            if (nextInterval) {
+                // Snooze: skip ~20 minutes (2 cron intervals)
+                alert.nextRun = System.currentTimeMillis() + 20 * 60 * 1000
+            } else {
+                // Disable for rest of today
+                val tomorrow = java.time.LocalDate.now().plusDays(1)
+                    .atStartOfDay(java.time.ZoneId.systemDefault())
+                    .toInstant().toEpochMilli()
+                alert.nextRun = tomorrow
+            }
+            alertRepo.update(alert)
+        }
         finish()
     }
 
@@ -148,7 +154,7 @@ class AlertNotificationActivity : AppCompatActivity() {
         noiseHandler.stopNoise()
 
         val activityIntent = Intent(applicationContext, WindEscalatorActivity::class.java)
-        activityIntent.putExtra("ALERT_ID", alert.id)
+        activityIntent.putExtra("NAVIGATE_TO", "wind")
         activityIntent.flags = FLAG_ACTIVITY_NEW_TASK
         applicationContext.startActivity(activityIntent)
     }

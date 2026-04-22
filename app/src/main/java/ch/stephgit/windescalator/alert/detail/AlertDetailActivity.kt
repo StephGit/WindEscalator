@@ -3,13 +3,11 @@ package ch.stephgit.windescalator.alert.detail
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -61,7 +59,6 @@ class AlertDetailActivity : AppCompatActivity() {
         fun newIntent(ctx: Context) = Intent(ctx, AlertDetailActivity::class.java)
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alert_detail)
@@ -157,7 +154,7 @@ class AlertDetailActivity : AppCompatActivity() {
         startTime.setText(alert.startTime)
         endTime.setText(alert.endTime)
         seekBar.progress = getWindForce()
-        if (!alert.directions.isNullOrEmpty()) alert.directions?.let { directionChart.setData(it) }
+        if (alert.directions.isNotEmpty()) directionChart.setData(alert.directions)
     }
 
 
@@ -171,12 +168,12 @@ class AlertDetailActivity : AppCompatActivity() {
     }
 
     private fun getAlertName(): String {
-        if (::alert.isInitialized && this.alert.name != null) return this.alert.name!!
+        if (::alert.isInitialized) return this.alert.name
         return ""
     }
 
     private fun getWindForce(): Int {
-        return if (alert.windForceKts != null) alert.windForceKts!! else 1
+        return alert.windForceKts
     }
 
     private fun isValid(): Boolean {

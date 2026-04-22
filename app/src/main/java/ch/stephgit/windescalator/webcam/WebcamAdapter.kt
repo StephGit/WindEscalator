@@ -35,15 +35,6 @@ class WebcamAdapter : ListAdapter<WindResource, WebcamAdapter.ViewHolder>(Webcam
         private val webcamImage: ImageView = itemView.findViewById(R.id.iv_webcam_image)
         private val noUrlMessage: TextView = itemView.findViewById(R.id.tv_webcam_no_url)
 
-        private fun isDirectImageUrl(url: String): Boolean {
-            val uri = Uri.parse(url)
-            if (!uri.fragment.isNullOrBlank()) return false
-            val path = uri.path?.lowercase() ?: return false
-            return path.endsWith(".jpg") || path.endsWith(".jpeg") ||
-                    path.endsWith(".png") || path.endsWith(".gif") ||
-                    path.endsWith(".webp") || path.endsWith(".bmp")
-        }
-
         fun bind(resource: WindResource) {
             resourceName.text = resource.displayName
             resourceIcon.setBackgroundResource(resource.icon)
@@ -52,17 +43,14 @@ class WebcamAdapter : ListAdapter<WindResource, WebcamAdapter.ViewHolder>(Webcam
                 webcamImage.visibility = View.VISIBLE
                 noUrlMessage.visibility = View.GONE
 
-                if (isDirectImageUrl(resource.webcamUrl)) {
-                    Glide.with(itemView.context)
-                        .load(resource.webcamUrl)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .placeholder(R.drawable.ic_baseline_videocam_24)
-                        .error(R.drawable.ic_baseline_videocam_24)
-                        .into(webcamImage)
-                } else {
-                    webcamImage.setImageResource(R.drawable.ic_baseline_videocam_24)
-                }
+                Glide.with(itemView.context)
+                    .load(resource.webcamUrl)
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.ic_baseline_videocam_24)
+                    .error(R.drawable.ic_baseline_videocam_24)
+                    .into(webcamImage)
 
                 openBrowser.visibility = View.VISIBLE
                 openBrowser.setOnClickListener {

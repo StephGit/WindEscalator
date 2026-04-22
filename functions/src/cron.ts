@@ -35,16 +35,13 @@ export const cronDataFetch = onSchedule(options, async (event) => {
       .where('endTime', '>=', time)
       .orderBy('resource', 'asc')
       .get();
+    // Always fetch all wind resources to keep data up-to-date
+    const windDataResults = await getWindData();
+
     // no alerts active so no continuation...
     if (snapshot.docs.length === 0) {
       return null;
     }
-
-    // filter resources to fetch
-    const resources: number[] = [
-      ...new Set(snapshot.docs.map((doc) => doc.data().resource)),
-    ];
-    const windDataResults = await getWindData(resources);
 
     // Daten verarbeiten
     for (const doc of snapshot.docs) {
@@ -77,12 +74,10 @@ export const cronDataFetch = onSchedule(options, async (event) => {
   }
 });
 
-async function getWindData(
-  resources: number[]
-): Promise<Map<number, WindData>> {
+async function getWindData(): Promise<Map<number, WindData>> {
   const windDataResults = new Map<number, WindData>();
-  // read resources as batch
-  const results = await fetchResources(resources);
+  // read all resources
+  const results = await fetchAllResources();
 
   for (const {docId, data} of results) {
     let dataAvailable = false;
@@ -173,13 +168,11 @@ function getMaxTimestampToday() {
   return today.getTime();
 }
 
-async function fetchResources(
-  resources: number[]
-): Promise<{docId: string; data: DocumentData}[]> {
+async function fetchAllResources(): Promise<
+  {docId: string; data: DocumentData}[]
+> {
   const windResourceCollection = firestore.collection('windResource');
-  const snapshot = await windResourceCollection
-    .where('localId', 'in', resources)
-    .get();
+  const snapshot = await windResourceCollection.get();
 
   if (snapshot.empty) {
     return []; // No resources found

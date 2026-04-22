@@ -1,7 +1,6 @@
 package ch.stephgit.windescalator.alert.detail
 
 import android.content.Context
-import android.database.Cursor
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import ch.stephgit.windescalator.R
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import javax.inject.Inject
 

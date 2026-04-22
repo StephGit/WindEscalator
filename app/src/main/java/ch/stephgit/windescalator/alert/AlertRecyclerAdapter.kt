@@ -66,19 +66,9 @@ class AlertRecyclerAdapter @Inject constructor() :
                 if (dataAvailable) R.drawable.bullet_online else R.drawable.bullet_offline
             )
             switch.isChecked = alert.active
-//            if (alert.active) alarmHandler.addOrUpdate(alert) //TODO due to db-updates on nextRun RecyclerView always creates a new view binding this leads to a never ending cycle
         }
     }
 
-    private fun onSwitchChange(alert: ch.stephgit.windescalator.data.Alert) {
-        Log.d(TAG, "AlertRecyclerAdapter: switch change $alert")
-
-        if (alert.active) {
-            //TODO Firebase Alert
-        } else {
-            //TODO Firebase Alert
-        }
-    }
 
     fun removeItem(viewHolder: RecyclerView.ViewHolder): ch.stephgit.windescalator.data.Alert {
         return getItem(viewHolder.absoluteAdapterPosition)
@@ -100,12 +90,7 @@ class AlertRecyclerAdapter @Inject constructor() :
             }
             switch.setOnCheckedChangeListener { _, isChecked ->
                 alert.active = isChecked
-                onSwitchChange(alert)
                 onSwitch?.invoke(alert)
-            }
-
-            switch.setOnClickListener { click ->
-                Log.d(TAG, "AlertRecyclerAdapter: switch clicked")
             }
         }
 

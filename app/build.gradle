@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.devtools.ksp'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
@@ -87,11 +86,6 @@ dependencies {
     testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    //db
-    implementation 'androidx.room:room-runtime:2.6.1'
-    implementation "androidx.room:room-ktx:2.6.1"
-    annotationProcessor 'androidx.room:room-compiler:2.6.1'
-    ksp 'androidx.room:room-compiler:2.6.1'
     api 'joda-time:joda-time:2.10.2'
     //dagger and lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"

@@ -113,7 +113,13 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
         //Firebase Stuff
         initFirebase()
-        replaceFragment(AlertFragment())
+
+        if (intent?.getStringExtra("NAVIGATE_TO") == "wind") {
+            replaceFragment(WindFragment())
+            navigation.selectedItemId = R.id.bottom_navigation_messure
+        } else {
+            replaceFragment(AlertFragment())
+        }
     }
 
     private fun requestAppPermissions() {

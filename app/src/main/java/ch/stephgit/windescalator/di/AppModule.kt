@@ -37,14 +37,12 @@ class AppModule {
         WindResourceRepository(firestore)        
 
     @Provides
-    @Singleton
     fun provideAlertRecyclerAdapter():
             AlertRecyclerAdapter = AlertRecyclerAdapter()
 
     @Provides
-    @Singleton
-    fun provideWindResourceAdapter(context: Context):
-            WindResourceAdapter = WindResourceAdapter(context, provideFirebaseDb().collection("windResource") )
+    fun provideWindResourceAdapter(context: Context, db: FirebaseFirestore):
+            WindResourceAdapter = WindResourceAdapter(context, db.collection("windResource"))
 
     @Provides
     @Singleton
