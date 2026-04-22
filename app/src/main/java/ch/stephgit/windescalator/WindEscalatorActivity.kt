@@ -20,8 +20,6 @@ import androidx.lifecycle.ViewModelProvider
 import ch.stephgit.windescalator.alert.AlertFragment
 import ch.stephgit.windescalator.alert.service.AlertMessagingService
 import ch.stephgit.windescalator.di.Injector
-import ch.stephgit.windescalator.log.LogCatViewModel
-import ch.stephgit.windescalator.log.LogFragment
 import ch.stephgit.windescalator.wind.WindFragment
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -42,8 +40,6 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
 
 
     private lateinit var navigation: BottomNavigationView
-
-    private lateinit var viewModel: LogCatViewModel
 
     private lateinit var menu: Menu
 
@@ -112,13 +108,18 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
         navigation.setOnItemSelectedListener { selectedNavItem -> selectNavItem(selectedNavItem) }
 
         Injector.appComponent.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[LogCatViewModel::class.java]
 
         requestAppPermissions()
 
         //Firebase Stuff
         initFirebase()
-        replaceFragment(AlertFragment())
+
+        if (intent?.getStringExtra("NAVIGATE_TO") == "wind") {
+            replaceFragment(WindFragment())
+            navigation.selectedItemId = R.id.bottom_navigation_messure
+        } else {
+            replaceFragment(AlertFragment())
+        }
     }
 
     private fun requestAppPermissions() {
@@ -228,7 +229,6 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
             R.id.bottom_navigation_alert -> replaceFragment(AlertFragment())
             R.id.bottom_navigation_messure -> replaceFragment(WindFragment())
             R.id.bottom_navigation_webcam -> replaceFragment(WebcamFragment())
-            R.id.bottom_navigation_log -> replaceFragment(LogFragment())
             else -> throw IllegalArgumentException("Unknown clickedMenuItem.itemId: ${selectedNavItem.itemId}")
         }
         return true

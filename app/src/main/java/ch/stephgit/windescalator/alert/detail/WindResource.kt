@@ -1,6 +1,7 @@
 package ch.stephgit.windescalator.alert.detail
 
 import android.util.Log
+import com.google.firebase.firestore.Exclude
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.alert.detail.TimePickerFragment.Companion.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
@@ -10,7 +11,7 @@ import org.jsoup.Jsoup
 import kotlin.math.roundToInt
 
 
-data class WindResource (var id: String = "", var displayName: String = "", var name: String = "", var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1)
+data class WindResource (@get:Exclude var id: String = "", var displayName: String = "", var name: String = "", @get:Exclude var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1, var online: Boolean = false, var lastChecked: Long = 0, var webcamUrl: String = "", var windDataUrl: String = "", var latestForce: Int = 0, var latestDirection: String = "", var latestTime: String = "")
 
 fun extractNeucData(data: String): WindData {
     Log.d(TAG, data)

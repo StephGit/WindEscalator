@@ -66,5 +66,15 @@
     <string name="default_notification_channel_id">WindEscalatorApp</string>
     <string name="channel_description">Notification channel to inform about windalerts</string>
     <string name="permission_post_notification_required">Notifaction access is required for sending you alerts about winddata.</string>
+    <string name="wind_resource_icon">Wind resource icon</string>
+    <string name="wind_status_indicator">Data status indicator</string>
+    <string name="wind_force_label">Force</string>
+    <string name="wind_direction_label">Direction</string>
+    <string name="wind_time_label">Time</string>
+    <string name="wind_last_checked">Last checked: %1$s</string>
+    <string name="wind_data_offline">Currently offline</string>
+    <string name="webcam_open_in_browser">Open in browser</string>
+    <string name="webcam_image_description">Webcam image</string>
+    <string name="webcam_no_url">No webcam URL configured</string>
 
 </resources>

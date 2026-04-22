@@ -1,7 +1,8 @@
 import {onSchedule} from 'firebase-functions/v2/scheduler';
-import * as admin from 'firebase-admin';
+import {initializeApp} from 'firebase-admin/app';
+import {DocumentData, getFirestore} from 'firebase-admin/firestore';
+import {getMessaging} from 'firebase-admin/messaging';
 import {DateTime} from 'luxon';
-import fetch from 'node-fetch';
 
 import {
   extractNeucData,
@@ -10,10 +11,10 @@ import {
   WindData,
 } from './winddata';
 
-admin.initializeApp();
+initializeApp();
 
 const TIME_ZONE = 'Europe/Zurich';
-const firestore = admin.firestore();
+const firestore = getFirestore();
 
 const options = {schedule: '0,10,20,30,40,50 5-21 * * *', timeZone: TIME_ZONE};
 
@@ -34,16 +35,13 @@ export const cronDataFetch = onSchedule(options, async (event) => {
       .where('endTime', '>=', time)
       .orderBy('resource', 'asc')
       .get();
+    // Always fetch all wind resources to keep data up-to-date
+    const windDataResults = await getWindData();
+
     // no alerts active so no continuation...
     if (snapshot.docs.length === 0) {
       return null;
     }
-
-    // filter resources to fetch
-    const resources: number[] = [
-      ...new Set(snapshot.docs.map((doc) => doc.data().resource)),
-    ];
-    const windDataResults = await getWindData(resources);
 
     // Daten verarbeiten
     for (const doc of snapshot.docs) {
@@ -51,7 +49,7 @@ export const cronDataFetch = onSchedule(options, async (event) => {
       const windData = windDataResults.get(data.resource);
 
       // only send message on exceeding threshold
-      if (windData.force >= data.windForceKts) {
+      if (windData && windData.force >= data.windForceKts) {
         const uid = data.userId;
         const messageData = {
           alertId: doc.id,
@@ -76,14 +74,13 @@ export const cronDataFetch = onSchedule(options, async (event) => {
   }
 });
 
-async function getWindData(
-  resources: number[]
-): Promise<Map<number, WindData>> {
+async function getWindData(): Promise<Map<number, WindData>> {
   const windDataResults = new Map<number, WindData>();
-  // read resources as batch
-  const results = await fetchResources(resources);
+  // read all resources
+  const results = await fetchAllResources();
 
-  for (const data of results) {
+  for (const {docId, data} of results) {
+    let dataAvailable = false;
     try {
       const result = await getData(data.url);
       let windData: WindData;
@@ -96,19 +93,32 @@ async function getWindData(
         windData = extractWsctData(result);
       }
 
+      dataAvailable = windData.force > 0 && windData.direction !== '';
       windDataResults.set(data.localId, windData);
     } catch (error) {
       console.error(
         `Error fetching or extracting data for resource ${data.displayName}:`,
         error
       );
+    } finally {
+      // Update windResource document with data availability status and latest reading
+      const updateData: Record<string, unknown> = {
+        online: dataAvailable,
+        lastChecked: Date.now(),
+      };
+      if (dataAvailable && windDataResults.has(data.localId)) {
+        const wd = windDataResults.get(data.localId)!;
+        updateData.latestForce = wd.force;
+        updateData.latestDirection = wd.direction;
+        updateData.latestTime = wd.time;
+      }
+      await firestore.collection('windResource').doc(docId).update(updateData);
     }
   }
-
   return windDataResults;
 }
 
-export const sendFCMMessage = async (
+const sendFCMMessage = async (
   uid: string,
   message: {alertId: string; windData: string}
 ) => {
@@ -129,7 +139,7 @@ export const sendFCMMessage = async (
         };
 
         // Send the message using the Admin SDK
-        const response = await admin.messaging().send(messagePayload);
+        const response = await getMessaging().send(messagePayload);
         console.info('Successfully sent message:', response);
         return {success: true};
       } else {
@@ -158,19 +168,17 @@ function getMaxTimestampToday() {
   return today.getTime();
 }
 
-async function fetchResources(
-  resources: number[]
-): Promise<admin.firestore.DocumentData[]> {
+async function fetchAllResources(): Promise<
+  {docId: string; data: DocumentData}[]
+> {
   const windResourceCollection = firestore.collection('windResource');
-  const snapshot = await windResourceCollection
-    .where('localId', 'in', resources)
-    .get();
+  const snapshot = await windResourceCollection.get();
 
   if (snapshot.empty) {
     return []; // No resources found
   }
 
-  return snapshot.docs.map((doc) => doc.data());
+  return snapshot.docs.map((doc) => ({docId: doc.id, data: doc.data()}));
 }
 
 async function getData(url: string): Promise<string> {

@@ -3,8 +3,7 @@ package ch.stephgit.windescalator.data
 import android.util.Log
 import ch.stephgit.windescalator.TAG
 import com.google.android.gms.tasks.Task
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -24,9 +23,16 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
 
     private val collectionReference: CollectionReference = db.collection(COLLECTION_NAME)
 
-    private val user = Firebase.auth.currentUser!!
+    private val user get() = FirebaseAuth.getInstance().currentUser
 
     fun getAlerts(): Flow<List<Alert>> = callbackFlow {
+        val currentUser = user
+        if (currentUser == null) {
+            trySend(emptyList())
+            close()
+            return@callbackFlow
+        }
+
         val listener = object : EventListener<QuerySnapshot> {
             override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
                 if (exception != null) {
@@ -51,7 +57,7 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
         }
 
         val registration =
-            collectionReference.whereEqualTo("userId", user.uid).addSnapshotListener(listener)
+            collectionReference.whereEqualTo("userId", currentUser.uid).addSnapshotListener(listener)
         awaitClose { registration.remove() }
     }
 

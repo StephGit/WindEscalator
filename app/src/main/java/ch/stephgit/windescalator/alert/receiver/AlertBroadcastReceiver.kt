@@ -12,7 +12,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Build.*
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -31,7 +30,6 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
 
 
     @SuppressLint("ObsoleteSdkInt")
-    @RequiresApi(VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "Got Broadcast")
         val action = intent.action

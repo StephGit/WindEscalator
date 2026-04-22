@@ -1,7 +1,6 @@
 package ch.stephgit.windescalator.alert.detail
 
 import android.content.Context
-import android.database.Cursor
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import ch.stephgit.windescalator.R
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import javax.inject.Inject
 
@@ -20,7 +18,7 @@ class WindResourceAdapter @Inject constructor(
         ArrayAdapter<WindResource>(context, 0) {
 
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
-    // FIXME use flow to ensure loaded resource after setViewElementsData in AlertDetailActivity
+
     private val results = query.orderBy("localId").get().addOnSuccessListener { result ->
         for (document in result) {
             var resource = document.toObject(WindResource::class.java)
@@ -65,8 +63,11 @@ class WindResourceAdapter @Inject constructor(
         if (position == 0) {
             return null
         }
-
-        return super.getItem(position - 1)
+        val adjustedPosition = position - 1
+        if (adjustedPosition >= super.getCount()) {
+            return null
+        }
+        return super.getItem(adjustedPosition)
     }
 
     override fun getCount() = super.getCount() + 1

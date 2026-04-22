@@ -22,9 +22,10 @@ import ch.stephgit.windescalator.data.Alert
 import ch.stephgit.windescalator.data.AlertRepository
 import ch.stephgit.windescalator.di.Injector
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -86,25 +87,27 @@ class AlertNotificationActivity : AppCompatActivity() {
                 stopAlert()
             }
 
-            CoroutineScope(Dispatchers.IO).launch {
-                alertRepo.get(alertId!!).collect {
-                    val json = Json { ignoreUnknownKeys = true }
-                    val windDataObject = json.decodeFromString<WindData>(windData!!)
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    alertRepo.get(alertId!!).collect {
+                        val json = Json { ignoreUnknownKeys = true }
+                        val windDataObject = json.decodeFromString<WindData>(windData!!)
 
-                    alert = it
-                    runOnUiThread {
-                        findViewById<TextView>(R.id.tv_alertDetailText).text =
-                            applicationContext.getString(
-                                R.string.winddata_alertnotification,
-                                alert.name,
-                                windDataObject.force,
-                                windDataObject.direction,
-                                windDataObject.time
-                            );
+                        alert = it
+                        runOnUiThread {
+                            findViewById<TextView>(R.id.tv_alertDetailText).text =
+                                applicationContext.getString(
+                                    R.string.winddata_alertnotification,
+                                    alert.name,
+                                    windDataObject.force,
+                                    windDataObject.direction,
+                                    windDataObject.time
+                                )
+                        }
                     }
                 }
-                noiseHandler.makeNoise()
             }
+            noiseHandler.makeNoise()
 
         } else super.onDestroy()
 
@@ -122,7 +125,6 @@ class AlertNotificationActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-//        if (wakeLock.isHeld) wakeLock.release()
     }
 
     override fun onDestroy() {
@@ -132,12 +134,19 @@ class AlertNotificationActivity : AppCompatActivity() {
 
     private fun stopAlert() {
         noiseHandler.stopNoise()
-        //FIXME
-//        if (nextInterval) {
-//            alarmHandler.setNextInterval(alert.id!!)
-//        } else {
-//            alarmHandler.removeAlarm(alert.id!!, true)
-//        }
+        if (::alert.isInitialized) {
+            if (nextInterval) {
+                // Snooze: skip ~20 minutes (2 cron intervals)
+                alert.nextRun = System.currentTimeMillis() + 20 * 60 * 1000
+            } else {
+                // Disable for rest of today
+                val tomorrow = java.time.LocalDate.now().plusDays(1)
+                    .atStartOfDay(java.time.ZoneId.systemDefault())
+                    .toInstant().toEpochMilli()
+                alert.nextRun = tomorrow
+            }
+            alertRepo.update(alert)
+        }
         finish()
     }
 
@@ -145,7 +154,7 @@ class AlertNotificationActivity : AppCompatActivity() {
         noiseHandler.stopNoise()
 
         val activityIntent = Intent(applicationContext, WindEscalatorActivity::class.java)
-        activityIntent.putExtra("ALERT_ID", alert.id)
+        activityIntent.putExtra("NAVIGATE_TO", "wind")
         activityIntent.flags = FLAG_ACTIVITY_NEW_TASK
         applicationContext.startActivity(activityIntent)
     }
