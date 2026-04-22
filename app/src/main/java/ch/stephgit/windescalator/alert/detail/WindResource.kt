@@ -11,7 +11,7 @@ import org.jsoup.Jsoup
 import kotlin.math.roundToInt
 
 
-data class WindResource (@get:Exclude var id: String = "", var displayName: String = "", var name: String = "", @get:Exclude var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1, var online: Boolean = false, var lastChecked: Long = 0, var webcamUrl: String = "", var windDataUrl: String = "", var latestForce: Int = 0, var latestDirection: String = "", var latestTime: String = "")
+data class WindResource (@get:Exclude var id: String = "", var displayName: String = "", var name: String = "", @get:Exclude var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1, var online: Boolean = false, var lastChecked: Long = 0, var webcamUrl: String = "", var url: String = "", var latestForce: Int = 0, var latestDirection: String = "", var latestTime: String = "")
 
 fun extractNeucData(data: String): WindData {
     Log.d(TAG, data)
@@ -24,7 +24,7 @@ fun extractNeucData(data: String): WindData {
 }
 
 
-private fun extractScniData(data: String): WindData {
+fun extractScniData(data: String): WindData {
     val doc = Jsoup.parse(data)
     val windData = WindData()
     // throw away titles
@@ -46,7 +46,7 @@ private fun isActualData(time: String): Boolean {
 
 }
 
-private fun extractWsctData(data: String): WindData {
+fun extractWsctData(data: String): WindData {
     val doc = Jsoup.parse(data)
     val knots = doc.select("windkts").text();
     val degrees = doc.select("curval_winddir").text();
@@ -58,6 +58,14 @@ private fun extractWsctData(data: String): WindData {
         time
     )
 
+}
+
+fun extractWindData(data: String, localId: Int): WindData {
+    return when (localId) {
+        1 -> extractScniData(data)
+        2 -> extractNeucData(data)
+        else -> extractWsctData(data)
+    }
 }
 
 private fun calcKnotsByKmh(windText: String) = (windText.toDouble() / 1.852).roundToInt()

@@ -43,6 +43,11 @@ class WindFragment : androidx.fragment.app.Fragment() {
         }
 
         viewModel = ViewModelProvider(this, viewModelFactory)[WindViewModel::class.java]
+
+        windDataAdapter.onItemClick = { resource ->
+            viewModel.refreshResource(resource)
+        }
+
         subscribeViewModel()
 
         return view

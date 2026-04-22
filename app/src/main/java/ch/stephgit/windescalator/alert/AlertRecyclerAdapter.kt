@@ -56,8 +56,14 @@ class AlertRecyclerAdapter @Inject constructor() :
             bind(alert)
             initChartData(itemView.context.getString(R.color.windEscalator_colorSelectedLight))
             itemText.text = alert.name
-            alert.nextRun?.let {
-                itemNext.text = "Next: " + Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime().format(fmt) };
+            val now = System.currentTimeMillis()
+            if (alert.active && alert.nextRun > now) {
+                itemNext.text = "Next: " + Instant.ofEpochMilli(alert.nextRun).atZone(ZoneId.systemDefault()).toLocalDateTime().format(fmt)
+            } else if (alert.active) {
+                itemNext.text = "Next: active"
+            } else {
+                itemNext.text = ""
+            }
             itemTime.text = alert.startTime + "\n" + alert.endTime
             itemForce.text = alert.windForceKts.toString()
             alert.directions?.let { itemDirs.setData(it) }

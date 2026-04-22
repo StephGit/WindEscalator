@@ -1,10 +1,18 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/windEscalator_colorBrand</item>
         <item name="colorPrimaryDark">@color/windEscalator_colorBlack</item>
-        <item name="colorAccent">@color/windEscalator_colorBrand</item>
+        <item name="colorPrimaryVariant">@color/windEscalator_colorBrandLight</item>
+        <item name="colorOnPrimary">@color/windEscalator_colorWhite</item>
+        <item name="colorSecondary">@color/windEscalator_colorSelected</item>
+        <item name="colorSecondaryVariant">@color/windEscalator_colorSelectedLight</item>
+        <item name="colorOnSecondary">@color/windEscalator_colorWhite</item>
+        <item name="colorSurface">@color/windEscalator_colorWhite</item>
+        <item name="colorOnSurface">@color/windEscalator_colorBlack</item>
+        <item name="colorError">@color/windEscalator_colorDelete</item>
+        <item name="colorOnError">@color/windEscalator_colorWhite</item>
         <item name="android:datePickerMode">spinner</item>
         <item name="android:timePickerMode">spinner</item>
         <item name="android:windowBackground">@color/windEscalator_colorWhite</item>
