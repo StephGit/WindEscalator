@@ -62,28 +62,32 @@ export function extractNeucData(data: string): WindData {
   };
 }
 
-// Function to extract data from TXT
-export function extractScniData(data: string): WindData {
-  let windData: WindData = {force: 0, direction: '', time: ''};
-  const lines = data.split('\r\n');
-  const dataCols = lines[lines.length - 2].split(' ').filter((n) => n);
-  const pos = dataCols.length - 15;
+// Function to extract latest wind/gust from meteomap.cloud chart JSON
+export function extractScniData(windJson: string): WindData {
+  const windResponse = JSON.parse(windJson);
 
-  if (dataCols.length > 0) {
-    if (isActualData(dataCols[pos])) {
-      windData.force = parseWindSpeed(dataCols[pos + 2], 'km/h');
-      windData.direction = parseDirection(parseInt(dataCols[pos + 1]));
-      windData.time = dataCols[pos];
-    }
+  const windPoints = windResponse?.data?.data ?? [];
+  const lastWind = windPoints[windPoints.length - 1];
+
+  if (!lastWind) {
+    return {force: 0, direction: '', time: ''};
   }
 
-  return windData;
-}
+  // Extract direction from hourlyDir HTML (title="27.04.2026 09:00 : SSE")
+  const hourlyDir: string = windResponse?.data?.hourlyDir ?? '';
+  const dirMatches = hourlyDir.match(/title="[^"]*"/g) ?? [];
+  const lastDirMatch = dirMatches[dirMatches.length - 1] ?? '';
+  const dirParts = lastDirMatch.split(' : ');
+  const direction =
+    dirParts.length > 1 ? dirParts[dirParts.length - 1].replace('"', '') : '';
 
-// Function to check if data is actual
-function isActualData(time: string): boolean {
-  const currentHour = DateTime.local({zone: 'Europe/Zurich'}).hour;
-  return currentHour.toString() === time.split(':')[0];
+  return {
+    force: parseWindSpeed(lastWind.y.toString(), 'km/h'),
+    direction,
+    time: DateTime.fromSQL(lastWind.x, {zone: 'utc'})
+      .setZone('Europe/Zurich')
+      .toFormat('HH:mm:ss'),
+  };
 }
 
 // Function to extract data from HTML (using JSDOM)
