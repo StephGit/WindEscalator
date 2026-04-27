@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter
 
 class WindDataAdapter : ListAdapter<WindResource, WindDataAdapter.ViewHolder>(WindResourceDiffCallback()) {
 
+    var onItemClick: ((WindResource) -> Unit)? = null
     private val fmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,6 +43,7 @@ class WindDataAdapter : ListAdapter<WindResource, WindDataAdapter.ViewHolder>(Wi
         private val offlineMessage: TextView = itemView.findViewById(R.id.tv_wind_offline)
 
         fun bind(resource: WindResource) {
+            itemView.setOnClickListener { onItemClick?.invoke(resource) }
             resourceName.text = resource.displayName
             resourceIcon.setBackgroundResource(resource.icon)
 
