@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.di.Injector
 import ch.stephgit.windescalator.webcam.WebcamAdapter
-import ch.stephgit.windescalator.wind.WindViewModel
+import ch.stephgit.windescalator.webcam.WebcamViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class WebcamFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var noWebcamsInfo: ConstraintLayout
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewModel: WindViewModel
+    private lateinit var viewModel: WebcamViewModel
     private val webcamAdapter = WebcamAdapter()
 
     @Inject
@@ -43,7 +43,7 @@ class WebcamFragment : androidx.fragment.app.Fragment() {
             adapter = webcamAdapter
         }
 
-        viewModel = ViewModelProvider(this, viewModelFactory)[WindViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[WebcamViewModel::class.java]
         subscribeViewModel()
 
         return view
@@ -52,10 +52,9 @@ class WebcamFragment : androidx.fragment.app.Fragment() {
     private fun subscribeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.windResources.collect { resources ->
-                    val withWebcams = resources.filter { it.webcamUrl.isNotBlank() }
-                    if (withWebcams.isNotEmpty()) {
-                        webcamAdapter.submitList(withWebcams)
+                viewModel.webcams.collect { webcams ->
+                    if (webcams.isNotEmpty()) {
+                        webcamAdapter.submitList(webcams)
                         recyclerView.visibility = View.VISIBLE
                         noWebcamsInfo.visibility = View.GONE
                     } else {

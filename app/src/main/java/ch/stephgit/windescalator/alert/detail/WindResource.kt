@@ -11,7 +11,7 @@ import org.jsoup.Jsoup
 import kotlin.math.roundToInt
 
 
-data class WindResource (@get:Exclude var id: String = "", var displayName: String = "", var name: String = "", @get:Exclude var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1, var online: Boolean = false, var lastChecked: Long = 0, var webcamUrl: String = "", var url: String = "", var latestForce: Int = 0, var latestDirection: String = "", var latestTime: String = "")
+data class WindResource (@get:Exclude var id: String = "", var displayName: String = "", var name: String = "", @get:Exclude var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1, var online: Boolean = false, var lastChecked: Long = 0, var url: String = "", var latestForce: Int = 0, var latestDirection: String = "", var latestTime: String = "")
 
 fun extractNeucData(data: String): WindData {
     Log.d(TAG, data)

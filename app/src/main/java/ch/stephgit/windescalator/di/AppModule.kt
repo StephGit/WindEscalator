@@ -8,6 +8,7 @@ import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
 import ch.stephgit.windescalator.alert.service.AlertMessagingService
 import ch.stephgit.windescalator.alert.service.NoiseHandler
 import ch.stephgit.windescalator.data.AlertRepository
+import ch.stephgit.windescalator.data.WebcamRepository
 import ch.stephgit.windescalator.data.WindResourceRepository
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,7 +35,12 @@ class AppModule {
     @Provides
     @Singleton
     fun provideWindResourceRepository(firestore: FirebaseFirestore): WindResourceRepository =
-        WindResourceRepository(firestore)        
+        WindResourceRepository(firestore)
+
+    @Provides
+    @Singleton
+    fun provideWebcamRepository(firestore: FirebaseFirestore): WebcamRepository =
+        WebcamRepository(firestore)
 
     @Provides
     fun provideAlertRecyclerAdapter():

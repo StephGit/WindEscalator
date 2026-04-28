@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
-import ch.stephgit.windescalator.alert.detail.WindResource
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 
-class WebcamAdapter : ListAdapter<WindResource, WebcamAdapter.ViewHolder>(WebcamDiffCallback()) {
+class WebcamAdapter : ListAdapter<Webcam, WebcamAdapter.ViewHolder>(WebcamDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -35,16 +34,16 @@ class WebcamAdapter : ListAdapter<WindResource, WebcamAdapter.ViewHolder>(Webcam
         private val webcamImage: ImageView = itemView.findViewById(R.id.iv_webcam_image)
         private val noUrlMessage: TextView = itemView.findViewById(R.id.tv_webcam_no_url)
 
-        fun bind(resource: WindResource) {
-            resourceName.text = resource.displayName
-            resourceIcon.setBackgroundResource(resource.icon)
+        fun bind(webcam: Webcam) {
+            resourceName.text = webcam.displayName
+            resourceIcon.setBackgroundResource(webcam.icon)
 
-            if (resource.webcamUrl.isNotBlank()) {
+            if (webcam.url.isNotBlank()) {
                 webcamImage.visibility = View.VISIBLE
                 noUrlMessage.visibility = View.GONE
 
                 Glide.with(itemView.context)
-                    .load(resource.webcamUrl)
+                    .load(webcam.url)
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
@@ -54,12 +53,12 @@ class WebcamAdapter : ListAdapter<WindResource, WebcamAdapter.ViewHolder>(Webcam
 
                 openBrowser.visibility = View.VISIBLE
                 openBrowser.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resource.webcamUrl))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webcam.url))
                     itemView.context.startActivity(intent)
                 }
 
                 webcamImage.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resource.webcamUrl))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webcam.url))
                     itemView.context.startActivity(intent)
                 }
             } else {
@@ -71,12 +70,12 @@ class WebcamAdapter : ListAdapter<WindResource, WebcamAdapter.ViewHolder>(Webcam
     }
 }
 
-private class WebcamDiffCallback : DiffUtil.ItemCallback<WindResource>() {
-    override fun areItemsTheSame(oldItem: WindResource, newItem: WindResource): Boolean {
+private class WebcamDiffCallback : DiffUtil.ItemCallback<Webcam>() {
+    override fun areItemsTheSame(oldItem: Webcam, newItem: Webcam): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: WindResource, newItem: WindResource): Boolean {
+    override fun areContentsTheSame(oldItem: Webcam, newItem: Webcam): Boolean {
         return oldItem == newItem
     }
 }

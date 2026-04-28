@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import ch.stephgit.windescalator.alert.AlertViewModel
 import ch.stephgit.windescalator.util.ViewModelFactory
+import ch.stephgit.windescalator.webcam.WebcamViewModel
 import ch.stephgit.windescalator.wind.WindViewModel
 
 
@@ -22,6 +23,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(WindViewModel::class)
     internal abstract fun bindWindViewModel(windViewModel: WindViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(WebcamViewModel::class)
+    internal abstract fun bindWebcamViewModel(webcamViewModel: WebcamViewModel): ViewModel
 
     @Binds
     internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

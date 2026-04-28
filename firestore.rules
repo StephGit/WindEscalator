@@ -11,6 +11,9 @@ service cloud.firestore {
     match /windResource/{document=**} {
       allow read: if true;
     }
+    match /webcam/{document=**} {
+      allow read: if true;
+    }
     match /users/{userId} {
       allow read, write: if request.auth.uid == userId;
     }
