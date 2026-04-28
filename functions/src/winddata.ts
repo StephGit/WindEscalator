@@ -1,4 +1,3 @@
-import {JSDOM} from 'jsdom';
 import {DateTime} from 'luxon';
 
 // Define the WindData interface
@@ -90,13 +89,12 @@ export function extractScniData(windJson: string): WindData {
   };
 }
 
-// Function to extract data from HTML (using JSDOM)
+// Function to extract data from XML using regex
 export function extractWsctData(data: string): WindData {
-  const dom = new JSDOM(data);
-  const doc = dom.window.document;
-  const knots = doc.querySelector('windkts')?.textContent || '';
-  const degrees = doc.querySelector('curval_winddir')?.textContent || '';
-  const time = doc.querySelector('time')?.textContent || '';
+  const knots = data.match(/<windkts>([^<]+)<\/windkts>/)?.[1] ?? '';
+  const degrees =
+    data.match(/<curval_winddir>([^<]+)<\/curval_winddir>/)?.[1] ?? '';
+  const time = data.match(/<time>([^<]+)<\/time>/)?.[1] ?? '';
 
   return {
     force: parseWindSpeed(knots, 'knots'),

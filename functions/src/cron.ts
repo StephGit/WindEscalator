@@ -89,11 +89,17 @@ async function getWindData(): Promise<Map<number, WindData>> {
         windData = extractScniData(result);
       } else if (data.localId === 2) {
         windData = extractNeucData(result);
-      } else {
+      } else if (data.localId === 3 || data.localId === 4) {
         windData = extractWsctData(result);
       }
 
-      dataAvailable = windData.force > 0 && windData.direction !== '';
+      dataAvailable =
+        !isNaN(windData.force) &&
+        windData.force >= 0 &&
+        windData.direction !== '';
+      console.info(
+        `Resource ${data.displayName}: force=${windData.force}, dir=${windData.direction}, time=${windData.time}, available=${dataAvailable}`
+      );
       windDataResults.set(data.localId, windData);
     } catch (error) {
       console.error(
@@ -182,12 +188,16 @@ async function fetchAllResources(): Promise<
 }
 
 async function getData(url: string): Promise<string> {
-  try {
-    const response = await fetch(url);
-    const data = await response.text();
-    return data;
-  } catch (error) {
-    console.error('Fehler beim Abrufen der Website:', error);
-    return '';
+  const response = await fetch(url, {
+    headers: {
+      Accept: 'text/xml, application/xml, text/html, application/json, */*',
+      'User-Agent': 'WindEscalator/1.0',
+    },
+  });
+  if (!response.ok) {
+    throw new Error(
+      `HTTP ${response.status} ${response.statusText} for ${url}`
+    );
   }
+  return await response.text();
 }
