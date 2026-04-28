@@ -16,7 +16,11 @@ initializeApp();
 const TIME_ZONE = 'Europe/Zurich';
 const firestore = getFirestore();
 
-const options = {schedule: '0,10,20,30,40,50 5-21 * * *', timeZone: TIME_ZONE};
+const options = {
+  schedule: '0,10,20,30,40,50 5-21 * * *',
+  timeZone: TIME_ZONE,
+  region: 'europe-west6',
+};
 
 // runs 05:00 to 22:00 all 10mins
 export const cronDataFetch = onSchedule(options, async (event) => {
@@ -83,6 +87,7 @@ async function getWindData(): Promise<Map<number, WindData>> {
     let dataAvailable = false;
     try {
       const result = await getData(data.url);
+
       let windData: WindData;
 
       if (data.localId === 1) {
