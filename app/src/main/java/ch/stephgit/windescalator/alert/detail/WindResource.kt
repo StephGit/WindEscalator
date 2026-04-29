@@ -66,7 +66,9 @@ fun extractWindData(data: String, localId: Int): WindData {
     return when (localId) {
         1 -> extractScniData(data)
         2 -> extractNeucData(data)
-        else -> extractWsctData(data)
+        3 -> extractWsctData(data)
+        4 -> extractWsctData(data)
+        else -> return WindData(0, "", "")
     }
 }
 

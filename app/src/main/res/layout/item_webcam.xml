@@ -38,15 +38,6 @@
                 android:textStyle="bold"
                 android:textColor="@color/windEscalator_colorBrand" />
 
-            <ImageView
-                android:id="@+id/iv_webcam_open_browser"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@android:drawable/ic_menu_share"
-                android:contentDescription="@string/webcam_open_in_browser"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true" />
         </LinearLayout>
 
         <!-- Webcam image -->

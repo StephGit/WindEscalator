@@ -30,7 +30,6 @@ class WebcamAdapter : ListAdapter<Webcam, WebcamAdapter.ViewHolder>(WebcamDiffCa
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val resourceIcon: ImageView = itemView.findViewById(R.id.iv_webcam_resource_icon)
         private val resourceName: TextView = itemView.findViewById(R.id.tv_webcam_resource_name)
-        private val openBrowser: ImageView = itemView.findViewById(R.id.iv_webcam_open_browser)
         private val webcamImage: ImageView = itemView.findViewById(R.id.iv_webcam_image)
         private val noUrlMessage: TextView = itemView.findViewById(R.id.tv_webcam_no_url)
 
@@ -51,12 +50,6 @@ class WebcamAdapter : ListAdapter<Webcam, WebcamAdapter.ViewHolder>(WebcamDiffCa
                     .error(R.drawable.ic_baseline_videocam_24)
                     .into(webcamImage)
 
-                openBrowser.visibility = View.VISIBLE
-                openBrowser.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webcam.url))
-                    itemView.context.startActivity(intent)
-                }
-
                 webcamImage.setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webcam.url))
                     itemView.context.startActivity(intent)
@@ -64,7 +57,6 @@ class WebcamAdapter : ListAdapter<Webcam, WebcamAdapter.ViewHolder>(WebcamDiffCa
             } else {
                 webcamImage.visibility = View.GONE
                 noUrlMessage.visibility = View.VISIBLE
-                openBrowser.visibility = View.GONE
             }
         }
     }
