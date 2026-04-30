@@ -78,6 +78,31 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_wind_gust"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wind_gust_label"
+                    android:textSize="12sp"
+                    android:textColor="@color/windEscalator_colorDisabled" />
+
+                <TextView
+                    android:id="@+id/tv_wind_gust"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/windEscalator_colorSelected" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

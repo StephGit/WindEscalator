@@ -1,7 +1,6 @@
 package ch.stephgit.windescalator.webcam
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.stephgit.windescalator.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import androidx.core.net.toUri
 
 class WebcamAdapter : ListAdapter<Webcam, WebcamAdapter.ViewHolder>(WebcamDiffCallback()) {
 
@@ -27,7 +27,7 @@ class WebcamAdapter : ListAdapter<Webcam, WebcamAdapter.ViewHolder>(WebcamDiffCa
         holder.bind(resource)
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val resourceIcon: ImageView = itemView.findViewById(R.id.iv_webcam_resource_icon)
         private val resourceName: TextView = itemView.findViewById(R.id.tv_webcam_resource_name)
         private val webcamImage: ImageView = itemView.findViewById(R.id.iv_webcam_image)
@@ -51,7 +51,7 @@ class WebcamAdapter : ListAdapter<Webcam, WebcamAdapter.ViewHolder>(WebcamDiffCa
                     .into(webcamImage)
 
                 webcamImage.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webcam.url))
+                    val intent = Intent(Intent.ACTION_VIEW, webcam.url.toUri())
                     itemView.context.startActivity(intent)
                 }
             } else {

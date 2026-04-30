@@ -66,7 +66,7 @@ class AlertRecyclerAdapter @Inject constructor() :
             }
             itemTime.text = alert.startTime + "\n" + alert.endTime
             itemForce.text = alert.windForceKts.toString()
-            alert.directions?.let { itemDirs.setData(it) }
+            alert.directions.let { itemDirs.setData(it) }
             val dataAvailable = resourceAvailability[alert.resource] ?: false
             statusIndicator.setImageResource(
                 if (dataAvailable) R.drawable.bullet_online else R.drawable.bullet_offline

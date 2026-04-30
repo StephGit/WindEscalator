@@ -69,6 +69,7 @@
     <string name="wind_resource_icon">Wind resource icon</string>
     <string name="wind_status_indicator">Data status indicator</string>
     <string name="wind_force_label">Force</string>
+    <string name="wind_gust_label">Gust</string>
     <string name="wind_direction_label">Direction</string>
     <string name="wind_time_label">Time</string>
     <string name="wind_last_checked">Last checked: %1$s</string>

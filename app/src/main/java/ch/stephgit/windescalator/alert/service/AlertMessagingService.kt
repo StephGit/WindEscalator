@@ -51,7 +51,7 @@ class AlertMessagingService : FirebaseMessagingService() {
                 db.collection("users").document(uid)
                     .set(mapOf("fcmToken" to token), SetOptions.merge())
                     .addOnSuccessListener { Log.d("FCM", "Token stored successfully") }
-                    .addOnFailureListener { e ->
+                    .addOnFailureListener { _ ->
                         retryCount++
 
                         // Wait before retrying
@@ -107,7 +107,7 @@ class AlertMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        remoteMessage.data?.let {
+        remoteMessage.data.let {
             Log.d(TAG, "Message Notification ID: ${it["alertId"]} - Winddata: ${it["windData"]}")
 
             val data = Data.Builder()

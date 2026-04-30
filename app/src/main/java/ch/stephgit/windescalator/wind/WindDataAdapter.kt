@@ -37,6 +37,8 @@ class WindDataAdapter : ListAdapter<WindResource, WindDataAdapter.ViewHolder>(Wi
         private val statusIndicator: ImageView = itemView.findViewById(R.id.iv_wind_status)
         private val windDataLayout: LinearLayout = itemView.findViewById(R.id.ll_wind_data)
         private val windForce: TextView = itemView.findViewById(R.id.tv_wind_force)
+        private val windGustLayout: LinearLayout = itemView.findViewById(R.id.ll_wind_gust)
+        private val windGust: TextView = itemView.findViewById(R.id.tv_wind_gust)
         private val windDirection: TextView = itemView.findViewById(R.id.tv_wind_direction)
         private val windTime: TextView = itemView.findViewById(R.id.tv_wind_time)
         private val lastChecked: TextView = itemView.findViewById(R.id.tv_wind_last_checked)
@@ -55,6 +57,12 @@ class WindDataAdapter : ListAdapter<WindResource, WindDataAdapter.ViewHolder>(Wi
                 windDataLayout.visibility = View.VISIBLE
                 offlineMessage.visibility = View.GONE
                 windForce.text = itemView.context.getString(R.string.progress_kts, resource.latestForce.toString())
+                if (resource.latestGust > 0) {
+                    windGustLayout.visibility = View.VISIBLE
+                    windGust.text = itemView.context.getString(R.string.progress_kts, resource.latestGust.toString())
+                } else {
+                    windGustLayout.visibility = View.GONE
+                }
                 windDirection.text = resource.latestDirection
                 windTime.text = resource.latestTime
             } else if (resource.online) {

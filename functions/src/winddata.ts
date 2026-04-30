@@ -3,6 +3,7 @@ import {DateTime} from 'luxon';
 // Define the WindData interface
 export interface WindData {
   force: number;
+  gust: number;
   direction: string;
   time: string;
 }
@@ -41,7 +42,7 @@ function parseDirection(degrees: number): Direction {
 }
 
 function parseTime(timeString: string): string {
-  return DateTime.fromISO(timeString).toFormat('HH:mm:ss');
+  return DateTime.fromISO(timeString).toFormat('HH:mm');
 }
 
 function parseWindSpeed(speedString: string, unit: string): number {
@@ -56,6 +57,7 @@ export function extractNeucData(data: string): WindData {
   const json = JSON.parse(data);
   return {
     force: parseWindSpeed(json.windSpeedKnotsIchtus.toString(), 'knots'),
+    gust: parseWindSpeed(json.windSpeedHigh1KnotsIchtus.toString(), 'knots'),
     direction: parseDirection(json.windDirectionDegreesIchtus),
     time: parseTime(json.recordTimeIchtus),
   };
@@ -69,7 +71,7 @@ export function extractScniData(windJson: string): WindData {
   const lastWind = windPoints[windPoints.length - 1];
 
   if (!lastWind) {
-    return {force: 0, direction: '', time: ''};
+    return {force: 0, gust: 0, direction: '', time: ''};
   }
 
   // Extract direction from hourlyDir HTML (title="27.04.2026 09:00 : SSE")
@@ -82,23 +84,71 @@ export function extractScniData(windJson: string): WindData {
 
   return {
     force: parseWindSpeed(lastWind.y.toString(), 'km/h'),
+    gust: 0,
     direction,
     time: DateTime.fromSQL(lastWind.x, {zone: 'utc'})
       .setZone('Europe/Zurich')
-      .toFormat('HH:mm:ss'),
+      .toFormat('HH:mm'),
   };
 }
 
 // Function to extract data from XML using regex
 export function extractWsctData(data: string): WindData {
   const knots = data.match(/<windkts>([^<]+)<\/windkts>/)?.[1] ?? '';
+  const gust = data.match(/<windgustkts>([^<]+)<\/windgustkts>/)?.[1] ?? '';
   const degrees =
     data.match(/<curval_winddir>([^<]+)<\/curval_winddir>/)?.[1] ?? '';
   const time = data.match(/<time>([^<]+)<\/time>/)?.[1] ?? '';
 
   return {
     force: parseWindSpeed(knots, 'knots'),
+    gust: parseWindSpeed(gust, 'knots'),
     direction: parseDirection(parseInt(degrees)),
     time: time,
   };
+}
+
+export function extractBrieData(data: string): WindData {
+  // Parse HTML and extract table data
+  const tableMatch = data.match(
+    /<table[^>]*id="table-2"[^>]*>[\s\S]*?<\/table>/
+  );
+  if (!tableMatch) {
+    return {force: 0, gust: 0, direction: '', time: ''};
+  }
+
+  const tableHtml = tableMatch[0];
+  const rowMatches = tableHtml.match(/<tr[^>]*>[\s\S]*?<\/tr>/g) || [];
+
+  let force = 0;
+  let gust = 0;
+  let direction = '';
+  let time = '';
+
+  for (const row of rowMatches) {
+    const cellMatches = row.match(/<td[^>]*>([\s\S]*?)<\/td>/g) || [];
+    if (cellMatches.length < 2) continue;
+
+    const sensorName = cellMatches[0]?.replace(/<[^>]*>/g, '').trim() || '';
+    const currentValue = cellMatches[1]?.replace(/<[^>]*>/g, '').trim() || '';
+
+    if (sensorName === 'Wind aktuell') {
+      force = parseWindSpeed(currentValue.replace('km/h', '').trim(), 'km/h');
+    } else if (sensorName === 'Wind-B�e') {
+      gust = parseWindSpeed(currentValue.replace('km/h', '').trim(), 'km/h');
+    } else if (sensorName === 'Wind-Richtung') {
+      direction = currentValue;
+    }
+  }
+
+  // Extract time from header
+  const headerMatch = tableHtml.match(
+    /<th[^>]*colspan="4"[^>]*>([\s\S]*?)<\/th>/
+  );
+  if (headerMatch) {
+    const timeMatch = headerMatch[1].match(/\d{2}:\d{2}/);
+    time = timeMatch ? timeMatch[0] : '';
+  }
+
+  return {force, gust, direction, time};
 }

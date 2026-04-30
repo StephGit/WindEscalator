@@ -93,7 +93,7 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
     }
 
     fun create(alert: Alert) {
-        val documentReference = collectionReference.add(alert)
+        collectionReference.add(alert)
             .addOnSuccessListener {
                 alert.id = it.id
             }

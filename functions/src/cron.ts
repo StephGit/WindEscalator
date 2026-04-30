@@ -8,6 +8,7 @@ import {
   extractNeucData,
   extractScniData,
   extractWsctData,
+  extractBrieData,
   WindData,
 } from './winddata';
 
@@ -96,6 +97,8 @@ async function getWindData(): Promise<Map<number, WindData>> {
         windData = extractNeucData(result);
       } else if (data.localId === 3 || data.localId === 4) {
         windData = extractWsctData(result);
+      } else if (data.localId === 5) {
+        windData = extractBrieData(result);
       }
 
       dataAvailable =
@@ -103,7 +106,7 @@ async function getWindData(): Promise<Map<number, WindData>> {
         windData.force >= 0 &&
         windData.direction !== '';
       console.info(
-        `Resource ${data.displayName}: force=${windData.force}, dir=${windData.direction}, time=${windData.time}, available=${dataAvailable}`
+        `Resource ${data.displayName}: force=${windData.force}, gust=${windData.gust}, dir=${windData.direction}, time=${windData.time}, available=${dataAvailable}`
       );
       windDataResults.set(data.localId, windData);
     } catch (error) {
@@ -120,6 +123,7 @@ async function getWindData(): Promise<Map<number, WindData>> {
       if (dataAvailable && windDataResults.has(data.localId)) {
         const wd = windDataResults.get(data.localId)!;
         updateData.latestForce = wd.force;
+        updateData.latestGust = wd.gust;
         updateData.latestDirection = wd.direction;
         updateData.latestTime = wd.time;
       }

@@ -47,6 +47,7 @@ class WindViewModel @Inject constructor(
                     val windData = extractWindData(data, resource.localId)
                     val updated = resource.copy(
                         latestForce = windData.force,
+                        latestGust = windData.gust,
                         latestDirection = windData.direction,
                         latestTime = windData.time,
                         online = windData.force > 0 && windData.direction.isNotEmpty(),
