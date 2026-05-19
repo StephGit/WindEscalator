@@ -46,10 +46,17 @@ function parseTime(timeString: string): string {
 }
 
 function parseWindSpeed(speedString: string, unit: string): number {
-  if (unit === 'km/h') {
-    return Math.round(parseFloat(speedString) / 1.852); // Convert km/h to knots
+  const parsed = parseFloat(speedString);
+
+  // Return 0 if parsing fails (NaN, empty string, etc.)
+  if (isNaN(parsed)) {
+    return 0;
   }
-  return Math.round(parseFloat(speedString)); // Assume knots
+
+  if (unit === 'km/h') {
+    return Math.round(parsed / 1.852); // Convert km/h to knots
+  }
+  return Math.round(parsed); // Assume knots
 }
 
 // Function to extract data from JSON
