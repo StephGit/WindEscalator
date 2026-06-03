@@ -18,7 +18,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "bool", "DEBUG", "false"
 
         }
@@ -50,7 +50,7 @@ android {
 dependencies {
 
     def lifecycleVersion = '2.6.2'
-    def daggerVersion = '2.48'
+    def daggerVersion = '2.50'
     def navVersion = '2.7.6'
     def work_version = "2.9.0"
 

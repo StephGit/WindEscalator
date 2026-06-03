@@ -8,6 +8,9 @@ import ch.stephgit.windescalator.alert.detail.direction.Direction
 import org.joda.time.LocalDateTime
 import org.json.JSONObject
 import org.jsoup.Jsoup
+import java.time.Duration
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 
@@ -119,5 +122,17 @@ fun extractWindData(data: String, localId: Int): WindData {
 }
 
 
+
+fun isWindDataFresh(timeStr: String, maxMinutes: Long = 15): Boolean {
+    if (timeStr.isBlank()) return false
+    return try {
+        val dataTime = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"))
+        val now = LocalTime.now()
+        val diff = Duration.between(dataTime, now).toMinutes()
+        diff in 0..maxMinutes
+    } catch (e: Exception) {
+        false
+    }
+}
 
 private fun calcKnotsByKmh(windText: String) = (windText.toDouble() / 1.852).roundToInt()

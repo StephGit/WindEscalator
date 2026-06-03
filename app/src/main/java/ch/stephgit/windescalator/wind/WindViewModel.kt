@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.detail.WindResource
 import ch.stephgit.windescalator.alert.detail.extractWindData
+import ch.stephgit.windescalator.alert.detail.isWindDataFresh
 import ch.stephgit.windescalator.data.WindResourceRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +51,7 @@ class WindViewModel @Inject constructor(
                         latestGust = windData.gust,
                         latestDirection = windData.direction,
                         latestTime = windData.time,
-                        online = windData.force > 0 && windData.direction.isNotEmpty(),
+                        online = isWindDataFresh(windData.time),
                         lastChecked = System.currentTimeMillis()
                     )
                     _windResources.value = _windResources.value.map {
