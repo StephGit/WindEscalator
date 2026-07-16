@@ -115,6 +115,7 @@ export function extractWsctData(data: string): WindData {
   };
 }
 
+// classic soft cheese data extraction
 export function extractBrieData(data: string): WindData {
   // Parse HTML and extract table data
   const tableMatch = data.match(
@@ -158,4 +159,22 @@ export function extractBrieData(data: string): WindData {
   }
 
   return {force, gust, direction, time};
+}
+
+export function extractGruyData(data: string): WindData {
+  const json = JSON.parse(data);
+  const latest = json.measures.reduce((prev: any, current: any) => {
+    return new Date(prev.updatedAt) > new Date(current.updatedAt)
+      ? prev
+      : current;
+  });
+
+  return {
+    force: parseWindSpeed(latest.windSpeed.toString(), 'knots'),
+    gust: parseWindSpeed(latest.windBurst.toString(), 'knots'),
+    direction: parseDirection(latest.windDir),
+    time: DateTime.fromISO(latest.updatedAt)
+      .setZone('Europe/Zurich')
+      .toFormat('HH:mm'),
+  };
 }

@@ -9,6 +9,7 @@ import {
   extractScniData,
   extractWsctData,
   extractBrieData,
+  extractGruyData,
   WindData,
 } from './winddata';
 
@@ -99,6 +100,8 @@ async function getWindData(): Promise<Map<number, WindData>> {
         windData = extractWsctData(result);
       } else if (data.localId === 5) {
         windData = extractBrieData(result);
+      } else if (data.localId === 6) {
+        windData = extractGruyData(result);
       }
 
       dataAvailable =

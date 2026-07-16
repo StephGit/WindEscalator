@@ -1,48 +1,138 @@
 package ch.stephgit.windescalator.alert.detail
 
-import android.util.Log
-import com.google.firebase.firestore.Exclude
 import ch.stephgit.windescalator.R
-import ch.stephgit.windescalator.alert.detail.TimePickerFragment.Companion.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
-import org.joda.time.LocalDateTime
-import org.json.JSONObject
+import com.google.firebase.firestore.Exclude
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 
-data class WindResource (@get:Exclude var id: String = "", var displayName: String = "", var name: String = "", @get:Exclude var icon: Int = R.drawable.ic_windbag_black_24, var localId: Int = -1, var online: Boolean = false, var lastChecked: Long = 0, var url: String = "", var latestForce: Int = 0, var latestGust: Int = 0, var latestDirection: String = "", var latestTime: String = "")
+data class WindResource (
+    @get:Exclude var id: String = "",
+    var displayName: String = "",
+    var name: String = "",
+    @get:Exclude var icon: Int = R.drawable.ic_windbag_black_24,
+    var localId: Int = -1,
+    var online: Boolean = false,
+    var lastChecked: Long = 0,
+    var url: String = "",
+    var latestForce: Int = 0,
+    var latestGust: Int = 0,
+    var latestDirection: String = "",
+    var latestTime: String = ""
+) {
+    @get:Exclude
+    val type: WindResourceType?
+        get() = WindResourceType.fromId(localId)
+}
 
+enum class WindResourceType(val localId: Int) {
+    SCNI(1) {
+        override fun extract(data: String) = extractScniData(data)
+    },
+    NEUC(2) {
+        override fun extract(data: String) = extractNeucData(data)
+    },
+    WSCT_LAKE(3) {
+        override fun extract(data: String) = extractWsctData(data)
+    },
+    WSCT_PROG(4) {
+        override fun extract(data: String) = extractWsctData(data)
+    },
+    BRIE(5) {
+        override fun extract(data: String) = extractBrieData(data)
+    },
+    GRUYERE(6) {
+        override fun extract(data: String) = extractGruyData(data)
+    };
+
+    abstract fun extract(data: String): WindData
+
+    companion object {
+        fun fromId(id: Int) = values().find { it.localId == id }
+    }
+}
+
+private val jsonConfig = Json { ignoreUnknownKeys = true }
+
+@InternalSerializationApi @Serializable
+internal data class NeucResponse(
+    val recordTimeIchtus: String,
+    val windSpeedKnotsIchtus: Double,
+    val windSpeedHigh1KnotsIchtus: Double? = null,
+    val windDirectionDegreesIchtus: Int
+)
+
+@InternalSerializationApi @Serializable
+internal data class ScniResponse(
+    val data: ScniDataContainer
+)
+
+@InternalSerializationApi @Serializable
+internal data class ScniDataContainer(
+    val data: List<ScniPoint>,
+    val hourlyDir: String? = null
+)
+
+@InternalSerializationApi @Serializable
+internal data class ScniPoint(
+    val x: String,
+    val y: Double
+)
+
+@InternalSerializationApi @Serializable
+internal data class GruyResponse(
+    val measures: List<GruyMeasure> = emptyList()
+)
+
+@InternalSerializationApi @Serializable
+internal data class GruyMeasure(
+    val updatedAt: String,
+    val windSpeed: Double? = null,
+    val windBurst: Double? = null,
+    val windDir: Int? = null
+)
+
+@OptIn(InternalSerializationApi::class)
 fun extractNeucData(data: String): WindData {
-    Log.d(TAG, data)
-    val json = JSONObject(data);
-    val time = LocalDateTime.parse(json.getString("recordTimeIchtus")).toLocalTime().toString("HH:mm")
+    val response = jsonConfig.decodeFromString<NeucResponse>(data)
+    val time = LocalDateTime.parse(response.recordTimeIchtus)
+        .format(DateTimeFormatter.ofPattern("HH:mm"))
     return WindData(
-        force = json.getDouble("windSpeedKnotsIchtus").roundToInt(),
-        gust = json.optDouble("windSpeedHigh1KnotsIchtus", 0.0).roundToInt(),
-        direction = Direction.getByDegree(json.getInt("windDirectionDegreesIchtus")).toString(),
+        force = response.windSpeedKnotsIchtus.roundToInt(),
+        gust = response.windSpeedHigh1KnotsIchtus?.roundToInt() ?: 0,
+        direction = Direction.getByDegree(response.windDirectionDegreesIchtus).name,
         time = time
     )
 }
 
 
+@OptIn(InternalSerializationApi::class)
 fun extractScniData(windJson: String): WindData {
-    val json = JSONObject(windJson)
-    val dataObj = json.optJSONObject("data") ?: return WindData()
-    val dataArray = dataObj.optJSONArray("data") ?: return WindData()
+    val response = jsonConfig.decodeFromString<ScniResponse>(windJson)
+    val dataArray = response.data.data
 
-    if (dataArray.length() == 0) return WindData()
+    if (dataArray.isEmpty()) return WindData()
 
-    val lastWind = dataArray.getJSONObject(dataArray.length() - 1)
-    val force = calcKnotsByKmh(lastWind.getDouble("y").toString())
-    val timestamp = lastWind.getString("x")
-    val time = LocalDateTime.parse(timestamp.replace(' ', 'T')).plusHours(2).toLocalTime().toString("HH:mm")
+    val lastWind = dataArray.last()
+    val force = calcKnotsByKmh(lastWind.y.toString())
+
+    val time = LocalDateTime.parse(lastWind.x.replace(' ', 'T'))
+        .atZone(ZoneOffset.UTC)
+        .format(DateTimeFormatter.ofPattern("HH:mm"))
 
     // Extract direction from hourlyDir HTML (title="27.04.2026 09:00 : SSE")
-    val hourlyDir = dataObj.optString("hourlyDir", "")
+    val hourlyDir = response.data.hourlyDir ?: ""
     val dirPattern = Regex("""title="[^"]*"""")
     val matches = dirPattern.findAll(hourlyDir).toList()
     val direction = if (matches.isNotEmpty()) {
@@ -110,18 +200,28 @@ fun extractBrieData(data: String): WindData {
     return WindData(force = force, gust = gust, direction = direction, time = time)
 }
 
-fun extractWindData(data: String, localId: Int): WindData {
-    return when (localId) {
-        1 -> extractScniData(data)
-        2 -> extractNeucData(data)
-        3 -> extractWsctData(data)
-        4 -> extractWsctData(data)
-        5 -> extractBrieData(data)
-        else -> return WindData()
-    }
+@OptIn(InternalSerializationApi::class)
+fun extractGruyData(data: String): WindData {
+    val response = jsonConfig.decodeFromString<GruyResponse>(data)
+    if (response.measures.isEmpty()) return WindData()
+
+    val latestMeasure = response.measures.maxByOrNull { ZonedDateTime.parse(it.updatedAt).toInstant() } ?: return WindData()
+    val latestZdt = ZonedDateTime.parse(latestMeasure.updatedAt)
+
+    val zurichTime = latestZdt.withZoneSameInstant(ZoneId.of("Europe/Zurich"))
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    return WindData(
+        force = latestMeasure.windSpeed?.roundToInt() ?: 0,
+        gust = latestMeasure.windBurst?.roundToInt() ?: 0,
+        direction = Direction.getByDegree(latestMeasure.windDir ?: 0).name,
+        time = zurichTime.format(timeFormatter)
+    )
 }
 
-
+fun extractWindData(data: String, localId: Int): WindData {
+    return WindResourceType.fromId(localId)?.extract(data) ?: WindData()
+}
 
 fun isWindDataFresh(timeStr: String, maxMinutes: Long = 15): Boolean {
     if (timeStr.isBlank()) return false
