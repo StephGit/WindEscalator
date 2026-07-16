@@ -1,6 +1,8 @@
 package ch.stephgit.windescalator.alert.detail
 
+import android.util.Log
 import ch.stephgit.windescalator.R
+import ch.stephgit.windescalator.alert.detail.TimePickerFragment.Companion.TAG
 import ch.stephgit.windescalator.alert.detail.direction.Direction
 import com.google.firebase.firestore.Exclude
 import kotlinx.serialization.InternalSerializationApi
@@ -59,7 +61,7 @@ enum class WindResourceType(val localId: Int) {
     abstract fun extract(data: String): WindData
 
     companion object {
-        fun fromId(id: Int) = values().find { it.localId == id }
+        fun fromId(id: Int) = entries.find { it.localId == id }
     }
 }
 
@@ -145,10 +147,10 @@ fun extractScniData(windJson: String): WindData {
 
 fun extractWsctData(data: String): WindData {
     val doc = Jsoup.parse(data)
-    val knots = doc.select("windkts").text();
-    val gustKts = doc.select("windgustkts").text();
-    val degrees = doc.select("curval_winddir").text();
-    val timeRaw = doc.select("time").text();
+    val knots = doc.select("windkts").text()
+    val gustKts = doc.select("windgustkts").text()
+    val degrees = doc.select("curval_winddir").text()
+    val timeRaw = doc.select("time").text()
 
     val time = if (timeRaw.contains(":")) {
         val parts = timeRaw.split(":")
@@ -171,7 +173,7 @@ fun extractBrieData(data: String): WindData {
     var force = 0
     var gust = 0
     var direction = ""
-    var time = ""
+    var time: String
 
     for (row in rows) {
         val cells = row.select("td")
@@ -231,6 +233,7 @@ fun isWindDataFresh(timeStr: String, maxMinutes: Long = 15): Boolean {
         val diff = Duration.between(dataTime, now).toMinutes()
         diff in 0..maxMinutes
     } catch (e: Exception) {
+        Log.e(TAG, e.toString())
         false
     }
 }
