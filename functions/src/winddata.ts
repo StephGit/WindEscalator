@@ -177,8 +177,8 @@ export function extractGruyData(data: string): WindData {
   });
 
   return {
-    force: parseWindSpeed(latest.windSpeed.toString(), 'knots'),
-    gust: parseWindSpeed(latest.windBurst.toString(), 'knots'),
+    force: parseWindSpeed(latest.windSpeed.toString(), 'km/h'),
+    gust: parseWindSpeed(latest.windBurst.toString(), 'km/h'),
     direction: parseDirection(latest.windDir),
     time: DateTime.fromISO(latest.updatedAt)
       .setZone('Europe/Zurich')
