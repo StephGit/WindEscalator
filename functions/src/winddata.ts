@@ -8,6 +8,13 @@ export interface WindData {
   time: string;
 }
 
+interface GruyMeasure {
+  updatedAt: string;
+  windSpeed: number;
+  windBurst: number;
+  windDir: number;
+}
+
 enum Direction {
   E = 'E',
   SE = 'SE',
@@ -163,7 +170,7 @@ export function extractBrieData(data: string): WindData {
 
 export function extractGruyData(data: string): WindData {
   const json = JSON.parse(data);
-  const latest = json.measures.reduce((prev: any, current: any) => {
+  const latest = (json.measures as GruyMeasure[]).reduce((prev, current) => {
     return new Date(prev.updatedAt) > new Date(current.updatedAt)
       ? prev
       : current;

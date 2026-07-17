@@ -17,11 +17,7 @@ Android-App to alert driven windsurfers in Thun when the local Ober-Wind kicks i
 
 ## Technologies
 
-- Android SDK v33 (min v26)
-- Kotlin 1.8.0
-- Dagger 2.33
-- Lifecycle 2.4.1
-- Room 2.5.1 
+- Android SDK v33 (min v33)
 
 ## Getting Started
 

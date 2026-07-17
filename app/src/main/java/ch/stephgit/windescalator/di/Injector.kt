@@ -4,10 +4,18 @@ import android.app.Application
 import ch.stephgit.windescalator.di.DaggerAppComponent.builder
 
 object Injector {
-    lateinit var appComponent : AppComponent
+    lateinit var appComponent: AppComponent
+        private set
+
     fun init(application: Application) {
-        appComponent = builder()
-            .application(application)
-            .build()
+        if (::appComponent.isInitialized) return
+
+        synchronized(this) {
+            if (::appComponent.isInitialized) return
+
+            appComponent = builder()
+                .application(application)
+                .build()
+        }
     }
 }

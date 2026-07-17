@@ -1,22 +1,26 @@
 {
   "name": "functions",
-  "scripts": {
-    "lint": "npm run lint:eslint",
-    "lint:eslint": "eslint . --ext .ts",
-    "format": "prettier \"{**/*,*}.{cjs,html,js,json,md,ts}\" --ignore-path ./.eslintignore --write",
-    "build": "npm run format && tsc",
-    "build:watch": "tsc --watch",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "npm run build && firebase deploy --only functions",
-    "logs": "firebase functions:log"
-  },
+  "packageManager": "pnpm@11.10.0",
   "engines": {
-    "node": "22.13.0"
+    "node": "22.22.3",
+    "pnpm": "11.10.0"
+  },
+  "scripts": {
+    "lint": "pnpm run lint:eslint",
+    "lint:eslint": "eslint . --ext .ts",
+    "test": "node --require ts-node/register --test src/**/*.test.ts",
+    "format": "prettier \"{**/*,*}.{cjs,html,js,json,md,ts}\" --ignore-path ./.eslintignore --write",
+    "build": "pnpm run format && tsc",
+    "build:watch": "tsc --watch",
+    "serve": "pnpm run build && firebase emulators:start --only functions",
+    "shell": "pnpm run build && firebase functions:shell",
+    "start": "pnpm run shell",
+    "deploy": "pnpm run build && firebase deploy --only functions",
+    "logs": "firebase functions:log"
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google-cloud/functions-framework": "^5.0.5",
     "firebase-admin": "^13.8.0",
     "firebase-functions": "^7.2.5",
     "luxon": "^3.7.2"

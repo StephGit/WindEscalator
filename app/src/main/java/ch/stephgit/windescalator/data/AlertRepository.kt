@@ -12,14 +12,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 private const val COLLECTION_NAME = "alert"
-class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
+class AlertRepository @Inject constructor(private val db: FirebaseFirestore) {
 
     private val collectionReference: CollectionReference = db.collection(COLLECTION_NAME)
 
@@ -36,23 +35,15 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
         val listener = object : EventListener<QuerySnapshot> {
             override fun onEvent(snapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
                 if (exception != null) {
-                    // An error occurred
-                    cancel()
+                    this@callbackFlow.close(exception)
                     return
                 }
 
-                if (snapshot != null && !snapshot.isEmpty) {
-                    var tmpList = ArrayList<Alert>();
-                    for (document in snapshot) {
-                        Log.d(TAG, "${document.id} => ${document.data}")
-                        var alert = document.toObject(Alert::class.java)
-                        alert.id = document.id
-                        tmpList.add(alert)
-                    }
-                    trySend(tmpList)
-                } else {
-                    // The alert document does not exist or has no data
-                }
+                val alerts = snapshot?.mapNotNull { document ->
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    document.toObject<Alert>()?.apply { this.id = document.id }
+                } ?: emptyList()
+                trySend(alerts)
             }
         }
 
@@ -68,22 +59,18 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
                 exception: FirebaseFirestoreException?
             ) {
                 if (exception != null) {
-                    // An error occurred
-                    cancel()
+                    this@callbackFlow.close(exception)
                     return
                 }
 
                 if (document != null) {
                     Log.d(TAG, "${document.id} => ${document.data}")
-                    document.toObject<Alert>()?.let { it: Alert ->
-                        it.id = id
-                        trySend(it)
-                    }
+                    document.toObject<Alert>()?.let { alert ->
+                        alert.id = id
+                        trySend(alert)
+                    } ?: Log.e(TAG, "Reading alert `$id` from db failed: data is null")
                 } else {
-                    Log.d(
-                        TAG,
-                        "Reading alert `$id` from db failed"
-                    )
+                    Log.e(TAG, "Reading alert `$id` from db failed")
                 }
             }
         }
@@ -92,17 +79,17 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
         awaitClose { registration.remove() }
     }
 
-    fun create(alert: Alert) {
-        collectionReference.add(alert)
+    fun create(alert: Alert): Task<DocumentReference> {
+        return collectionReference.add(alert)
             .addOnSuccessListener {
                 alert.id = it.id
             }
             .addOnFailureListener { e ->
-                Log.d(
+                Log.e(
                     TAG,
                     "There was an error creating '${alert.name}' in '$COLLECTION_NAME'!", e
                 )
-        }
+            }
     }
 
     fun update(alert: Alert): Task<Void> {
@@ -113,7 +100,7 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
             "Updating '$documentName' in '$COLLECTION_NAME'."
         )
         return documentReference.set(alert).addOnFailureListener { e ->
-            Log.d(
+            Log.e(
                 TAG,
                 "There was an error updating '$documentName' in '$COLLECTION_NAME'.", e
             )
@@ -127,7 +114,7 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
             "Deleting '$id' in '$COLLECTION_NAME'."
         )
         return documentReference.delete().addOnFailureListener { e ->
-            Log.d(
+            Log.e(
                 TAG,
                 "There was an error deleting '$id' in '$COLLECTION_NAME'.", e
             )
@@ -143,8 +130,7 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
                 exception: FirebaseFirestoreException?
             ) {
                 if (exception != null) {
-                    // An error occurred
-                    cancel()
+                    this@callbackFlow.close(exception)
                     return
                 }
 
@@ -153,7 +139,7 @@ class AlertRepository @Inject constructor(var db: FirebaseFirestore) {
                     val data = snapshot.toObject(dataType)
                     trySend(data)
                 } else {
-                    // The document does not exist or has no data
+                    trySend(null)
                 }
             }
         }

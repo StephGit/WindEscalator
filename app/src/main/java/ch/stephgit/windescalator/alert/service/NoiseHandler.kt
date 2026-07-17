@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.preference.PreferenceManager
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
-import ch.stephgit.windescalator.di.Injector
 import javax.inject.Inject
 
 
@@ -21,14 +20,11 @@ class NoiseHandler @Inject constructor(
     private val playAlertSound = sharedPreferences.getBoolean("activate_alert_sound", false)
     private val vibrateOnAlert = sharedPreferences.getBoolean("activate_vibration", false)
     private val soundVolume = sharedPreferences.getInt("alert_sound_level", 5)
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer? = null
     private lateinit var vibrator: Vibrator
 
-    init {
-        Injector.appComponent.inject(this)
-    }
-
     fun makeNoise() {
+        releaseMediaPlayer()
         mediaPlayer = MediaPlayer.create(context, R.raw.alarm_sound)
         vibrator = getSystemService(context, Vibrator::class.java) as Vibrator
 
@@ -40,13 +36,12 @@ class NoiseHandler @Inject constructor(
         }
 
         if (playAlertSound) {
-            mediaPlayer.setOnPreparedListener {
-                mediaPlayer.setVolume(soundVolume.toFloat(), soundVolume.toFloat())
-                mediaPlayer.isLooping = false
-                mediaPlayer.start()
+            mediaPlayer?.setOnPreparedListener {
+                it.setVolume(soundVolume.toFloat(), soundVolume.toFloat())
+                it.isLooping = false
+                it.start()
             }
         }
-
     }
 
     fun stopNoise() {
@@ -54,8 +49,16 @@ class NoiseHandler @Inject constructor(
         if (::vibrator.isInitialized && vibrateOnAlert) {
             vibrator.cancel()
         }
-        if (::mediaPlayer.isInitialized && mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
+        releaseMediaPlayer()
+    }
+
+    private fun releaseMediaPlayer() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+            }
+            it.release()
         }
+        mediaPlayer = null
     }
 }

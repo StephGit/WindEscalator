@@ -7,6 +7,7 @@
     "rootDir": "src",
     "sourceMap": true,
     "strict": true,
+    "types": ["node"],
     "noImplicitAny": false,
     "useUnknownInCatchVariables": false,
     "strictNullChecks": false,

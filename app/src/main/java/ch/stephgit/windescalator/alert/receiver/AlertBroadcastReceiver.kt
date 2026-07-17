@@ -18,15 +18,10 @@ import androidx.core.app.NotificationManagerCompat
 import ch.stephgit.windescalator.R
 import ch.stephgit.windescalator.TAG
 import ch.stephgit.windescalator.alert.AlertNotificationActivity
-import ch.stephgit.windescalator.di.Injector
 
 class AlertBroadcastReceiver : BroadcastReceiver() {
 
     private val WIND_ALERT_ACTION = "WIND_ALERT_ACTION"
-
-    init {
-        Injector.appComponent.inject(this)
-    }
 
 
     @SuppressLint("ObsoleteSdkInt")
@@ -40,7 +35,7 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
             val activityIntent = Intent(context, AlertNotificationActivity::class.java)
             activityIntent.putExtra("ALERT_ID", alertId)
             activityIntent.putExtra("WIND_DATA", windData)
-            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK and Intent.FLAG_FROM_BACKGROUND or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_FROM_BACKGROUND or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
             if (VERSION.SDK_INT > VERSION_CODES.TIRAMISU) {
                 val activityOptions = ActivityOptions.makeBasic()
@@ -49,7 +44,7 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
                     context,
                     0,
                     activityIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                     activityOptions.toBundle()
                 )
                 pendingIntent.send()

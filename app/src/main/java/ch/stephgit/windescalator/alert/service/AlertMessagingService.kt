@@ -8,29 +8,18 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import ch.stephgit.windescalator.TAG
-import ch.stephgit.windescalator.alert.receiver.AlertBroadcastReceiver
-import ch.stephgit.windescalator.di.Injector
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 
 class AlertMessagingService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var alertReceiver: AlertBroadcastReceiver
-
     private val MAX_RETRIES = 3
     private val RETRY_DELAY_MS: Long = 2000 // 2 seconds
-
-
-    init {
-        Injector.appComponent.inject(this)
-    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)

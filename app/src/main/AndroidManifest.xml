@@ -12,6 +12,10 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
+    <permission
+            android:name="WindEscalator.Broadcast.Permission"
+            android:protectionLevel="signature" />
+
     <queries>
         <package android:name="com.google.android.gms" />
     </queries>
@@ -47,7 +51,7 @@
 
         <activity
                 android:name=".alert.AlertNotificationActivity"
-                android:exported="true"
+                android:exported="false"
                 android:launchMode="singleTask"
                 android:taskAffinity=""
                 android:excludeFromRecents="true"
@@ -55,15 +59,6 @@
                 android:screenOrientation="fullSensor">
         </activity>
 
-        <receiver
-                android:name=".alert.receiver.BootBroadcastReceiver"
-                android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
-                android:enabled="true"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
         <receiver
                 android:name=".alert.receiver.AlertBroadcastReceiver"
                 android:enabled="true"

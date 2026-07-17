@@ -47,10 +47,6 @@ class AlertNotificationActivity : AppCompatActivity() {
     private var windData: String? = null
     private var nextInterval: Boolean = false
 
-    init {
-        Injector.appComponent.inject(this)
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         Log.d(TAG, "new intent log")
@@ -64,6 +60,8 @@ class AlertNotificationActivity : AppCompatActivity() {
     @SuppressLint("StringFormatMatches")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Injector.init(application)
+        Injector.appComponent.inject(this)
         wakeUp()
 
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -74,42 +72,46 @@ class AlertNotificationActivity : AppCompatActivity() {
         val sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
         nextInterval = sharedPreferences.getBoolean("cancel_firing_alert_behavior", false)
-        alertId = intent!!.getStringExtra("ALERT_ID")
-        windData = intent!!.getStringExtra("WIND_DATA")
+        val alertIdExtra = intent?.getStringExtra("ALERT_ID")
+        val windDataExtra = intent?.getStringExtra("WIND_DATA")
 
-        if (!alertId.isNullOrBlank()) {
+        if (alertIdExtra.isNullOrBlank() || windDataExtra.isNullOrBlank()) {
+            finish()
+            return
+        }
 
-            findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener {
-                showWindData()
-            }
+        alertId = alertIdExtra
+        windData = windDataExtra
 
-            findViewById<FloatingActionButton>(R.id.btn_stopAlert).setOnClickListener {
-                stopAlert()
-            }
+        findViewById<FloatingActionButton>(R.id.btn_showWindData).setOnClickListener {
+            showWindData()
+        }
 
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    alertRepo.get(alertId!!).collect {
-                        val json = Json { ignoreUnknownKeys = true }
-                        val windDataObject = json.decodeFromString<WindData>(windData!!)
+        findViewById<FloatingActionButton>(R.id.btn_stopAlert).setOnClickListener {
+            stopAlert()
+        }
 
-                        alert = it
-                        runOnUiThread {
-                            findViewById<TextView>(R.id.tv_alertDetailText).text =
-                                applicationContext.getString(
-                                    R.string.winddata_alertnotification,
-                                    alert.name,
-                                    windDataObject.force,
-                                    windDataObject.direction,
-                                    windDataObject.time
-                                )
-                        }
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                alertRepo.get(alertIdExtra).collect {
+                    val json = Json { ignoreUnknownKeys = true }
+                    val windDataObject = json.decodeFromString<WindData>(windDataExtra)
+
+                    alert = it
+                    runOnUiThread {
+                        findViewById<TextView>(R.id.tv_alertDetailText).text =
+                            applicationContext.getString(
+                                R.string.winddata_alertnotification,
+                                alert.name,
+                                windDataObject.force,
+                                windDataObject.direction,
+                                windDataObject.time
+                            )
                     }
                 }
             }
-            noiseHandler.makeNoise()
-
-        } else super.onDestroy()
+        }
+        noiseHandler.makeNoise()
 
 
     }

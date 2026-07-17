@@ -36,7 +36,7 @@ import com.google.firebase.messaging.messaging
 import javax.inject.Inject
 
 
-class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
+class WindEscalatorActivity : AppCompatActivity() {
 
 
     private lateinit var navigation: BottomNavigationView
@@ -167,7 +167,9 @@ class WindEscalatorActivity : AppCompatActivity(), WindEscalatorNavigator {
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
 
-        createSignInIntent()
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            createSignInIntent()
+        }
 
         Firebase.messaging.token.addOnCompleteListener(
             OnCompleteListener { task ->

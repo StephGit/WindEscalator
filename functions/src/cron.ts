@@ -18,6 +18,8 @@ initializeApp();
 const TIME_ZONE = 'Europe/Zurich';
 const firestore = getFirestore();
 
+type ResourceDoc = {docId: string; data: DocumentData};
+
 const options = {
   schedule: '0,10,20,30,40,50 5-21 * * *',
   timeZone: TIME_ZONE,
@@ -25,7 +27,7 @@ const options = {
 };
 
 // runs 05:00 to 22:00 all 10mins
-export const cronDataFetch = onSchedule(options, async (event) => {
+export const cronDataFetch = onSchedule(options, async () => {
   try {
     const collectionRef = firestore.collection('alert');
     const time = getCurrentTime();
@@ -109,7 +111,9 @@ async function getWindData(): Promise<Map<number, WindData>> {
         windData.force >= 0 &&
         windData.direction !== '';
       console.info(
-        `Resource ${data.displayName}: force=${windData.force}, gust=${windData.gust}, dir=${windData.direction}, time=${windData.time}, available=${dataAvailable}`
+        `Resource ${data.displayName}: force=${windData.force}, ` +
+          `gust=${windData.gust}, dir=${windData.direction}, ` +
+          `time=${windData.time}, available=${dataAvailable}`
       );
       windDataResults.set(data.localId, windData);
     } catch (error) {
@@ -118,7 +122,8 @@ async function getWindData(): Promise<Map<number, WindData>> {
         error
       );
     } finally {
-      // Update windResource document with data availability status and latest reading
+      // Update windResource document with data availability status
+      // and latest reading
       const updateData: Record<string, unknown> = {
         online: dataAvailable,
         lastChecked: Date.now(),
@@ -186,9 +191,7 @@ function getMaxTimestampToday() {
   return today.getTime();
 }
 
-async function fetchAllResources(): Promise<
-  {docId: string; data: DocumentData}[]
-> {
+async function fetchAllResources(): Promise<ResourceDoc[]> {
   const windResourceCollection = firestore.collection('windResource');
   const snapshot = await windResourceCollection.get();
 
