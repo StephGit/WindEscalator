@@ -8,7 +8,7 @@ description: Validate and deploy the Firebase Functions service from the functio
 ## Preconditions
 
 - Work only in the `functions/` directory.
-- Use Node 22.22.3 and pnpm 11.10.0.
+- Use Node and pnpm versions according to package.json.
 - Use mise instead of nvm or other version managers.
 - Do not add or upgrade dependencies as part of deployment.
 - Never deploy without the user's explicit confirmation.
@@ -16,10 +16,11 @@ description: Validate and deploy the Firebase Functions service from the functio
 ## Validate
 
 1. Confirm that the intended Firebase project and Functions changes are clear.
-2. Run `pnpm run lint` from `functions/`.
-3. Run `pnpm run build` from `functions/`.
-4. Review the working tree after the build. The build runs Prettier with `--write`; stop and ask the user how to handle any unexpected formatting changes.
-5. Stop if linting or the build fails. Report the failure and do not deploy.
+2. Run `pnpm run test` from `functions/`.
+3. Run `pnpm run lint` from `functions/`.
+4. Run `pnpm run build` from `functions/`.
+5. Review the working tree after the build. The build runs Prettier with `--write`; stop and ask the user how to handle any unexpected formatting changes.
+6. Stop if linting or the build fails. Report the failure and do not deploy.
 
 ## Deploy
 
