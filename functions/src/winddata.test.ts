@@ -115,8 +115,8 @@ test('extractGruyData selects the newest measurement', () => {
   });
 
   assert.deepEqual(extractGruyData(data), {
-    force: 12,
-    gust: 19,
+    force: 7,
+    gust: 10,
     direction: 'SW',
     time: '11:15',
   });

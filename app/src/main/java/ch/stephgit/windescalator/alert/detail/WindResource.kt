@@ -214,8 +214,8 @@ fun extractGruyData(data: String): WindData {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     return WindData(
-        force = latestMeasure.windSpeed?.roundToInt() ?: 0,
-        gust = latestMeasure.windBurst?.roundToInt() ?: 0,
+        force = calcKnotsByKmh(latestMeasure.windSpeed.toString()) ?: 0,
+        gust = calcKnotsByKmh(latestMeasure.windBurst.toString()) ?: 0,
         direction = Direction.getByDegree(latestMeasure.windDir ?: 0).name,
         time = zurichTime.format(timeFormatter)
     )
